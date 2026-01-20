@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Models;
+using Microsoft.EntityFrameworkCore;
 using Movie_Watchlist.Models.DTOs;
 using Movie_Watchlist.Repositories;
-using System.Diagnostics;
 
 namespace Movie_Watchlist.Controllers
 {
@@ -11,32 +10,44 @@ namespace Movie_Watchlist.Controllers
     {
         private readonly IHomeRepository _homeRepo;
         private readonly UserManager<IdentityUser> _userManager;
-
         public HomeController(IHomeRepository homeRepo, UserManager<IdentityUser> userManager)
         {
             _homeRepo = homeRepo;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index(string sTerm = "", int genreId = 0)
+
+        public async Task<IActionResult> Index(string sTerm = "", int genreId = 0, int page = 1)
         {
+          
             var userId = _userManager.GetUserId(User);
-            var movies = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
+
+            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
             var genres = await _homeRepo.Genres();
 
+            
+            int pageSize = 16;
+            int totalMovies = moviesFromRepo.Count();
+            int totalPages = (int)Math.Ceiling((double)totalMovies / pageSize);
+
+            var pagedMovies = moviesFromRepo
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+          
             var model = new MovieDisplayModel
             {
-                Movies = movies,
-                Genres = genres
+                Movies = pagedMovies,
+                Genres = genres,
+                STerm = sTerm,
+                GenreId = genreId
             };
+
+            
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
             return View(model);
-        }
-
-
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

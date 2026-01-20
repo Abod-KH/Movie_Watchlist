@@ -19,7 +19,7 @@ namespace Movie_Watchlist.Models
         public int ReleaseYear { get; set; }
 
         public int GenreId { get; set; }
-        public Genre Genre { get; set; }
+        public Genre? Genre { get; set; }
 
         public List<WatchlistItem> WatchlistItem { get; set; } = new List<WatchlistItem>();
     }

@@ -94,7 +94,8 @@ namespace Movie_Watchlist.Controllers
                     {
                         Title = apiMovie.Title,
                         ReleaseYear = year,
-                        GenreId = 1, 
+                        GenreId = apiMovie.Genre_ids?.FirstOrDefault() ?? 28,
+                        Description = apiMovie.Description,
                         PosterPath = apiMovie.FullPosterPath
                     };
 
@@ -105,6 +106,36 @@ namespace Movie_Watchlist.Controllers
 
             await _db.SaveChangesAsync(); 
             TempData["Message"] = $"Imported {count} new movies!";
+            return RedirectToAction("Index", "Home");
+        }
+        // 1. GET: Show the Edit Form
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var movie = await _adminRepo.GetMovieById(id);
+            if (movie == null) return NotFound();
+            return View(movie);
+        }
+
+        // 2. POST: Process the Edit
+        [HttpPost]
+        public async Task<IActionResult> Edit(Movie movie)
+        {
+            ModelState.Remove("Genre");
+
+            if (ModelState.IsValid)
+            {
+                await _adminRepo.UpdateMovie(movie);
+                return RedirectToAction("Index", "Home");
+            }
+            return View(movie);
+        }
+
+        // 3. POST: Process the Delete
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _adminRepo.DeleteMovie(id);
             return RedirectToAction("Index", "Home");
         }
     }

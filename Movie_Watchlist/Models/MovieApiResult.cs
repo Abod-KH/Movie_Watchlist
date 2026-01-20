@@ -10,10 +10,16 @@ namespace Movie_Watchlist.Models
         [JsonPropertyName("release_date")] 
         public string ReleaseDate { get; set; }
 
+        [JsonPropertyName("overview")]
+        public string? Description { get; set; }
+
         [JsonPropertyName("poster_path")]
         public string PosterPath { get; set; }
 
-        public string Overview { get; set; }
+        [JsonPropertyName("genre_ids")]
+        public List<int> Genre_ids { get; set; }
+
+
 
         // This is the full URL for your <img> tags
         public string FullPosterPath => string.IsNullOrEmpty(PosterPath)

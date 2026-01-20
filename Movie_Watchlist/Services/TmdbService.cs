@@ -16,7 +16,7 @@ namespace Movie_Watchlist.Services
         public async Task<IEnumerable<MovieApiResult>> GetPopularMoviesAsync()
         {
             // TMDB returns 20 movies per page by default
-            var url = $"https://api.themoviedb.org/3/movie/popular?api_key={_apiKey}&language=en-US&page=2";
+            var url = $"https://api.themoviedb.org/3/movie/popular?api_key={_apiKey}&language=en-US&page=5";
             var response = await _httpClient.GetFromJsonAsync<TmdbSearchResponse>(url);
             return response?.Results ?? new List<MovieApiResult>();
         }

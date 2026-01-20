@@ -1,0 +1,81 @@
+﻿@model Movie_Watchlist.Models.Movie
+
+@{
+    ViewData["Title"] = "Edit Movie";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Edit Movie</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Movie Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReleaseYear" class="form-label">Release Year</label>
+                            <input asp-for="ReleaseYear" class="form-control" type="number" />
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GenreId" class="form-label">Genre ID</label>
+                            <input asp-for="GenreId" class="form-control" />
+                            <span asp-validation-for="GenreId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PosterPath" class="form-label">Poster URL</label>
+                            <input asp-for="PosterPath" class="form-control" id="PosterUrlInput" />
+                            <span asp-validation-for="PosterPath" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            <label class="form-label d-block">Poster Preview</label>
+                            <img src="@Model.PosterPath" id="PosterPreview"
+                                 class="img-thumbnail" style="max-height: 200px;"
+                                 alt="Poster Preview"
+                                 onerror="this.src='https://via.placeholder.com/150';" />
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $("#PosterUrlInput").on("input", function () {
+                var url = $(this).val();
+                if (url) {
+                    $("#PosterPreview").attr("src", url);
+                }
+            });
+        });
+    </script>
+}
