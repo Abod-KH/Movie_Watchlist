@@ -1,0 +1,107 @@
+﻿@model Movie_Watchlist.Models.WatchlistDashboardViewModel
+@{
+    ViewData["Title"] = "My Watchlist";
+}
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h2><i class="bi bi-bookmark-heart-fill text-danger"></i> My Watchlist</h2>
+    <a href="/Home/Index" class="btn btn-outline-secondary">
+        <i class="bi bi-plus-lg"></i> Add More Movies
+    </a>
+</div>
+
+@if (Model.TotalMovies > 0)
+{
+    <div class="card shadow-sm mb-4 bg-light border-0">
+        <div class="card-body">
+            <div class="row text-center mb-3">
+                <div class="col-6 border-end">
+                    <h5 class="text-muted">Total Movies</h5>
+                    <h3 class="fw-bold">@Model.TotalMovies</h3>
+                </div>
+                <div class="col-6">
+                    <h5 class="text-muted">Watched</h5>
+                    <h3 class="fw-bold text-success">@Model.MoviesWatched</h3>
+                </div>
+            </div>
+
+            <label class="small text-muted mb-1">Watch Progress: @Model.Percentage%</label>
+            <div class="progress" style="height: 20px;">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     style="width: @Model.Percentage%"
+                     aria-valuenow="@Model.Percentage"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                    @Model.Percentage%
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!Model.Movies.Any())
+{
+    <div class="alert alert-info shadow-sm">
+        Your watchlist is currently empty. Start adding some movies from the <a href="/Home/Index">Home Page</a>!
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var movie in Model.Movies)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 @(movie.IsWatched ? "opacity-75" : "")">
+                    <img src="@movie.PosterPath"
+                         class="card-img-top"
+                         alt="@movie.Title"
+                         style="height: 350px; object-fit: cover;"
+                         onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
+
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">@movie.Title</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">@movie.ReleaseYear</span>
+                        </div>
+
+                        <div class="form-check mt-2">
+                            <input class="form-check-input watch-check"
+                                   type="checkbox"
+                                   data-movieid="@movie.MovieId"
+                                   @(movie.IsWatched ? "checked" : "")
+                                   id="check-@movie.MovieId">
+                            <label class="form-check-label small" for="check-@movie.MovieId">
+                                Mark as Watched
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white border-top-0 d-grid gap-2">
+                        <a asp-controller="Watchlist"
+                           asp-action="RemoveItem"
+                           asp-route-movieId="@movie.MovieId"
+                           class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Are you sure?')">
+                            <i class="bi bi-trash"></i> Remove
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(".watch-check").click(function () {
+            const movieId = $(this).data("movieid");
+            $.post("/Watchlist/ToggleWatched", { movieId: movieId }, function () {
+                // Reload the page to update the progress bar numbers
+                location.reload();
+            }).fail(function() {
+                alert("Could not update status.");
+            });
+        });
+    </script>
+}

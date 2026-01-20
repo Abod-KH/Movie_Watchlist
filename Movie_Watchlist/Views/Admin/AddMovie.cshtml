@@ -1,0 +1,64 @@
+﻿@model Movie_Watchlist.Models.DTOs.MovieFormModel
+@{
+    ViewData["Title"] = "Add New Movie";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-film"></i> Add New Movie</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddMovie" method="post" enctype="multipart/form-data">
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter movie title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReleaseYear" class="form-label fw-bold">Release Year</label>
+                            <input asp-for="ReleaseYear" type="number" class="form-control" placeholder="YYYY" />
+                            <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GenreId" class="form-label fw-bold">Genre</label>
+                            <select asp-for="GenreId" class="form-select"
+                                    asp-items="@(new SelectList(Model.GenreList, "Id", "Name"))">
+                                <option value="">-- Select Genre --</option>
+                            </select>
+                            <span asp-validation-for="GenreId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ImageFile" class="form-label fw-bold">Movie Poster</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                            <div class="form-text">Upload a JPG or PNG image.</div>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-cloud-upload"></i> Save Movie
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-light border">Cancel</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

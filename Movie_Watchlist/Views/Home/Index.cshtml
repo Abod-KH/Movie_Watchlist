@@ -1,0 +1,81 @@
+﻿@model MovieDisplayModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="my-4">
+    <form asp-action="Index" method="get" class="row g-3 align-items-center bg-light p-3 rounded shadow-sm">
+        <div class="col-md-4">
+            <label class="form-label fw-bold" for="genreId">Filter by Genre</label>
+            <select class="form-select" id="genreId" name="genreId">
+                <option value="0">All Genres</option>
+                @foreach (var genre in Model.Genres)
+                {
+                    <option selected="@(genre.Id == Model.GenreId)" value="@genre.Id">@genre.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-5">
+            <label class="form-label fw-bold" for="sTerm">Search Movie</label>
+            <input type="text" class="form-control" value="@Model.STerm" id="sTerm" name="sTerm" placeholder="Enter movie title...">
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Search</button>
+            <a href="/Home/Index" class="btn btn-secondary">Reset</a>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    @foreach (var item in Model.Movies)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                <img src="@item.Movie.PosterPath"
+                     class="card-img-top"
+                     alt="@item.Movie.Title"
+                     style="height: 350px; object-fit: cover;"
+                     onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
+
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">@item.Movie.Title</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small">@item.Movie.ReleaseYear</span>
+                        <span class="badge bg-info text-dark">@item.GenreName</span>
+                       
+                    </div>
+                        <span>@item.Movie.Description</span>
+                </div>
+
+                <div class="card-footer bg-white border-top-0">
+                    @if (item.IsInWatchlist)
+                    {
+                        <a asp-controller="Watchlist" asp-action="UserWatchlist" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle-fill"></i> In Watchlist
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Watchlist"
+                           asp-action="AddItem"
+                           asp-route-movieId="@item.Movie.Id"
+                           class="btn btn-outline-primary w-100">
+                            <i class="bi bi-plus-lg"></i> Add to Watchlist
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Movies.Any())
+{
+    <div class="text-center my-5">
+        <h4 class="text-muted">No movies found matching your search.</h4>
+    </div>
+}
