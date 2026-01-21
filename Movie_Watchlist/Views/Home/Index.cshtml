@@ -67,7 +67,7 @@
                         <h5 class="card-title text-truncate">@movie.Movie.Title</h5>
                         <p class="card-text text-muted">@movie.Movie.ReleaseYear</p>
                         <p class="card-text text-muted">@movie.Movie.Genre.Name</p>
-                        <p class="card-text text-muted">@movie.Movie.Description</p>
+                        @* <p class="card-text text-muted">@movie.Movie.Description</p> *@
                     </div>
                     @if (User.IsInRole("Admin"))
                     {
