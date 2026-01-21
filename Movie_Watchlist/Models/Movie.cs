@@ -11,6 +11,7 @@ namespace Movie_Watchlist.Models
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
+        public int TmdbId { get; set; }
         [MaxLength(1000)]
         public string? Description { get; set; }
 

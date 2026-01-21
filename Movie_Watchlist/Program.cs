@@ -24,6 +24,8 @@ builder.Services.AddScoped<IUserWatchlistRepository, UserWatchlistRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<IMovieService, MovieService>();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

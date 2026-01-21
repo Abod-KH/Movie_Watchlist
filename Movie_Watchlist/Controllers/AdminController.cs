@@ -70,44 +70,7 @@ namespace Movie_Watchlist.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> BulkImport()
-        {
-            var apiMovies = await _tmdbService.GetPopularMoviesAsync();
-            int count = 0;
-
-            foreach (var apiMovie in apiMovies)
-            {
-                // Check if movie already exists in your SQL database by Title
-                bool exists = _db.Movies.Any(m => m.Title == apiMovie.Title);
-
-                if (!exists)
-                {
-                    int year = 0;
-                    if (!string.IsNullOrEmpty(apiMovie.ReleaseDate))
-                    {
-                        int.TryParse(apiMovie.ReleaseDate.Split('-')[0], out year);
-                    }
-
-                    var movie = new Movie
-                    {
-                        Title = apiMovie.Title,
-                        ReleaseYear = year,
-                        GenreId = apiMovie.Genre_ids?.FirstOrDefault() ?? 28,
-                        Description = apiMovie.Description,
-                        PosterPath = apiMovie.FullPosterPath
-                    };
-
-                    _db.Movies.Add(movie);
-                    count++;
-                }
-            }
-
-            await _db.SaveChangesAsync(); 
-            TempData["Message"] = $"Imported {count} new movies!";
-            return RedirectToAction("Index", "Home");
-        }
+        
         // 1. GET: Show the Edit Form
         [HttpGet]
         public async Task<IActionResult> Edit(int id)

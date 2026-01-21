@@ -7,7 +7,7 @@ namespace Movie_Watchlist.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey = "e7b394e9c456eaab403ea5e754a069a1";
-
+       
         public TmdbService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -15,8 +15,11 @@ namespace Movie_Watchlist.Services
        
         public async Task<IEnumerable<MovieApiResult>> GetPopularMoviesAsync()
         {
+            Random rng = new Random();
+            int randomPage = rng.Next(1, 501);
+
             // TMDB returns 20 movies per page by default
-            var url = $"https://api.themoviedb.org/3/movie/popular?api_key={_apiKey}&language=en-US&page=5";
+            var url = $"https://api.themoviedb.org/3/movie/popular?api_key={_apiKey}&language=en-US&page={randomPage}";
             var response = await _httpClient.GetFromJsonAsync<TmdbSearchResponse>(url);
             return response?.Results ?? new List<MovieApiResult>();
         }

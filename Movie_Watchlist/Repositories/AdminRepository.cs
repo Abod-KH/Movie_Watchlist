@@ -42,8 +42,7 @@
 
             public async Task<Movie> GetMovieById(int id)
             {
-                // FindAsync is the most efficient way to get a single row by ID
-                // It will return null if the movie is not found.
+                
                 return await _db.Movies.FindAsync(id);
             }
 
