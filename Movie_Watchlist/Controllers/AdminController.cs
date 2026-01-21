@@ -16,15 +16,15 @@ namespace Movie_Watchlist.Controllers
         private readonly IFileService _fileService;
         private readonly IHomeRepository _homeRepo; 
         private readonly ITmdbService _tmdbService;
-        private ApplicationDbContext _db;
+       
 
-        public AdminController(IAdminRepository adminRepo, IFileService fileService, IHomeRepository homeRepo, ITmdbService tmdbService, ApplicationDbContext db)
+        public AdminController(IAdminRepository adminRepo, IFileService fileService, IHomeRepository homeRepo, ITmdbService tmdbService)
         {
             _adminRepo = adminRepo;
             _fileService = fileService;
             _homeRepo = homeRepo;
             _tmdbService = tmdbService;
-            _db = db;
+           
         }
 
       
