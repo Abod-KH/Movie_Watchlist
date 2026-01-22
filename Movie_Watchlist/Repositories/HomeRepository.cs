@@ -60,7 +60,7 @@ namespace Movie_Watchlist.Repositories
             //                 GenreName = genre.Name 
             //             };
             // return await query.ToListAsync();
-            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@UserId", (object?)userId ?? DBNull.Value);
             command.Parameters.AddWithValue("@SearchTerm", (object?)sTerm ?? DBNull.Value);
             command.Parameters.AddWithValue("@GenreId", genreId);
 
@@ -92,50 +92,6 @@ namespace Movie_Watchlist.Repositories
             return movies;
         }
 
-        public async Task<bool> AddToWatchlist(int movieId, string userId)
-        {
-            //    try
-            // {
-                
-            //     var exists = await _db.WatchlistItems
-            //         .AnyAsync(w => w.MovieId == movieId && w.UserId == userId);
-            //    if (exists) return false; 
-            //   var watchlistItem = new WatchlistItem
-            //     {
-            //         MovieId = movieId,
-            //         UserId = userId,
-            //         DateAdded = DateTime.Now,
-            //         IsWatched = false
-            //     };
-            //     _db.WatchlistItems.Add(watchlistItem);
-            //     await _db.SaveChangesAsync();
-            //     return true;
-            // }
-            // catch (Exception)
-            // {
-            //     return false;
-            // }
-            using var connection = _connectionFactory.CreateConnection();
-            var commandText = @"
-                IF NOT EXISTS (SELECT 1 FROM WatchlistItem WHERE MovieId = @MovieId AND UserId = @UserId)
-                BEGIN
-                    INSERT INTO WatchlistItem (MovieId, UserId, DateAdded, IsWatched)
-                    VALUES (@MovieId, @UserId, @DateAdded, 0);
-                    SELECT 1;
-                END
-                ELSE
-                BEGIN
-                    SELECT 0;
-                END";
 
-            var command = new SqlCommand(commandText, connection);
-            command.Parameters.AddWithValue("@MovieId", movieId);
-            command.Parameters.AddWithValue("@UserId", userId);
-            command.Parameters.AddWithValue("@DateAdded", DateTime.Now);
-
-            await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync();
-            return result != null && (int)result == 1;
-        }
     }
 }

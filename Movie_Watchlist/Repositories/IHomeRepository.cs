@@ -7,6 +7,6 @@ namespace Movie_Watchlist.Repositories
     {
         Task<IEnumerable<MovieHomeViewModel>> GetMoviesForUser(string userId, string sTerm = "", int genreId = 0);
         Task<IEnumerable<Genre>> Genres();
-        Task<bool> AddToWatchlist(int movieId, string userId);
+       
     }
 }

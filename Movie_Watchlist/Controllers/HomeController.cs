@@ -32,7 +32,7 @@ namespace Movie_Watchlist.Controllers
                 lastImport = DateTime.MinValue;
             }
 
-            if (DateTime.Now > lastImport.AddMinutes(2))
+            if (DateTime.Now > lastImport.AddMinutes(60))
             {
                 await _movieService.ImportMoviesAsync();
 
