@@ -92,6 +92,39 @@ namespace Movie_Watchlist.Repositories
             return movies;
         }
 
+        public async Task<Movie?> GetMovieById(int id)
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            var command = new SqlCommand(@"
+                SELECT m.Id, m.Title, m.TmdbId, m.Description, m.PosterPath, m.ReleaseYear, m.GenreId, g.Name as GenreName
+                FROM Movie m
+                JOIN Genre g ON m.GenreId = g.Id
+                WHERE m.Id = @Id", connection);
+            command.Parameters.AddWithValue("@Id", id);
+
+            await connection.OpenAsync();
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Movie
+                {
+                    Id = (int)reader["Id"],
+                    Title = (string)reader["Title"],
+                    TmdbId = (int)reader["TmdbId"],
+                    Description = reader["Description"] as string,
+                    PosterPath = reader["PosterPath"] as string,
+                    ReleaseYear = (int)reader["ReleaseYear"],
+                    GenreId = (int)reader["GenreId"],
+                    Genre = new Genre
+                    {
+                        Id = (int)reader["GenreId"],
+                        Name = (string)reader["GenreName"]
+                    }
+                };
+            }
+            return null;
+        }
+
 
     }
 }

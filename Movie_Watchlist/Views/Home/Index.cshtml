@@ -1,4 +1,4 @@
-﻿﻿ 
+﻿﻿
 @model MovieDisplayModel
 @{
     ViewData["Title"] = "Home Page";
@@ -20,7 +20,8 @@
 
         <div class="col-md-5">
             <label class="form-label fw-bold" for="sTerm">Search Movie</label>
-            <input type="text" class="form-control" value="@Model.STerm" id="sTerm" name="sTerm" placeholder="Enter movie title...">
+            <input type="text" class="form-control" value="@Model.STerm" id="sTerm" name="sTerm"
+                placeholder="Enter movie title...">
         </div>
 
         <div class="col-md-3 d-flex align-items-end">
@@ -48,42 +49,46 @@
                         @if (movie.IsInWatchlist)
                         {
                             <a asp-controller="Watchlist" asp-action="UserWatchlist"
-                               class="btn btn-success btn-sm rounded-circle shadow" title="In Watchlist" style="width: 45px; height: 45px;">
+                                class="btn btn-success btn-sm rounded-circle shadow" title="In Watchlist"
+                                style="width: 45px; height: 45px;">
                                 <i class="bi bi-bookmark-check-fill fs-4"></i>
                             </a>
                         }
                         else
                         {
                             <a asp-controller="Watchlist" asp-action="AddItem" asp-route-movieId="@movie.Movie.Id"
-                               class="btn btn-light btn-sm rounded-circle shadow border" title="Add to Watchlist" style="width: 45px; height: 45px;">
+                                class="btn btn-light btn-sm rounded-circle shadow border" title="Add to Watchlist"
+                                style="width: 45px; height: 45px;">
                                 <i class="bi bi-bookmark-plus text-primary fs-4"></i>
                             </a>
                         }
                     </div>
-                <div class="card h-100 shadow-sm">
-                    <img src="@movie.Movie.PosterPath" class="card-img-top" alt="@movie.Movie.Title"
-                         style="height: 350px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">@movie.Movie.Title</h5>
-                        <p class="card-text text-muted">@movie.Movie.ReleaseYear</p>
-                        <p class="card-text text-muted">@movie.Movie.Genre.Name</p>
-                        @* <p class="card-text text-muted">@movie.Movie.Description</p> *@
-                    </div>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
-                            <a asp-controller="Admin" asp-action="Edit" asp-route-id="@movie.Movie.Id"
-                               class="btn btn-sm btn-outline-primary">
-                                Edit
-                            </a>
-
-                            <form asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Movie.Id" method="post"
-                                  onsubmit="return confirm('Are you sure you want to delete this movie?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                            </form>
+                    <div class="card h-100 shadow-sm">
+                        <a asp-action="Details" asp-route-id="@movie.Movie.Id" class="text-decoration-none">
+                            <img src="@movie.Movie.PosterPath" class="card-img-top" alt="@movie.Movie.Title"
+                                style="height: 350px; object-fit: cover; cursor: pointer;">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@movie.Movie.Title</h5>
+                            <p class="card-text text-muted">@movie.Movie.ReleaseYear</p>
+                            <p class="card-text text-muted">@movie.Movie.Genre.Name</p>
+                            @* <p class="card-text text-muted">@movie.Movie.Description</p> *@
                         </div>
-                    }
-                </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@movie.Movie.Id"
+                                    class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <form asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Movie.Id" method="post"
+                                    onsubmit="return confirm('Are you sure you want to delete this movie?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
 

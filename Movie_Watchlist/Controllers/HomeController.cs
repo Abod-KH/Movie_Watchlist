@@ -44,7 +44,7 @@ namespace Movie_Watchlist.Controllers
             var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
             var genres = await _homeRepo.Genres();
 
-            
+
             int pageSize = 20;
             int totalMovies = moviesFromRepo.Count();
             int totalPages = (int)Math.Ceiling((double)totalMovies / pageSize);
@@ -54,7 +54,7 @@ namespace Movie_Watchlist.Controllers
                 .Take(pageSize)
                 .ToList();
 
-          
+
             var model = new MovieDisplayModel
             {
                 Movies = pagedMovies,
@@ -63,11 +63,21 @@ namespace Movie_Watchlist.Controllers
                 GenreId = genreId
             };
 
-            
+
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
 
             return View(model);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var movie = await _homeRepo.GetMovieById(id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            return View(movie);
         }
     }
 }

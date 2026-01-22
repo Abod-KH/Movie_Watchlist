@@ -1,0 +1,68 @@
+@model Movie_Watchlist.Models.Movie
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-lg border-0 overflow-hidden">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="@Model.PosterPath" class="img-fluid h-100" alt="@Model.Title" style="object-fit: cover; min-height: 500px;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body p-5">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h1 class="card-title display-5 fw-bold mb-1">@Model.Title</h1>
+                                    <p class="text-muted fs-5">@Model.ReleaseYear &bull; @Model.Genre?.Name</p>
+                                </div>
+                                <div class="badge bg-primary fs-6 p-2">Movie</div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="mb-4">
+                                <h4 class="fw-bold mb-3">Overview</h4>
+                                <p class="card-text fs-5 leading-relaxed text-secondary-emphasis">
+                                    @(string.IsNullOrEmpty(Model.Description) ? "No description available for this movie." : Model.Description)
+                                </p>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-5">
+                                <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Movies
+                                </a>
+                                @* Note: Watchlist button could be added here similar to Index if needed, but the prompt focused on details/description *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .leading-relaxed {
+        line-height: 1.6;
+    }
+    .card {
+        border-radius: 1.5rem;
+    }
+    .breadcrumb-item a {
+        text-decoration: none;
+        color: var(--bs-primary);
+    }
+    .breadcrumb-item.active {
+        color: var(--bs-gray-600);
+    }
+</style>
