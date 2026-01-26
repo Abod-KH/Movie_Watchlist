@@ -7,16 +7,16 @@
 
     namespace Movie_Watchlist.Repositories
     {
-        public class AdminRepository : IAdminRepository
+        public class AdminRepository : Repository,IAdminRepository
         {
             // private readonly ApplicationDbContext _db;
-            private readonly SqlConnectionFactory _connectionFactory;
+            
 
-//public AdminRepository(ApplicationDbContext db)
-            public AdminRepository(SqlConnectionFactory connectionFactory)
+            //public AdminRepository(ApplicationDbContext db)
+            public AdminRepository(SqlConnectionFactory connectionFactory):base(connectionFactory)
             {
                 //_db = db;
-                _connectionFactory = connectionFactory;
+               
             }
 
             public async Task AddMovie(Movie movie)
@@ -24,10 +24,9 @@
                 //  _db.Movies.Add(movie);
                 // await _db.SaveChangesAsync();
                 using var connection = _connectionFactory.CreateConnection();
-                var commandText = @"INSERT INTO Movie (Title, TmdbId, Description, PosterPath, ReleaseYear, GenreId) 
-                                    VALUES (@Title, @TmdbId, @Description, @PosterPath, @ReleaseYear, @GenreId)";
+                var command = new SqlCommand("sp_InsertMovie", connection);
+                command.CommandType = CommandType.StoredProcedure;
 
-                var command = new SqlCommand(commandText, connection);
                 command.Parameters.AddWithValue("@Title", movie.Title);
                 command.Parameters.AddWithValue("@TmdbId", movie.TmdbId);
                 command.Parameters.AddWithValue("@Description", (object?)movie.Description ?? DBNull.Value);
@@ -44,12 +43,8 @@
                 // _db.Movies.Update(movie);
                 // await _db.SaveChangesAsync();
                 using var connection = _connectionFactory.CreateConnection();
-                var commandText = @"UPDATE Movie 
-                                    SET Title = @Title, TmdbId = @TmdbId, Description = @Description, 
-                                        PosterPath = @PosterPath, ReleaseYear = @ReleaseYear, GenreId = @GenreId
-                                    WHERE Id = @Id";
-
-                var command = new SqlCommand(commandText, connection);
+                var command = new SqlCommand("sp_UpdateMovie", connection);
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@Id", movie.Id);
                 command.Parameters.AddWithValue("@Title", movie.Title);
                 command.Parameters.AddWithValue("@TmdbId", movie.TmdbId);
@@ -71,9 +66,8 @@
                 //     await _db.SaveChangesAsync();
                 // }
                 using var connection = _connectionFactory.CreateConnection();
-                var commandText = "DELETE FROM Movie WHERE Id = @Id";
-
-                var command = new SqlCommand(commandText, connection);
+                var command = new SqlCommand("sp_DeleteMovie", connection);
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@Id", id);
 
                 await connection.OpenAsync();
@@ -85,28 +79,14 @@
             {
                 // return await _db.Movies.FindAsync(id);
                 using var connection = _connectionFactory.CreateConnection();
-                var commandText = "SELECT * FROM Movie WHERE Id = @Id";
-
-                var command = new SqlCommand(commandText, connection);
+                var command = new SqlCommand("sp_GetMovieById", connection);
+                command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.AddWithValue("@Id", id);
 
                 await connection.OpenAsync();
                 using var reader = await command.ExecuteReaderAsync();
 
-                if (await reader.ReadAsync())
-                {
-                    return new Movie
-                    {
-                        Id = (int)reader["Id"],
-                        Title = (string)reader["Title"],
-                        TmdbId = (int)reader["TmdbId"],
-                        Description = reader["Description"] as string,
-                        PosterPath = reader["PosterPath"] as string,
-                        ReleaseYear = (int)reader["ReleaseYear"],
-                        GenreId = (int)reader["GenreId"]
-                    };
-                }
-                return null;
+                return await reader.ReadAsync() ? MapReaderToObject<Movie>(reader) : null;
             }
 
         }

@@ -6,15 +6,15 @@ using System.Data;
 
 namespace Movie_Watchlist.Repositories
 {
-    public class HomeRepository : IHomeRepository
+    public class HomeRepository : Repository, IHomeRepository
     {
-        private readonly SqlConnectionFactory _connectionFactory;
+        
         //    private readonly ApplicationDbContext _db;
 
         //     public HomeRepository(ApplicationDbContext db)
-        public HomeRepository(SqlConnectionFactory connectionFactory)
+        public HomeRepository(SqlConnectionFactory connectionFactory):base(connectionFactory)
         {
-            _connectionFactory = connectionFactory;
+            
             // _db = db;
         }
 
@@ -23,17 +23,14 @@ namespace Movie_Watchlist.Repositories
             // return await _db.Genres.ToListAsync();
             var genres = new List<Genre>();
             using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand("SELECT Id, Name FROM Genre", connection);
+            var command = new SqlCommand("sp_GetAllGenres", connection);
+            command.CommandType = CommandType.StoredProcedure;
 
             await connection.OpenAsync();
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                genres.Add(new Genre
-                {
-                    Id = (int)reader["Id"],
-                    Name = (string)reader["Name"]
-                });
+                genres.Add(MapReaderToObject<Genre>(reader));
             }
             return genres;
         }
@@ -95,34 +92,13 @@ namespace Movie_Watchlist.Repositories
         public async Task<Movie?> GetMovieById(int id)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand(@"
-                SELECT m.Id, m.Title, m.TmdbId, m.Description, m.PosterPath, m.ReleaseYear, m.GenreId, g.Name as GenreName
-                FROM Movie m
-                JOIN Genre g ON m.GenreId = g.Id
-                WHERE m.Id = @Id", connection);
+            var command = new SqlCommand("sp_GetMovieDetails", connection);
+            command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@Id", id);
 
             await connection.OpenAsync();
             using var reader = await command.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                return new Movie
-                {
-                    Id = (int)reader["Id"],
-                    Title = (string)reader["Title"],
-                    TmdbId = (int)reader["TmdbId"],
-                    Description = reader["Description"] as string,
-                    PosterPath = reader["PosterPath"] as string,
-                    ReleaseYear = (int)reader["ReleaseYear"],
-                    GenreId = (int)reader["GenreId"],
-                    Genre = new Genre
-                    {
-                        Id = (int)reader["GenreId"],
-                        Name = (string)reader["GenreName"]
-                    }
-                };
-            }
-            return null;
+            return await reader.ReadAsync() ? MapReaderToObject<Movie>(reader) : null;
         }
 
 
