@@ -65,25 +65,18 @@ namespace Movie_Watchlist.Repositories
             using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
+                var movie = MapReaderToObject<Movie>(reader);
+                movie.Genre = new Genre
+                {
+                    Id = (int)reader["GenreId"],
+                    Name = (string)reader["GenreName"]
+                };
+
                 movies.Add(new MovieHomeViewModel
                 {
-                    Movie = new Movie
-                    {
-                        Id = (int)reader["Id"],
-                        Title = (string)reader["Title"],
-                        TmdbId = (int)reader["TmdbId"],
-                        Description = reader["Description"] as string,
-                        PosterPath = reader["PosterPath"] as string,
-                        ReleaseYear = (int)reader["ReleaseYear"],
-                        GenreId = (int)reader["GenreId"],
-                        Genre = new Genre
-                        {
-                            Id = (int)reader["GenreId"],
-                            Name = (string)reader["GenreName"]
-                        }
-                    },
+                    Movie = movie,
                     IsInWatchlist = (int)reader["IsInWatchlist"] == 1,
-                    GenreName = (string)reader["GenreName"]
+                    GenreName = movie.Genre.Name
                 });
             }
             return movies;
