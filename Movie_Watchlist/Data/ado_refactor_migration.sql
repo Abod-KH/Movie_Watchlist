@@ -1,4 +1,4 @@
-USE [Movie_Watchlist]; -- Ensure this matches your actual DB name or remove if generic
+USE [Movie_Watchlist]; 
 GO
 
 -- 1. Create User-Defined Table Type for Bulk Movie Imports

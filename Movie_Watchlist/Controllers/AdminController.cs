@@ -71,7 +71,7 @@ namespace Movie_Watchlist.Controllers
         }
 
         
-        // 1. GET: Show the Edit Form
+        
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -80,7 +80,7 @@ namespace Movie_Watchlist.Controllers
             return View(movie);
         }
 
-        // 2. POST: Process the Edit
+        
         [HttpPost]
         public async Task<IActionResult> Edit(Movie movie)
         {
@@ -94,7 +94,7 @@ namespace Movie_Watchlist.Controllers
             return View(movie);
         }
 
-        // 3. POST: Process the Delete
+        
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {

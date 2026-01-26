@@ -8,7 +8,7 @@ namespace Movie_Watchlist.Controllers
     [Authorize] 
     public class WatchlistController : Controller
     {
-        private readonly IUserWatchlistRepository _watchlistRepo; // New Repo
+        private readonly IUserWatchlistRepository _watchlistRepo; 
         private readonly UserManager<IdentityUser> _userManager;
 
         public WatchlistController(IUserWatchlistRepository watchlistRepo, UserManager<IdentityUser> userManager)
