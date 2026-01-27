@@ -5,19 +5,20 @@ using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Models.DTOs;
 using Movie_Watchlist.Repositories;
 using Movie_Watchlist.Services;
+using System.Security.Claims;
 
 namespace Movie_Watchlist.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IHomeRepository _homeRepo;
-        private readonly UserManager<IdentityUser> _userManager;
+        
         private readonly IMovieService _movieService;
         private readonly IMemoryCache _cache;
-        public HomeController(IHomeRepository homeRepo, UserManager<IdentityUser> userManager, IMovieService movieService, IMemoryCache cache)
+        public HomeController(IHomeRepository homeRepo, IMovieService movieService, IMemoryCache cache)
         {
             _homeRepo = homeRepo;
-            _userManager = userManager;
+           
             _movieService = movieService;
             _cache = cache;
         }
@@ -39,7 +40,7 @@ namespace Movie_Watchlist.Controllers
 
                 _cache.Set(cacheKey, DateTime.Now);
             }
-            var userId = _userManager.GetUserId(User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
             var genres = await _homeRepo.Genres();

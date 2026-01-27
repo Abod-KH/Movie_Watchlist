@@ -1,39 +1,40 @@
-﻿using Microsoft.AspNetCore.Identity;
-
+﻿using BCrypt.Net;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Movie_Watchlist.Models;
+using Movie_Watchlist.Repositories;
+using System;
 namespace Movie_Watchlist.Data
 {
     public static class DbSeeder
     {
         public static async Task SeedDefaultData(IServiceProvider service)
         {
-            var userManager = service.GetService<UserManager<IdentityUser>>();
-            var roleManager = service.GetService<RoleManager<IdentityRole>>();
+            var accountRepo = service.GetRequiredService<IAccountRepository>();
 
-            // 1. Seed Roles (Admin and User)
-            if (!await roleManager.RoleExistsAsync("Admin"))
-            {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
-            }
-            if (!await roleManager.RoleExistsAsync("User"))
-            {
-                await roleManager.CreateAsync(new IdentityRole("User"));
-            }
-
-            // 2. Create the Admin User
             var adminEmail = "admin@watchlist.com";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            var existingAdmin = await accountRepo.GetUserByEmailAsync(adminEmail);
 
-            if (adminUser == null)
+            if (existingAdmin == null)
             {
-                adminUser = new IdentityUser
+
+                var adminUser = new User
                 {
-                    UserName = adminEmail,
+                    Username = "Admin",
                     Email = adminEmail,
-                    EmailConfirmed = true
+
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+                    IsActive = true
                 };
-                // Set a strong password here
-                await userManager.CreateAsync(adminUser, "Admin@123");
-                await userManager.AddToRoleAsync(adminUser, "Admin");
+
+
+                int adminId = await accountRepo.CreateUserAsync(adminUser);
+
+                if (adminId > 0)
+                {
+
+                    await accountRepo.AddUserToRoleAsync(adminId, "Admin");
+                }
             }
         }
     }

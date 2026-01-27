@@ -98,21 +98,27 @@
     @if (ViewBag.TotalPages > 1)
     {
         <nav aria-label="Page navigation" class="mt-5">
-            <ul class="pagination justify-content-center">
-
+            <ul class="pagination pagination-sm flex-wrap justify-content-center">
+                @* Previous *@
                 <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">Previous</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">&laquo;</a>
                 </li>
 
-                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                @{
+                    int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
+                    int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2);
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
                 {
                     <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
                         <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
                     </li>
                 }
 
+                @* Next *@
                 <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">Next</a>
+                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">&raquo;</a>
                 </li>
             </ul>
         </nav>
