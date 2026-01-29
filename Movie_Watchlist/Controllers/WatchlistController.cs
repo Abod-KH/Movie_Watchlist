@@ -18,7 +18,7 @@ namespace Movie_Watchlist.Controllers
             
         }
 
-        public async Task<IActionResult> UserWatchlist()
+        private async Task<WatchlistDashboardViewModel> GetViewModelData()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var movies = await _watchlistRepo.GetUserWatchlist(userId);
@@ -27,23 +27,34 @@ namespace Movie_Watchlist.Controllers
             var watched = movies.Count(m => m.IsWatched);
             var percentage = total == 0 ? 0 : (int)((double)watched / total * 100);
 
-            
-            var model = new WatchlistDashboardViewModel
+            return new WatchlistDashboardViewModel
             {
                 Movies = movies,
                 TotalMovies = total,
                 MoviesWatched = watched,
                 Percentage = percentage
             };
+        }
 
+    
+        public async Task<IActionResult> UserWatchlist()
+        {
+            var model = await GetViewModelData();
             return View(model);
         }
 
+        
+        public async Task<IActionResult> GetWatchlistPartial()
+        {
+            var model = await GetViewModelData(); 
+            return PartialView("_WatchlistContent", model);
+        }
+        [HttpPost]
         public async Task<IActionResult> AddItem(int movieId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _watchlistRepo.AddToWatchlist(movieId, userId);
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
         public async Task<IActionResult> RemoveItem(int movieId)
         {
@@ -51,6 +62,7 @@ namespace Movie_Watchlist.Controllers
             await _watchlistRepo.RemoveFromWatchlist(movieId, userId);
             return RedirectToAction("UserWatchlist");
         }
+        
         [HttpPost]
         public async Task<IActionResult> ToggleWatched(int movieId)
         {

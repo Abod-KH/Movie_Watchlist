@@ -48,19 +48,19 @@
                     <div class="position-absolute top-0 start-0 m-2" style="z-index: 5;">
                         @if (movie.IsInWatchlist)
                         {
-                            <a asp-controller="Watchlist" asp-action="UserWatchlist"
-                                class="btn btn-success btn-sm rounded-circle shadow" title="In Watchlist"
-                                style="width: 45px; height: 45px;">
+                            <button class="btn btn-success btn-sm rounded-circle shadow"
+                                    style="width: 45px; height: 45px;" disabled>
                                 <i class="bi bi-bookmark-check-fill fs-4"></i>
-                            </a>
+                            </button>
                         }
                         else
                         {
-                            <a asp-controller="Watchlist" asp-action="AddItem" asp-route-movieId="@movie.Movie.Id"
-                                class="btn btn-light btn-sm rounded-circle shadow border" title="Add to Watchlist"
-                                style="width: 45px; height: 45px;">
+                            <button class="btn btn-light btn-sm rounded-circle shadow border add-to-watchlist"
+                                    data-movieid="@movie.Movie.Id"
+                                    type="button"
+                                    style="width: 45px; height: 45px;">
                                 <i class="bi bi-bookmark-plus text-primary fs-4"></i>
-                            </a>
+                            </button>
                         }
                     </div>
                     <div class="card h-100 shadow-sm">
@@ -124,3 +124,28 @@
         </nav>
     }
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            console.log("Script loaded and watching for clicks...");
+
+            $(document).on("click", ".add-to-watchlist", function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var movieId = btn.data("movieid");
+
+                $.ajax({
+                    url: '/Watchlist/AddItem',
+                    type: 'POST',
+                    data: { movieId: movieId },
+                    success: function () {
+
+                        btn.removeClass("btn-light add-to-watchlist").addClass("btn-success").prop("disabled", true);
+                        btn.html('<i class="bi bi-bookmark-check-fill fs-4"></i>');
+                    }
+                });
+            });
+        });
+    </script>
+}
