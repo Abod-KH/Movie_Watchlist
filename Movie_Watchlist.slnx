@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="Movie_Watchlist.Application/Movie_Watchlist.Application.csproj" Id="76977685-31bc-4180-8050-4da954dc1669" />
+  <Project Path="Movie_Watchlist.Domain/Movie_Watchlist.Domain.csproj" Id="9c96e21f-3228-4687-a63e-c09a800d2d58" />
+  <Project Path="Movie_Watchlist.Infrastructure/Movie_Watchlist.Infrastructure.csproj" Id="04a5e8d6-a375-4406-99de-2e3df4d1397e" />
   <Project Path="Movie_Watchlist/Movie_Watchlist.csproj" />
 </Solution>
