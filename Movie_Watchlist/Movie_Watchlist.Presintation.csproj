@@ -17,4 +17,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Movie_Watchlist.Infrastructure\Movie_Watchlist.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
