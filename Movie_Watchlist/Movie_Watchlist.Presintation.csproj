@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Movie_Watchlist.Application\Movie_Watchlist.Application.csproj" />
     <ProjectReference Include="..\Movie_Watchlist.Infrastructure\Movie_Watchlist.Infrastructure.csproj" />
   </ItemGroup>
 

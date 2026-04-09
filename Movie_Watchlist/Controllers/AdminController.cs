@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Data;
-using Movie_Watchlist.Models;
-using Movie_Watchlist.Models.DTOs;
-using Movie_Watchlist.Repositories;
-using Movie_Watchlist.Services;
+using Movie_Watchlist.Application.DTOs;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.Models;
+using Movie_Watchlist.Domain.Entities;
 
-namespace Movie_Watchlist.Controllers
+
+namespace Movie_Watchlist.Presintation.Controllers
 {
     [Authorize(Roles = "Admin")] 
     public class AdminController : Controller

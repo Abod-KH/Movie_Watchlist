@@ -2,12 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Movie_Watchlist.Models.DTOs;
-using Movie_Watchlist.Repositories;
-using Movie_Watchlist.Services;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.DTOs;
 using System.Security.Claims;
 
-namespace Movie_Watchlist.Controllers
+namespace Movie_Watchlist.Presintation.Controllers
 {
     public class HomeController : Controller
     {

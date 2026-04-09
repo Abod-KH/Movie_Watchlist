@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Models;
-using Movie_Watchlist.Services;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.Models;
 using System.Security.Claims;
 
 
-namespace Movie_Watchlist.Controllers
+namespace Movie_Watchlist.Presintation.Controllers
 {
     public class AccountController : Controller
     {

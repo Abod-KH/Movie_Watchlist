@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Models;
-using Movie_Watchlist.Repositories;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.Models;
 using System.Security.Claims;
-namespace Movie_Watchlist.Controllers
+namespace Movie_Watchlist.Presintation.Controllers
 {
     [Authorize] 
     public class WatchlistController : Controller
