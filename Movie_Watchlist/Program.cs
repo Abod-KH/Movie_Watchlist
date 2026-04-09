@@ -6,8 +6,8 @@ using Movie_Watchlist.Application.Services;
 using Movie_Watchlist.Infrastructure.Data;
 using Movie_Watchlist.Infrastructure.ExternalServices;
 using Movie_Watchlist.Infrastructure.Repositories;
-using Movie_Watchlist.Repositories;
-using Movie_Watchlist.Repositories.Movie_Watchlist.Repositories;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 

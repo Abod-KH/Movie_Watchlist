@@ -1,14 +1,10 @@
-﻿namespace Movie_Watchlist.Repositories
-{
-    using global::Movie_Watchlist.Application.Interfaces;
-    using global::Movie_Watchlist.Infrastructure.Data;
-    using global::Movie_Watchlist.Domain.Entities;
-    using global::Movie_Watchlist.Application.Models;
-    using Microsoft.Data.SqlClient;
-    using System.Data;
-    using global::Movie_Watchlist.Infrastructure.Repositories;
+﻿using Microsoft.Data.SqlClient;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Domain.Entities;
+using Movie_Watchlist.Infrastructure.Data;
+using System.Data;
 
-    namespace Movie_Watchlist.Repositories
+namespace Movie_Watchlist.Infrastructure.Repositories
     {
         public class AdminRepository : Repository,IAdminRepository
         {
@@ -84,4 +80,4 @@
 
         }
     }
-}
+

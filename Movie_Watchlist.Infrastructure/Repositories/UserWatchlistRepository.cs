@@ -2,12 +2,11 @@
 using Movie_Watchlist.Application.DTOs;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Infrastructure.Data;
-using Movie_Watchlist.Infrastructure.Repositories;
 using Movie_Watchlist.Application.Models;
 using System.Data;
 
 
-namespace Movie_Watchlist.Repositories
+namespace Movie_Watchlist.Infrastructure.Repositories
 {
     public class UserWatchlistRepository : Repository, IUserWatchlistRepository
     {
