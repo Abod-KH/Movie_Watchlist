@@ -16,11 +16,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 //    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//builder.Services
-//    .AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-//    .AddEntityFrameworkStores<ApplicationDbContext>()
-//    .AddDefaultUI()
-//    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -44,6 +39,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {

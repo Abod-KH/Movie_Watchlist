@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Application.Models;
@@ -9,8 +8,8 @@ namespace Movie_Watchlist.Presintation.Controllers
     [Authorize] 
     public class WatchlistController : Controller
     {
-        private readonly IUserWatchlistRepository _watchlistRepo; 
-        
+        private readonly IUserWatchlistRepository _watchlistRepo;
+        private string _userId => User.GetUserId()!;
 
         public WatchlistController(IUserWatchlistRepository watchlistRepo)
         {
@@ -20,8 +19,8 @@ namespace Movie_Watchlist.Presintation.Controllers
 
         private async Task<WatchlistDashboardViewModel> GetViewModelData()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var movies = await _watchlistRepo.GetUserWatchlist(userId);
+            
+            var movies = await _watchlistRepo.GetUserWatchlist(_userId);
 
             var total = movies.Count();
             var watched = movies.Count(m => m.IsWatched);
@@ -52,25 +51,30 @@ namespace Movie_Watchlist.Presintation.Controllers
         [HttpPost]
         public async Task<IActionResult> AddItem(int movieId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _watchlistRepo.AddToWatchlist(movieId, userId);
+            
+            await _watchlistRepo.AddToWatchlist(movieId, _userId);
             return Ok();
         }
         public async Task<IActionResult> RemoveItem(int movieId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _watchlistRepo.RemoveFromWatchlist(movieId, userId);
+            
+            await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
             return RedirectToAction("UserWatchlist");
         }
         
         [HttpPost]
         public async Task<IActionResult> ToggleWatched(int movieId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var success = await _watchlistRepo.ToggleWatchedStatus(movieId, userId);
+            
+            var success = await _watchlistRepo.ToggleWatchedStatus(movieId, _userId);
 
             if (success) return Ok();
             return BadRequest();
         }
+    }
+    public static class ClaimsPrincipalExtensions
+    {
+        public static string? GetUserId(this ClaimsPrincipal user)
+            => user.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
