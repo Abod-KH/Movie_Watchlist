@@ -1,4 +1,4 @@
-﻿using Movie_Watchlist.Application.DTOs;
+﻿using Movie_Watchlist.Application.ViewModels;
 
 namespace Movie_Watchlist.Application.Models
 {

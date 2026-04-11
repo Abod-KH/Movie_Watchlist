@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Movie_Watchlist.Application.DTOs;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Application.Models;
 using System.Net.Http.Json;

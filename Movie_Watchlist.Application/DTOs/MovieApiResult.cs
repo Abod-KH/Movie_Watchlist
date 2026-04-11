@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Movie_Watchlist.Application.Models
+namespace Movie_Watchlist.Application.DTOs
 {
     public class MovieApiResult
     {

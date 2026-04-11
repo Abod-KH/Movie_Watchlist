@@ -2,8 +2,8 @@
 using System.Data;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Domain.Entities;
-using Movie_Watchlist.Application.DTOs;
 using Movie_Watchlist.Infrastructure.Data;
+using Movie_Watchlist.Application.ViewModels;
 
 namespace Movie_Watchlist.Infrastructure.Repositories
 {

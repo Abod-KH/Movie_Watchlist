@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Movie_Watchlist.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Movie_Watchlist.Application.DTOs
+namespace Movie_Watchlist.Application.ViewModels
 {
     public class MovieFormModel
     {

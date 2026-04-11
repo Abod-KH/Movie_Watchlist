@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Application.DTOs;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Application.Models;
+using Movie_Watchlist.Application.ViewModels;
 using Movie_Watchlist.Domain.Entities;
 
 

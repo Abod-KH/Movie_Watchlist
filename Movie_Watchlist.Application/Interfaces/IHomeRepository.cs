@@ -1,4 +1,4 @@
-﻿using Movie_Watchlist.Application.DTOs;
+﻿using Movie_Watchlist.Application.ViewModels;
 using Movie_Watchlist.Domain.Entities;
 
 namespace Movie_Watchlist.Application.Interfaces

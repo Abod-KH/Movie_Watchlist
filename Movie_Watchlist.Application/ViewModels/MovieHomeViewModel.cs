@@ -1,6 +1,6 @@
 ﻿using Movie_Watchlist.Domain.Entities;
 
-namespace Movie_Watchlist.Application.DTOs
+namespace Movie_Watchlist.Application.ViewModels
 {
     public class MovieHomeViewModel
     {

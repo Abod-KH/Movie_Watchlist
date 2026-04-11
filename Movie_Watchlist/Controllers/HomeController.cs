@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Application.DTOs;
 using System.Security.Claims;
+using Movie_Watchlist.Application.ViewModels;
 
 namespace Movie_Watchlist.Presintation.Controllers
 {
