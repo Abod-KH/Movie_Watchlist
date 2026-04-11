@@ -6,25 +6,22 @@ using Movie_Watchlist.Application.Models;
 using Movie_Watchlist.Domain.Entities;
 
 
-namespace Movie_Watchlist.Presintation.Controllers
+
+namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")] 
+    [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         
         private readonly IAdminRepository _adminRepo;
         private readonly IFileService _fileService;
         private readonly IHomeRepository _homeRepo; 
-        private readonly ITmdbService _tmdbService;
-       
-
-        public AdminController(IAdminRepository adminRepo, IFileService fileService, IHomeRepository homeRepo, ITmdbService tmdbService)
+        public AdminController(IAdminRepository adminRepo, IFileService fileService, IHomeRepository homeRepo)
         {
             _adminRepo = adminRepo;
             _fileService = fileService;
             _homeRepo = homeRepo;
-            _tmdbService = tmdbService;
-           
         }
 
       
@@ -67,7 +64,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             
             await _adminRepo.AddMovie(movie);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         
@@ -89,7 +86,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             if (ModelState.IsValid)
             {
                 await _adminRepo.UpdateMovie(movie);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
             return View(movie);
         }
@@ -99,7 +96,7 @@ namespace Movie_Watchlist.Presintation.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _adminRepo.DeleteMovie(id);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
     }
 }

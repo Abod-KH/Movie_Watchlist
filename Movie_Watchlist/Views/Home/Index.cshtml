@@ -77,12 +77,12 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
-                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@movie.Movie.Id"
+                                <a asp-area="Admin" asp-controller="Admin" asp-action="Edit" asp-route-id="@movie.Movie.Id"
                                     class="btn btn-sm btn-outline-primary">
                                     Edit
                                 </a>
 
-                                <form asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Movie.Id" method="post"
+                                <form asp-area="Admin" asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Movie.Id" method="post"
                                     onsubmit="return confirm('Are you sure you want to delete this movie?');">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                 </form>
@@ -99,14 +99,21 @@
     {
         <nav aria-label="Page navigation" class="mt-5">
             <ul class="pagination pagination-sm flex-wrap justify-content-center">
+                @* First Page *@
+                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="1" title="First Page">
+                        &laquo;&laquo; First
+                    </a>
+                </li>
+                
                 @* Previous *@
                 <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
                     <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">&laquo;</a>
                 </li>
 
                 @{
-                    int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
-                    int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2);
+                    int startPage = Math.Max(1, ViewBag.CurrentPage - 5);
+                    int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 5);
                 }
 
                 @for (int i = startPage; i <= endPage; i++)
@@ -119,6 +126,12 @@
                 @* Next *@
                 <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
                     <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">&raquo;</a>
+                </li>
+                @* Last Page *@
+                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@ViewBag.TotalPages" title="Last Page">
+                        Last &raquo;&raquo;
+                    </a>
                 </li>
             </ul>
         </nav>
