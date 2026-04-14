@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Movie_Watchlist.Application.Interfaces;
+ 
 
 namespace Movie_Watchlist.Infrastructure.ExternalServices
 {

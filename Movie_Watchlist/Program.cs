@@ -1,19 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.Services;
-using Movie_Watchlist.Infrastructure.Data;
-using Movie_Watchlist.Infrastructure.ExternalServices;
-using Movie_Watchlist.Infrastructure.Repositories;
-
-
+ 
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//    options.UseSqlServer(connectionString));
+ 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 

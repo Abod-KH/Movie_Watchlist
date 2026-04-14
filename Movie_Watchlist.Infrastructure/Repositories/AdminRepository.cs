@@ -1,7 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Domain.Entities;
-using Movie_Watchlist.Infrastructure.Data;
+ 
 using System.Data;
 
 namespace Movie_Watchlist.Infrastructure.Repositories

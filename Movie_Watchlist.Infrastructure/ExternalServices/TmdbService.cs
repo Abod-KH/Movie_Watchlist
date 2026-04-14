@@ -2,8 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Movie_Watchlist.Application.DTOs;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.Models;
+ 
 using System.Net.Http.Json;
 
 namespace Movie_Watchlist.Application.Services
@@ -42,8 +41,8 @@ namespace Movie_Watchlist.Application.Services
             }
             catch (HttpRequestException e)
             {
-                
-                Console.WriteLine($"TMDB request failed: {e.Message}");
+ 
+                _logger.LogWarning($"TMDB request failed: {e.Message}");
                 return new List<MovieApiResult>();
             }
         }

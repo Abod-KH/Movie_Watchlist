@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.Models;
+ 
 using System.Security.Claims;
 namespace Movie_Watchlist.Presintation.Controllers
 {

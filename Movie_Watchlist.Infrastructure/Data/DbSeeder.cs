@@ -1,9 +1,6 @@
-﻿using BCrypt.Net;
-using Microsoft.AspNetCore.Identity;
+﻿ 
 using Microsoft.Extensions.DependencyInjection;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.Models;
-using Movie_Watchlist.Domain.Entities;
+ 
 using System;
 namespace Movie_Watchlist.Infrastructure.Data
 {

@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Identity;
+ 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+ 
 using Microsoft.Extensions.Caching.Memory;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.DTOs;
+ 
 using System.Security.Claims;
-using Movie_Watchlist.Application.ViewModels;
+ 
 
 namespace Movie_Watchlist.Presintation.Controllers
 {
@@ -40,9 +39,9 @@ namespace Movie_Watchlist.Presintation.Controllers
 
                 _cache.Set(cacheKey, DateTime.Now);
             }
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var  userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
+            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId , sTerm, genreId);
             var genres = await _homeRepo.Genres();
 
 
