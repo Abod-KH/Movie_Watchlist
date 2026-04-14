@@ -29,6 +29,7 @@ namespace Movie_Watchlist.Application.Services
 
             foreach (var apiMovie in apiMovies)
             {
+                 
                 int genreToUse = (apiMovie.Genre_ids != null && apiMovie.Genre_ids.Any())
                         ? apiMovie.Genre_ids.First()
                         : 28;

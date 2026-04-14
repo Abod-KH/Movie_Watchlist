@@ -1,4 +1,4 @@
-namespace Movie_Watchlist.Application.Models
+namespace Movie_Watchlist.Application.ViewModels
 {
     public class ErrorViewModel
     {

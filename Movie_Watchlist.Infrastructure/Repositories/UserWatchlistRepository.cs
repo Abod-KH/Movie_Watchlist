@@ -62,7 +62,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             await connection.OpenAsync();
             var result = await command.ExecuteScalarAsync();
 
-            return result != null && Convert.ToInt32(result) > 0;
+            return result != null && (int)(result) > 0;
         }
 
         public async Task<bool> ToggleWatchedStatus(int movieId, string userId)
@@ -76,7 +76,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
             await connection.OpenAsync();
             var result = await command.ExecuteScalarAsync();
-            return result != null && Convert.ToInt32(result) == 1;
+            return result != null && (int)(result) == 1;
         }
     }
 }

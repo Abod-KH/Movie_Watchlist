@@ -22,7 +22,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             _movieService = movieService;
             _cache = cache;
         }
-
+       
         public async Task<IActionResult> Index(string sTerm = "", int genreId = 0, int page = 1)
         {
             const string cacheKey = "LastImportTime";
