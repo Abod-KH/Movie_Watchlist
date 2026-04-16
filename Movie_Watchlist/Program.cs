@@ -46,7 +46,7 @@ else
 
     app.UseHsts();
 }
-
+app.UseStatusCodePagesWithReExecute("/NotFound");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();

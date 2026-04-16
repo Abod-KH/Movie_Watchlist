@@ -41,7 +41,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             }
             var  userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId , sTerm, genreId);
+            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId! , sTerm, genreId);
             var genres = await _homeRepo.Genres();
 
 
@@ -79,5 +79,9 @@ namespace Movie_Watchlist.Presintation.Controllers
             }
             return View(movie);
         }
+
+       
+
+
     }
 }

@@ -17,14 +17,24 @@
 @section Scripts {
     <script>
         
-        $(document).on("change", ".watch-check", function () {
+               $(document).on("change", ".watch-check", function () {
             const movieId = $(this).data("movieid");
+            const token = $('input[name="__RequestVerificationToken"]').val();
 
-            $.post("/Watchlist/ToggleWatched", { movieId: movieId }, function () {
-                // Fetch the updated partial view and swap it out
-                $("#watchlist-content").load("/Watchlist/GetWatchlistPartial");
-            }).fail(function() {
-                alert("Could not update status.");
+            $.ajax({
+                url: "/Watchlist/ToggleWatched",
+                type: "POST",
+                data: { movieId: movieId },
+                headers: {
+                    "RequestVerificationToken": token 
+                },
+                success: function () {
+                    
+                    $("#watchlist-content").load("/Watchlist/GetWatchlistPartial");
+                },
+                error: function() {
+                    alert("Could not update status. Check if you are logged in.");
+                }
             });
         });
     </script>
