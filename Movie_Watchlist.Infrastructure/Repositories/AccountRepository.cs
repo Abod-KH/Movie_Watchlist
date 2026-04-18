@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient; 
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace Movie_Watchlist.Infrastructure.Repositories
@@ -7,9 +7,9 @@ namespace Movie_Watchlist.Infrastructure.Repositories
     {
 
         public AccountRepository(SqlConnectionFactory connectionFactory)
-            : base(connectionFactory) 
+            : base(connectionFactory)
         {
-            
+
         }
 
         public async Task<int> CreateUserAsync(User user)
@@ -24,7 +24,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
             await connection.OpenAsync();
 
-           
+
             var result = await command.ExecuteScalarAsync();
             return Convert.ToInt32(result);
         }
@@ -43,7 +43,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             {
                 var user = MapReaderToObject<User>(reader);
 
-            
+
                 if (reader["RoleName"] != DBNull.Value)
                 {
                     user.RoleName = reader["RoleName"].ToString();

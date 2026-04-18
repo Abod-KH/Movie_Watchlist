@@ -31,10 +31,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    await DbSeeder.SeedDefaultData(scope.ServiceProvider);
-}
+
 
 if (app.Environment.IsDevelopment())
 {
