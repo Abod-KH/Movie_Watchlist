@@ -1,19 +1,14 @@
-﻿using Microsoft.Data.SqlClient;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Domain.Entities;
+
  
 using System.Data;
  
 
 namespace Movie_Watchlist.Infrastructure.Repositories
 {
-    public class MovieRepository : IMovieRepository
+    public class MovieRepository : Repository, IMovieRepository
     {
-        private readonly SqlConnectionFactory _connectionFactory;
-
-        public MovieRepository(SqlConnectionFactory connectionFactory)
+        public MovieRepository(SqlConnectionFactory connectionFactory) : base(connectionFactory)
         {
-            _connectionFactory = connectionFactory;
         }
 
         public async Task InsertOrUpdateAsync(IEnumerable<Movie> movies)
@@ -41,18 +36,9 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                 );
             }
 
-            using var connection = _connectionFactory.CreateConnection();
-            using var command = new SqlCommand("sp_SyncTmdbMovies", connection)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
+            await ExecuteTableValueNonQueryAsync("sp_SyncTmdbMovies", "@Movies", table, "dbo.MovieType");
 
-            var param = command.Parameters.AddWithValue("@Movies", table);
-            param.SqlDbType = SqlDbType.Structured;
-            param.TypeName = "dbo.MovieType";
-
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+            
         }
     }
 }

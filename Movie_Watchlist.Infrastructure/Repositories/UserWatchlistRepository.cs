@@ -1,7 +1,3 @@
-﻿using Microsoft.Data.SqlClient;
- 
-using System.Data;
- 
 
 
 namespace Movie_Watchlist.Infrastructure.Repositories
@@ -17,64 +13,28 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
         public async Task<bool> AddToWatchlist(int movieId, string userId)
         {
-           
-            using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand("sp_AddToWatchlist", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MovieId", movieId);
-            command.Parameters.AddWithValue("@UserId", userId);
-  
-
-            await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync();
-            return result != null && Convert.ToInt32(result) == 1;
+            var result = await ExecuteScalarAsync<int>("sp_AddToWatchlist", 
+                ("@MovieId", movieId), ("@UserId", userId));
+            return result == 1;
         }
 
         public async Task<IEnumerable<WatchlistViewModel>> GetUserWatchlist(string userId)
         {
-            
-            var list = new List<WatchlistViewModel>();
-            using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand("sp_GetUserWatchlist", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@UserId", userId);
-
-            await connection.OpenAsync();
-            using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                list.Add(MapReaderToObject<WatchlistViewModel>(reader));
-            }
-            return list;
+            return await ExecuteQueryListAsync<WatchlistViewModel>("sp_GetUserWatchlist", ("@UserId", userId));
         }
 
         public async Task<bool> RemoveFromWatchlist(int movieId, string userId)
         {
-           
-            using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand("sp_RemoveFromWatchlist", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MovieId", movieId);
-            command.Parameters.AddWithValue("@UserId", userId);
-
-            await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync();
-
-            return result != null && Convert.ToInt32(result) > 0;
+            var result = await ExecuteScalarAsync<int>("sp_RemoveFromWatchlist", 
+                ("@MovieId", movieId), ("@UserId", userId));
+            return result > 0;
         }
 
         public async Task<bool> ToggleWatchedStatus(int movieId, string userId)
         {
-           
-            using var connection = _connectionFactory.CreateConnection();
-            var command = new SqlCommand("sp_ToggleWatchlistStatus", connection);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@MovieId", movieId);
-            command.Parameters.AddWithValue("@UserId", userId);
-
-            await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync();
-            return result != null && Convert.ToInt32(result) == 1;
+            var result = await ExecuteScalarAsync<int>("sp_ToggleWatchlistStatus", 
+                ("@MovieId", movieId), ("@UserId", userId));
+            return result == 1;
         }
     }
 }
