@@ -10,16 +10,16 @@ namespace Movie_Watchlist.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } 
+        public string UserId { get; set; } = null!;
 
         [Required]
         public int MovieId { get; set; }
-        public Movie Movie { get; set; }
+        public Movie? Movie { get; set; }
 
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
-        public bool IsWatched { get; set; } = false; 
+        public bool IsWatched { get; set; } = false;
 
-        public int? UserRating { get; set; } 
+        public int? UserRating { get; set; }
     }
 }

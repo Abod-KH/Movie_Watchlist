@@ -17,17 +17,15 @@
 @section Scripts {
     <script>
         
-               $(document).on("change", ".watch-check", function () {
+            $(document).on("change", ".watch-check", function () {
             const movieId = $(this).data("movieid");
-            const token = $('input[name="__RequestVerificationToken"]').val();
+           
 
             $.ajax({
                 url: "/Watchlist/ToggleWatched",
-                type: "POST",
+                
                 data: { movieId: movieId },
-                headers: {
-                    "RequestVerificationToken": token 
-                },
+               
                 success: function () {
                     
                     $("#watchlist-content").load("/Watchlist/GetWatchlistPartial");

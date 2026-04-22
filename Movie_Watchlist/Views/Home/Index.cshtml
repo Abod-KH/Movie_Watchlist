@@ -72,7 +72,7 @@
                             <h5 class="card-title text-truncate">@movie.Title</h5>
                             <p class="card-text text-muted">@movie.ReleaseYear</p>
                             <p class="card-text text-muted">@movie.GenreName</p>
-                            @* <p class="card-text text-muted">@movie.Description</p> *@
+                            
                         </div>
                         @if (User.IsInRole("Admin"))
                         {
@@ -146,15 +146,9 @@
                 var btn = $(this);
                 var movieId = btn.data("movieid");
 
-                
-                var token = $('input[name="__RequestVerificationToken"]').val();
-
                 $.ajax({
                     url: '/Watchlist/AddItem',
-                    type: 'POST',
-                        headers: {
-                        "RequestVerificationToken": token
-                    },
+                   
                     data: {
                         movieId: movieId,
                         

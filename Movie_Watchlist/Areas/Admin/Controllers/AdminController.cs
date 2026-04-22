@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Application.Interfaces;
-using Movie_Watchlist.Application.Models;
-using Movie_Watchlist.Application.ViewModels;
+
 using Movie_Watchlist.Domain.Entities;
 
 
@@ -24,7 +22,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
             _homeRepo = homeRepo;
         }
 
-      
+        [HttpGet]
         public async Task<IActionResult> AddMovie()
         {
             var model = new MovieFormModel

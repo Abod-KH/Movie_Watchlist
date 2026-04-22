@@ -38,8 +38,9 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
         protected async Task ExecuteNonQueryAsync(string storedProcedure, params (string name, object? value)[] parameters)
         {
+     
 
-            await ExecuteWithCommandAsync(storedProcedure, async command =>
+        await ExecuteWithCommandAsync(storedProcedure, async command =>
             {
                 return await command.ExecuteNonQueryAsync();
             }, parameters);
@@ -115,18 +116,17 @@ namespace Movie_Watchlist.Infrastructure.Repositories
         {
             var obj = new T();
             var properties = typeof(T).GetProperties();
-            foreach (var property in properties) { Console.WriteLine($"properties:{property}"); }
+            
            
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 var columnName = reader.GetName(i);
                 var columnValue = reader.GetValue(i);
                 
-                Console.WriteLine($"Column: {columnName},\n Value: {columnValue}");
+               
                 // Find a property that matches the column name
                 var property = properties.FirstOrDefault(p => p.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase));
-                Console.WriteLine($"Property: {property}");
-
+                
                 if (property != null && columnValue != DBNull.Value)
                 {
                     property.SetValue(obj, columnValue);
@@ -134,5 +134,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             }
             return obj;
         }
+      
+        
     }
 }
