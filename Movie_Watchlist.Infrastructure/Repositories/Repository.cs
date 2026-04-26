@@ -45,10 +45,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                 return await command.ExecuteNonQueryAsync();
             }, parameters);
 
-            /* using var connection = _connectionFactory.CreateConnection();
-            using var command = CreateCommand(storedProcedure, connection, parameters);
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();*/
+
         }
 
         protected async Task<T?> ExecuteScalarAsync<T>(string storedProcedure, params (string name, object? value)[] parameters)
@@ -75,11 +72,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
 
             }, parameters);
-            // using var connection = _connectionFactory.CreateConnection();
-            // using var command = CreateCommand(storedProcedure, connection, parameters);
-            // await connection.OpenAsync();
-            // using var reader = await command.ExecuteReaderAsync();
-            // return await reader.ReadAsync() ? MapReaderToObject<T>(reader) : default;
+          
         }
 
         protected async Task<List<T>> ExecuteQueryListAsync<T>(string storedProcedure, params (string name, object? value)[] parameters) where T : new()

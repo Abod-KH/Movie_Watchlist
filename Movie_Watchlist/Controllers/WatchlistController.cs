@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
  
 using System.Security.Claims;
@@ -50,15 +50,31 @@ namespace Movie_Watchlist.Presintation.Controllers
         [HttpPost]
         public async Task<IActionResult> AddItem(int movieId)
         {
-            
-            await _watchlistRepo.AddToWatchlist(movieId, _userId);
-            return Ok();
+
+            bool isSuccess = await _watchlistRepo.AddToWatchlist(movieId, _userId);
+
+            if (isSuccess)
+            {
+                return Ok(); 
+            }
+            else
+            {
+                
+                return BadRequest("Failed to add movie to watchlist. It may already exist.");
+            }
         }
         public async Task<IActionResult> RemoveItem(int movieId)
         {
             
             await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
             return RedirectToAction("UserWatchlist");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveItemAjax(int movieId)
+        {
+            await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+            return Ok();
         }
         
         [HttpPost]
