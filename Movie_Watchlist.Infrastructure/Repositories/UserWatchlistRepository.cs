@@ -34,7 +34,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
         {
             var result = await ExecuteScalarAsync<int>("sp_ToggleWatchlistStatus", 
                 ("@MovieId", movieId), ("@UserId", userId));
-            return result == 1;
+            return result >= 0;
         }
     }
 }

@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
- 
-using System.Security.Claims;
 namespace Movie_Watchlist.Presintation.Controllers
 {
     [Authorize] 
@@ -60,7 +58,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             else
             {
                 
-                return BadRequest("Failed to add movie to watchlist. It may already exist.");
+                return BadRequest();
             }
         }
         public async Task<IActionResult> RemoveItem(int movieId)
@@ -86,10 +84,5 @@ namespace Movie_Watchlist.Presintation.Controllers
             if (success) return Ok();
             return BadRequest();
         }
-    }
-    public static class ClaimsPrincipalExtensions
-    {
-        public static string? GetUserId(this ClaimsPrincipal user)
-            => user.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }

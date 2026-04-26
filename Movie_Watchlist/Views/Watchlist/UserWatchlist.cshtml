@@ -1,4 +1,4 @@
-﻿@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
+@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
 @{
     ViewData["Title"] = "My Watchlist";
 }
@@ -23,7 +23,7 @@
 
             $.ajax({
                 url: "/Watchlist/ToggleWatched",
-                
+             
                 data: { movieId: movieId },
                
                 success: function () {

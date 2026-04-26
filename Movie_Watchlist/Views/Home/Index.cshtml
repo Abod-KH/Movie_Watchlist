@@ -168,7 +168,6 @@
         
         $.ajax({
             url: config.url,
-            type: 'POST',
             data: { movieId: movieId },
             success: function () {
                 btn.removeClass(config.removeCls).addClass(config.addCls);
