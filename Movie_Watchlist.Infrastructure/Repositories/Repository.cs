@@ -63,7 +63,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                 return (T)Convert.ChangeType(result, typeof(T));
             }, parameters);
 
-  
+                
         }
 
         protected async Task<T?> ExecuteQuerySingleAsync<T>(string storedProcedure, params (string name, object? value)[] parameters) where T : new()
