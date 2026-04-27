@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Movie_Watchlist.Infrastructure\Movie_Watchlist.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Views\Shared\" />
+  </ItemGroup>
+
 </Project>

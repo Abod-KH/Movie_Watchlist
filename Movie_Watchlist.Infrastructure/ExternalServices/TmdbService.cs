@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Movie_Watchlist.Application.DTOs;
@@ -47,11 +47,39 @@ namespace Movie_Watchlist.Application.Services
             }
         }
 
-        public async Task<IEnumerable<MovieApiResult>> SearchMoviesAsync(string query)
+        public async Task<IEnumerable<int>> GetChangedMovieIdsAsync()
         {
-            var url = $"https://api.themoviedb.org/3/search/movie?api_key={_apiKey}&query={Uri.EscapeDataString(query)}";
-            var response = await _httpClient.GetFromJsonAsync<TmdbSearchResponse>(url);
-            return response?.Results ?? new List<MovieApiResult>();
+            if (string.IsNullOrEmpty(_apiKey))
+                return new List<int>();
+
+            var url = $"https://api.themoviedb.org/3/movie/changes?api_key={_apiKey}&page=1";
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<TmdbChangesResponse>(url);
+                return response?.Results?.Select(r => r.Id).ToList() ?? new List<int>();
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogWarning($"TMDB GetChangedMovieIdsAsync failed: {e.Message}");
+                return new List<int>();
+            }
+        }
+
+        public async Task<MovieApiResult?> GetMovieDetailsAsync(int tmdbId)
+        {
+            if (string.IsNullOrEmpty(_apiKey))
+                return null;
+
+            var url = $"https://api.themoviedb.org/3/movie/{tmdbId}?api_key={_apiKey}&language=en-US";
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<MovieApiResult>(url);
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogWarning($"TMDB GetMovieDetailsAsync failed for ID {tmdbId}: {e.Message}");
+                return null;
+            }
         }
     }
 }

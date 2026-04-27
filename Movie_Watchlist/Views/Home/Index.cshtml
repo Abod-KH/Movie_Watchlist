@@ -105,14 +105,21 @@
             <ul class="pagination pagination-sm flex-wrap justify-content-center">
                 @* First Page *@
                 <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="1" title="First Page">
+                    <a class="page-link" asp-action="Index"
+                           asp-route-page="1"
+                           asp-route-sTerm="@Model.STerm"
+                           asp-route-genreId="@Model.GenreId"
+                           title="First Page">
                         &laquo;&laquo; First
                     </a>
                 </li>
-                
+            
                 @* Previous *@
                 <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage - 1)">&laquo;</a>
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage - 1)"
+                       asp-route-sTerm="@Model.STerm"
+                       asp-route-genreId="@Model.GenreId">&laquo;</a>
                 </li>
 
                 @{
@@ -123,17 +130,28 @@
                 @for (int i = startPage; i <= endPage; i++)
                 {
                     <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                        <a class="page-link" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-sTerm="@Model.STerm"
+                           asp-route-genreId="@Model.GenreId">@i</a>
                     </li>
                 }
 
                 @* Next *@
                 <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage + 1)">&raquo;</a>
+                    <a class="page-link" asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage + 1)"
+                       asp-route-sTerm="@Model.STerm"
+                       asp-route-genreId="@Model.GenreId">&raquo;</a>
                 </li>
+
                 @* Last Page *@
                 <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@ViewBag.TotalPages" title="Last Page">
+                    <a class="page-link" asp-action="Index"
+                           asp-route-page="@ViewBag.TotalPages"
+                           asp-route-sTerm="@Model.STerm"
+                           asp-route-genreId="@Model.GenreId"
+                           title="Last Page">
                         Last &raquo;&raquo;
                     </a>
                 </li>

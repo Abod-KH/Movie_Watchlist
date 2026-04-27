@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
- 
+using Movie_Watchlist.Infrastructure.Workers;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,10 +27,13 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
 builder.Services.AddMemoryCache();
-builder.Services.AddScoped<IMovieService, MovieService>();
+
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+builder.Services.AddHostedService<TmdbSyncWorker>();
+
 var app = builder.Build();
 
 
