@@ -22,7 +22,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var delay = CalculateDelayUntilNextRun(10, 40); 
+                var delay = CalculateDelayUntilNextRun(16, 55); 
                 _logger.LogInformation($"TmdbSyncWorker is waiting for {delay.TotalHours:F2} hours until the next run.");
 
                 try
