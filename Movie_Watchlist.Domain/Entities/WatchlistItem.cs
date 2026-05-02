@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Movie_Watchlist.Domain.Entities
 {
-    [Table("WatchlistItem")]
+   
     public class WatchlistItem
     {
         public int Id { get; set; }

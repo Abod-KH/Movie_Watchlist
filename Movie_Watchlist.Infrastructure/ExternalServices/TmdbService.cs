@@ -12,68 +12,86 @@ namespace Movie_Watchlist.Application.Services
         private readonly HttpClient _httpClient;
         private readonly string? _apiKey;
         private readonly ILogger<TmdbService> _logger;
-
+        private const string TmdbUrl = "https://api.themoviedb.org/3";
         public TmdbService(HttpClient httpClient, IConfiguration config, ILogger<TmdbService> logger)
         {
             _httpClient = httpClient;
             _apiKey = config["Tmdb:ApiKey"];
             _logger = logger;
+            if (string.IsNullOrEmpty(_apiKey))
+            {
+                _logger.LogError("TMDB API key is missing. TMDB features will be disabled.");
+            }
         }
 
+        private async Task<T?> SafeGetAsync<T>(string url, string context)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<T>(url);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{context} failed: {e}");
+                return default;
+            }
+        }
 
 
         public async Task<IEnumerable<int>> GetChangedMovieIdsAsync()
         {
-            if (string.IsNullOrEmpty(_apiKey)) return new List<int>();
 
             var allIds = new List<int>();
             int currentPage = 1;
             int totalPages = 1;
 
-            try
+            do
             {
-                do
+                var url = $"{TmdbUrl}/movie/changes?api_key={_apiKey}&page={currentPage}";
+                var response = await SafeGetAsync<TmdbChangesResponse>(
+                    url,
+                    $"TMDB GetChangedMovieIdsAsync (page {currentPage})"
+                );
+
+                if (response?.Results != null)
                 {
-                    var url = $"https://api.themoviedb.org/3/movie/changes?api_key={_apiKey}&page={currentPage}";
-                    var response = await _httpClient.GetFromJsonAsync<TmdbChangesResponse>(url);
+                    allIds.AddRange(response.Results.Select(r => r.Id));
+                    totalPages = response.TotalPages;
+                }
+                currentPage++;
 
-                    if (response?.Results != null)
-                    {
-                        allIds.AddRange(response.Results.Select(r => r.Id));
-                        totalPages = response.TotalPages; // Update the total pages from the API
-                    }
+                if (currentPage >= 50)
+                    break;
 
-                    currentPage++;
+            } while (currentPage <= totalPages);
 
-                    
-                    if (currentPage >= 50) break;
+            return allIds;
 
-                } while (currentPage <= totalPages);
-
-                return allIds;
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogWarning($"TMDB GetChangedMovieIdsAsync failed at page {currentPage}: {e.Message}");
-                return allIds; // Return what we managed to collect before the error
-            }
-        }
+        } 
 
         public async Task<MovieApiResult?> GetMovieDetailsAsync(int tmdbId)
         {
-            if (string.IsNullOrEmpty(_apiKey))
-                return null;
+            var url = $"{TmdbUrl}/movie/{tmdbId}?api_key={_apiKey}&language=en-US";
 
-            var url = $"https://api.themoviedb.org/3/movie/{tmdbId}?api_key={_apiKey}&language=en-US";
-            try
-            {
-                return await _httpClient.GetFromJsonAsync<MovieApiResult>(url);
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogWarning($"TMDB GetMovieDetailsAsync failed for ID {tmdbId}: {e.Message}");
-                return null;
-            }
+            return await SafeGetAsync<MovieApiResult>(
+                url,
+                $"TMDB GetMovieDetailsAsync (ID {tmdbId})"
+            );
+        }
+
+        public async Task<string?> GetMovieTrailerKeyAsync(int tmdbId)
+        {
+
+            var url = $"{TmdbUrl}/movie/{tmdbId}/videos?api_key={_apiKey}";
+
+            var response = await SafeGetAsync<TmdbVideoResponse>(
+                url,
+                $"TMDB GetMovieTrailerKeyAsync (ID {tmdbId})"
+            );
+            return response?.Results?
+               .FirstOrDefault(v => v.Site == "YouTube" && v.Type == "Trailer")
+               ?.Key;
+           
         }
     }
 }

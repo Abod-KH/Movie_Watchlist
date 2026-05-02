@@ -11,11 +11,13 @@ namespace Movie_Watchlist.Presintation.Controllers
     public class HomeController : Controller
     {
         private readonly IHomeRepository _homeRepo;
+        private readonly Movie_Watchlist.Application.Interfaces.ITmdbService _tmdbService;
         
        
-        public HomeController(IHomeRepository homeRepo)
+        public HomeController(IHomeRepository homeRepo, Movie_Watchlist.Application.Interfaces.ITmdbService tmdbService)
         {
             _homeRepo = homeRepo;
+            _tmdbService = tmdbService;
            
         }
        
@@ -60,6 +62,12 @@ namespace Movie_Watchlist.Presintation.Controllers
             {
                 return NotFound();
             }
+            
+            if (movie.TmdbId > 0)
+            {
+                ViewBag.TrailerKey = await _tmdbService.GetMovieTrailerKeyAsync(movie.TmdbId);
+            }
+            
             return View(movie);
         }
 

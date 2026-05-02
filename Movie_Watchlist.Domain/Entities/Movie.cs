@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Movie_Watchlist.Domain.Entities
 {
-    [Table("Movie")]
+    
     public class Movie
     {
         public int Id { get; set; }

@@ -7,5 +7,6 @@ namespace Movie_Watchlist.Application.Interfaces
         Task<IEnumerable<int>> GetChangedMovieIdsAsync();
         
         Task<MovieApiResult?> GetMovieDetailsAsync(int tmdbId);
+        Task<string?> GetMovieTrailerKeyAsync(int tmdbId);
     }
 }

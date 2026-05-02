@@ -7,7 +7,6 @@ namespace Movie_Watchlist.Application.DTOs
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonPropertyName("adult")]
-        public bool? Adult { get; set; }
+        
     }
 }

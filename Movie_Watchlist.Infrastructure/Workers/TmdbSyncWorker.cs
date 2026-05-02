@@ -72,11 +72,9 @@ namespace Movie_Watchlist.Infrastructure.Workers
                     {
                         int genreToUse = (apiMovie.Genre_ids != null && apiMovie.Genre_ids.Any()) ? apiMovie.Genre_ids.First() : 28;
                         int releaseYear = 0;
-                        if (!string.IsNullOrWhiteSpace(apiMovie.ReleaseDate))
+                        if (DateTime.TryParse(apiMovie.ReleaseDate, out var date))
                         {
-                            var parts = apiMovie.ReleaseDate.Split('-');
-                            if (parts.Length > 0 && int.TryParse(parts[0], out var y))
-                                releaseYear = y;
+                            releaseYear = date.Year;
                         }
 
                         movies.Add(new Movie
