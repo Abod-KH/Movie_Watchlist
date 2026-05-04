@@ -10,7 +10,7 @@ namespace Movie_Watchlist.Domain.Entities
 
         [Required]
         [MaxLength(40)]
-        public string Name { get; set; } = null!;
+        public string Name { get; set; } 
         public List<Movie> Movies { get; set; } = new();
     }
 }

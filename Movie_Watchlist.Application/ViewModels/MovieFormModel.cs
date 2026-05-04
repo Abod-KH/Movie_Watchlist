@@ -10,7 +10,7 @@ namespace Movie_Watchlist.Application.ViewModels
         public int Id { get; set; }
 
         [Required]
-        public string? Title { get; set; }
+        public string Title { get; set; }
 
         [Required]
         public int ReleaseYear { get; set; }

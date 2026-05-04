@@ -8,5 +8,6 @@ namespace Movie_Watchlist.Application.Interfaces
         
         Task<MovieApiResult?> GetMovieDetailsAsync(int tmdbId);
         Task<string?> GetMovieTrailerKeyAsync(int tmdbId);
+        Task<IEnumerable<MovieApiResult>> GetSimilarMoviesAsync(int tmdbId);
     }
 }

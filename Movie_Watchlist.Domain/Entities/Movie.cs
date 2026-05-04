@@ -10,12 +10,12 @@ namespace Movie_Watchlist.Domain.Entities
 
         [Required]
         [MaxLength(200)]
-        public string? Title { get; set; }
+        public string Title { get; set; } = "Unknown";
         public int TmdbId { get; set; }
         [MaxLength(1000)]
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        public string? PosterPath { get; set; }
+        public string? PosterPath { get; set; } 
 
         public int ReleaseYear { get; set; }
 

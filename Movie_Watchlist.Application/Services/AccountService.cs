@@ -37,14 +37,7 @@ public class AccountService : IAccountService
        
         int newUserId = await _accountRepository.CreateUserAsync(newUser);
 
-        
-        if (newUserId > 0)
-        {
-            await _accountRepository.AddUserToRoleAsync(newUserId, "User");
-            return true;
-        }
-
-        return false;
+        return newUserId > 0;
     }
 
     public async Task<User?> ValidateUserAsync(UserLogin login)

@@ -38,7 +38,7 @@
 
                         <div class="mb-4">
                             <label asp-for="ImageFile" class="form-label fw-bold">Movie Poster</label>
-                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" required/>
                             <div class="form-text">Upload a JPG or PNG image.</div>
                             <span asp-validation-for="ImageFile" class="text-danger"></span>
                         </div>

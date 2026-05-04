@@ -31,6 +31,9 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             return await ExecuteQuerySingleAsync<Movie>("sp_GetMovieDetails", ("@Id", id));
         }
 
-
+        public async Task<Movie?> GetMovieByTmdbId(int tmdbId)
+        {
+            return await ExecuteQuerySingleAsync<Movie>("sp_GetMovieByTmdbId", ("@TmdbId", tmdbId));
+        }
     }
 }

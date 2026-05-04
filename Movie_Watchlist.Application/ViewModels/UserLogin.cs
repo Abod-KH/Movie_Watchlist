@@ -4,6 +4,7 @@ namespace Movie_Watchlist.Application.Models
     public class UserLogin
     {
         [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
         [Required]

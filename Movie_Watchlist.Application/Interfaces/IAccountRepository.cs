@@ -6,6 +6,6 @@ namespace Movie_Watchlist.Application.Interfaces
     {
         Task<int> CreateUserAsync(User user);
         Task<User?> GetUserByEmailAsync(string email);
-        Task AddUserToRoleAsync(int userId, string roleName);
+        
     }
 }

@@ -93,5 +93,17 @@ namespace Movie_Watchlist.Application.Services
                ?.Key;
            
         }
+
+        public async Task<IEnumerable<MovieApiResult>> GetSimilarMoviesAsync(int tmdbId)
+        {
+            var url = $"{TmdbUrl}/movie/{tmdbId}/similar?api_key={_apiKey}&language=en-US";
+
+            var response = await SafeGetAsync<TmdbSimilarMoviesResponse>(
+                url,
+                $"TMDB GetSimilarMoviesAsync (ID {tmdbId})"
+            );
+
+            return response?.Results?.Take(10) ?? Enumerable.Empty<MovieApiResult>();
+        }
     }
 }

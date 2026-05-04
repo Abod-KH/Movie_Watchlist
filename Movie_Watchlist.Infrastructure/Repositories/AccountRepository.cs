@@ -24,10 +24,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
            
         }
 
-        public async Task AddUserToRoleAsync(int userId, string roleName)
-        {
-            await ExecuteNonQueryAsync("sp_UserRole_Add", ("@UserId", userId), ("@RoleName", roleName));
-        }
+      
 
     }
 }

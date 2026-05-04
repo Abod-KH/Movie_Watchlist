@@ -10,7 +10,7 @@ namespace Movie_Watchlist.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } = null!;
+        public string UserId { get; set; } 
 
         [Required]
         public int MovieId { get; set; }
