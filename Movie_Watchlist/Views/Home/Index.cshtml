@@ -1,4 +1,3 @@
-
 @model Movie_Watchlist.Application.ViewModels.MovieDisplayModel
 @{
     ViewData["Title"] = "Home Page";
@@ -49,20 +48,14 @@
                         @if (movie.IsInWatchlist)
                         {
                             <button class="btn btn-success btn-sm rounded-circle shadow toggle-watchlist"
-                                    data-movieid="@movie.Id"
-                                    data-action="remove"
-                                    type="button"
-                                    style="width: 45px; height: 45px;">
+                                data-movieid="@movie.Id" data-action="remove" type="button" style="width: 45px; height: 45px;">
                                 <i class="bi bi-bookmark-check-fill text-white fs-4"></i>
                             </button>
                         }
                         else
                         {
                             <button class="btn btn-light btn-sm rounded-circle shadow border toggle-watchlist"
-                                    data-movieid="@movie.Id"
-                                    data-action="add"
-                                    type="button"
-                                    style="width: 45px; height: 45px;">
+                                data-movieid="@movie.Id" data-action="add" type="button" style="width: 45px; height: 45px;">
                                 <i class="bi bi-bookmark-plus text-primary fs-4"></i>
                             </button>
                         }
@@ -76,7 +69,7 @@
                             <h5 class="card-title text-truncate">@movie.Title</h5>
                             <p class="card-text text-muted">@movie.ReleaseYear</p>
                             <p class="card-text text-muted">@movie.GenreName</p>
-                            
+
                         </div>
                         @if (User.IsInRole("Admin"))
                         {
@@ -86,8 +79,8 @@
                                     Edit
                                 </a>
 
-                                <form asp-area="Admin" asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Id" method="post"
-                                    >
+                                <form asp-area="Admin" asp-controller="Admin" asp-action="Delete" asp-route-id="@movie.Id"
+                                    method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                 </form>
                             </div>
@@ -101,102 +94,60 @@
 
     @if (ViewBag.TotalPages > 1)
     {
-        <nav aria-label="Page navigation" class="mt-5">
-            <ul class="pagination pagination-sm flex-wrap justify-content-center">
-                @* First Page *@
-                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index"
-                           asp-route-page="1"
-                           asp-route-sTerm="@Model.STerm"
-                           asp-route-genreId="@Model.GenreId"
-                           title="First Page">
-                        &laquo;&laquo; First
-                    </a>
-                </li>
-            
-                @* Previous *@
-                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-page="@(ViewBag.CurrentPage - 1)"
-                       asp-route-sTerm="@Model.STerm"
-                       asp-route-genreId="@Model.GenreId">&laquo;</a>
-                </li>
-
-                @{
-                    int startPage = Math.Max(1, ViewBag.CurrentPage - 5);
-                    int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 5);
-                }
-
-                @for (int i = startPage; i <= endPage; i++)
-                {
-                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index"
-                           asp-route-page="@i"
-                           asp-route-sTerm="@Model.STerm"
-                           asp-route-genreId="@Model.GenreId">@i</a>
-                    </li>
-                }
-
-                @* Next *@
-                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-page="@(ViewBag.CurrentPage + 1)"
-                       asp-route-sTerm="@Model.STerm"
-                       asp-route-genreId="@Model.GenreId">&raquo;</a>
-                </li>
-
-                @* Last Page *@
-                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index"
-                           asp-route-page="@ViewBag.TotalPages"
-                           asp-route-sTerm="@Model.STerm"
-                           asp-route-genreId="@Model.GenreId"
-                           title="Last Page">
-                        Last &raquo;&raquo;
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        @await Component.InvokeAsync("Pagination", new { 
+            currentPage = ViewBag.CurrentPage, 
+            totalPages = ViewBag.TotalPages, 
+            actionName = "Index", 
+            routeParams = new Dictionary<string, string> { 
+                { "sTerm", Model.STerm ?? "" }, 
+                { "genreId", Model.GenreId.ToString() } 
+            } 
+        })
     }
 </div>
 
 @section Scripts {
     <script>
-    $(document).ready(function () {
-    $(document).on("click", ".toggle-watchlist", function (e) {
-        e.preventDefault();
-        
-        var btn = $(this);
-        var movieId = btn.data("movieid");
-        var action = btn.attr("data-action");
+        $(document).ready(function () {
+            $(document).on("click", ".toggle-watchlist", function (e) {
+                e.preventDefault();
 
-      
-        var isAdd = action === "add";
-        
-        var config = {
-            url: isAdd ? '/Watchlist/AddItem' : '/Watchlist/RemoveItemAjax',
-            newAction: isAdd ? 'remove' : 'add',
-            removeCls: isAdd ? 'btn-light border' : 'btn-success',
-            addCls: isAdd ? 'btn-success' : 'btn-light border',
-            icon: isAdd ? 
-                '<i class="bi bi-bookmark-check-fill text-white fs-4"></i>' : 
-                '<i class="bi bi-bookmark-plus text-primary fs-4"></i>'
-        };
+                var btn = $(this);
+                var movieId = btn.data("movieid");
+                var action = btn.attr("data-action");
 
-        
-        $.ajax({
-            url: config.url,
-            data: { movieId: movieId },
-            success: function () {
-                btn.removeClass(config.removeCls).addClass(config.addCls);
-                btn.attr("data-action", config.newAction);
-                btn.html(config.icon);
-            },
-            error: function() {
-                alert("Server error. Please try again.");
-            }
+
+                var isAdd = action === "add";
+
+                var config = {
+                    url: isAdd ? '/Watchlist/AddItem' : '/Watchlist/RemoveItemAjax',
+                    newAction: isAdd ? 'remove' : 'add',
+                    removeCls: isAdd ? 'btn-light border' : 'btn-success',
+                    addCls: isAdd ? 'btn-success' : 'btn-light border',
+                    icon: isAdd ?
+                        '<i class="bi bi-bookmark-check-fill text-white fs-4"></i>' :
+                        '<i class="bi bi-bookmark-plus text-primary fs-4"></i>'
+                };
+
+
+                $.ajax({
+                    url: config.url,
+                    data: { movieId: movieId },
+                    success: function () {
+                        btn.removeClass(config.removeCls).addClass(config.addCls);
+                        btn.attr("data-action", config.newAction);
+                        btn.html(config.icon);
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) {
+                            window.location.href = "/Account/Login";
+                            return;
+                        }
+
+                        alert("Something went wrong. Please try again.");
+                    }
+                });
+            });
         });
-    });
-});
     </script>
 }

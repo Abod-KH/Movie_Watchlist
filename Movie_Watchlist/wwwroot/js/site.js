@@ -1,15 +1,15 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
 
-const getAntiforgeryToken = () => $('input[name="__RequestVerificationToken"]').val();
-
-// 2. Global AJAX Configuration
+// Global AJAX Configuration
 $.ajaxSetup({
     type: 'POST', 
-    headers: {
-        "RequestVerificationToken": getAntiforgeryToken()
-    },
-   
+    beforeSend: function (xhr) {
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        if (token) {
+            xhr.setRequestHeader("RequestVerificationToken", token);
+        }
+    }
 });

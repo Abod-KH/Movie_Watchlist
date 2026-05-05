@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Movie_Watchlist.Application.Helpers;
 namespace Movie_Watchlist.Presintation.Controllers
 {
     [Authorize] 
@@ -14,35 +15,40 @@ namespace Movie_Watchlist.Presintation.Controllers
             
         }
 
-        private async Task<WatchlistDashboardViewModel> GetViewModelData()
+        private async Task<WatchlistDashboardViewModel> GetViewModelData(int page = 1)
         {
             
             var movies = await _watchlistRepo.GetUserWatchlist(_userId);
 
             var total = movies.Count();
             var watched = movies.Count(m => m.IsWatched);
-            var percentage = total == 0 ? 0 : (int)((double)watched / total * 100);
+            
+            var pagedResult = movies.ToPagedResult(page);
+            var percentage = pagedResult.TotalItems == 0 ? 0 : (int)((double)watched / pagedResult.TotalItems * 100);
+
+            ViewBag.CurrentPage = pagedResult.CurrentPage;
+            ViewBag.TotalPages = pagedResult.TotalPages;
 
             return new WatchlistDashboardViewModel
             {
-                Movies = movies,
-                TotalMovies = total,
+                Movies = pagedResult.Items,
+                TotalMovies = pagedResult.TotalItems,
                 MoviesWatched = watched,
                 Percentage = percentage
             };
         }
 
     
-        public async Task<IActionResult> UserWatchlist()
+        public async Task<IActionResult> UserWatchlist(int page = 1)
         {
-            var model = await GetViewModelData();
+            var model = await GetViewModelData(page);
             return View(model);
         }
 
         
-        public async Task<IActionResult> GetWatchlistPartial()
+        public async Task<IActionResult> GetWatchlistPartial(int page = 1)
         {
-            var model = await GetViewModelData(); 
+            var model = await GetViewModelData(page); 
             return PartialView("_WatchlistContent", model);
         }
         [HttpPost]

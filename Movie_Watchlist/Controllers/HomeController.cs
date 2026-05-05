@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Domain.Entities;
 using System.Security.Claims;
+using Movie_Watchlist.Application.Helpers;
  
 
 namespace Movie_Watchlist.Presintation.Controllers
@@ -28,27 +29,19 @@ namespace Movie_Watchlist.Presintation.Controllers
             var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId! , sTerm, genreId);
             var genres = await _homeRepo.Genres();
 
-            int pageSize = 20;
-            int totalMovies = moviesFromRepo.Count();
-            int totalPages = (int)Math.Ceiling((double)totalMovies / pageSize);
-
-            var pagedMovies = moviesFromRepo
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
+            var pagedResult = moviesFromRepo.ToPagedResult(page);
 
             var model = new MovieDisplayModel
             {
-                Movies = pagedMovies,
+                Movies = pagedResult.Items,
                 Genres = genres,
                 STerm = sTerm,
                 GenreId = genreId
             };
 
 
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = pagedResult.CurrentPage;
+            ViewBag.TotalPages = pagedResult.TotalPages;
 
             return View(model);
         }

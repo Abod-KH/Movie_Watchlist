@@ -16,21 +16,22 @@
 
 @section Scripts {
     <script>
-        
-            $(document).on("change", ".watch-check", function () {
-            const movieId = $(this).data("movieid");
-           
 
+        $(document).on("change", ".watch-check", function () {
+            const movieId = $(this).data("movieid");
+            
             $.ajax({
                 url: "/Watchlist/ToggleWatched",
-             
+
                 data: { movieId: movieId },
-               
+
                 success: function () {
-                    
+
                     $("#watchlist-content").load("/Watchlist/GetWatchlistPartial");
                 },
-                error: function() {
+
+
+                error: function () {
                     alert("Could not update status. Check if you are logged in.");
                 }
             });

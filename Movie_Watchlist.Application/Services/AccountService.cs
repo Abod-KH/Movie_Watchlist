@@ -1,5 +1,6 @@
 ﻿
 using BCrypt.Net;
+using Microsoft.Extensions.Logging;
 using Movie_Watchlist.Application.Interfaces;
 using Movie_Watchlist.Application.Models;
 using Movie_Watchlist.Domain.Entities;
@@ -7,10 +8,13 @@ using Movie_Watchlist.Domain.Entities;
 public class AccountService : IAccountService
 {
     private readonly IAccountRepository _accountRepository;
+    private readonly ILogger<AccountService> _logger;
 
-    public AccountService(IAccountRepository accountRepository)
+
+    public AccountService(IAccountRepository accountRepository, ILogger<AccountService> logger)
     {
         _accountRepository = accountRepository;
+        _logger = logger;
     }
 
     public async Task<bool> RegisterUserAsync(UserRegister register)
@@ -34,10 +38,19 @@ public class AccountService : IAccountService
             IsActive = true
         };
 
-       
-        int newUserId = await _accountRepository.CreateUserAsync(newUser);
 
-        return newUserId > 0;
+        try
+        {
+            int newUserId = await _accountRepository.CreateUserAsync(newUser);
+            return newUserId > 0;
+        }
+        catch (Exception ex)
+        {
+            
+            _logger.LogError(ex, "Error registering user");
+
+            return false;
+        }
     }
 
     public async Task<User?> ValidateUserAsync(UserLogin login)

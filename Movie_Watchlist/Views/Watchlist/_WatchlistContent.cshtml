@@ -1,4 +1,4 @@
-﻿@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
+@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
 
 
 @if (Model.TotalMovies > 0)
@@ -81,4 +81,14 @@ else
             </div>
         }
     </div>
+
+    @if (ViewBag.TotalPages > 1)
+    {
+        @await Component.InvokeAsync("Pagination", new { 
+            currentPage = ViewBag.CurrentPage, 
+            totalPages = ViewBag.TotalPages, 
+            actionName = "UserWatchlist", 
+            controllerName = "Watchlist" 
+        })
+    }
 }
