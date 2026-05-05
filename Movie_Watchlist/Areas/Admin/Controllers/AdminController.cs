@@ -34,6 +34,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
 
        
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddMovie(MovieFormModel model)
         {
             if (!ModelState.IsValid)
@@ -77,6 +78,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
 
         
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Movie movie)
         {
             ModelState.Remove("Genre");
@@ -91,6 +93,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
 
         
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             await _adminRepo.DeleteMovie(id);

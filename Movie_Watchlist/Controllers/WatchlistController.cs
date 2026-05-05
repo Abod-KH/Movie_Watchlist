@@ -52,6 +52,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             return PartialView("_WatchlistContent", model);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(int movieId)
         {
 
@@ -75,6 +76,7 @@ namespace Movie_Watchlist.Presintation.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveItemAjax(int movieId)
         {
             await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
@@ -82,6 +84,7 @@ namespace Movie_Watchlist.Presintation.Controllers
         }
         
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleWatched(int movieId)
         {
             
