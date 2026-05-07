@@ -15,16 +15,10 @@ namespace Movie_Watchlist.Application.Helpers
 
     public static class PaginationExtensions
     {
-        public static PagedResult<T> ToPagedResult<T>(this IEnumerable<T> source, int page)
+
+        public static PagedResult<T> ToPagedResultServer<T>(this IEnumerable<T> items, int page, int totalItems, int pageSize = 20)
         {
-            int pageSize = 20;
-            var total = source.Count();
-            var totalPages = total == 0 ? 1 : (int)Math.Ceiling((double)total / pageSize);
-            
-            var items = source
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            var totalPages = totalItems == 0 ? 1 : (int)Math.Ceiling((double)totalItems / pageSize);
 
             return new PagedResult<T>
             {
@@ -32,7 +26,7 @@ namespace Movie_Watchlist.Application.Helpers
                 TotalPages = totalPages,
                 CurrentPage = page,
                 PageSize = pageSize,
-                TotalItems = total
+                TotalItems = totalItems
             };
         }
     }

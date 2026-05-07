@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Movie_Watchlist.Application.Helpers;
 namespace Movie_Watchlist.Presintation.Controllers
 {
-    [Authorize] 
+    [Authorize]
     public class WatchlistController : Controller
     {
         private readonly IUserWatchlistRepository _watchlistRepo;
@@ -12,19 +12,16 @@ namespace Movie_Watchlist.Presintation.Controllers
         public WatchlistController(IUserWatchlistRepository watchlistRepo)
         {
             _watchlistRepo = watchlistRepo;
-            
+
         }
 
         private async Task<WatchlistDashboardViewModel> GetViewModelData(int page = 1)
         {
+            int pageSize = 20;
+            var (movies, total, watched) = await _watchlistRepo.GetUserWatchlist(_userId, page, pageSize);
             
-            var movies = await _watchlistRepo.GetUserWatchlist(_userId);
-
-            var total = movies.Count();
-            var watched = movies.Count(m => m.IsWatched);
-            
-            var pagedResult = movies.ToPagedResult(page);
-            var percentage = pagedResult.TotalItems == 0 ? 0 : (int)((double)watched / pagedResult.TotalItems * 100);
+            var pagedResult = movies.ToPagedResultServer(page, total, pageSize);
+            var percentage = total == 0 ? 0 : (int)((double)watched / total * 100);
 
             ViewBag.CurrentPage = pagedResult.CurrentPage;
             ViewBag.TotalPages = pagedResult.TotalPages;
@@ -32,23 +29,23 @@ namespace Movie_Watchlist.Presintation.Controllers
             return new WatchlistDashboardViewModel
             {
                 Movies = pagedResult.Items,
-                TotalMovies = pagedResult.TotalItems,
+                TotalMovies = total,
                 MoviesWatched = watched,
                 Percentage = percentage
             };
         }
 
-    
+
         public async Task<IActionResult> UserWatchlist(int page = 1)
         {
             var model = await GetViewModelData(page);
             return View(model);
         }
 
-        
+
         public async Task<IActionResult> GetWatchlistPartial(int page = 1)
         {
-            var model = await GetViewModelData(page); 
+            var model = await GetViewModelData(page);
             return PartialView("_WatchlistContent", model);
         }
         [HttpPost]
@@ -60,17 +57,17 @@ namespace Movie_Watchlist.Presintation.Controllers
 
             if (isSuccess)
             {
-                return Ok(); 
+                return Ok();
             }
             else
             {
-                
+
                 return BadRequest();
             }
         }
         public async Task<IActionResult> RemoveItem(int movieId)
         {
-            
+
             await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
             return RedirectToAction("UserWatchlist");
         }
@@ -82,12 +79,12 @@ namespace Movie_Watchlist.Presintation.Controllers
             await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
             return Ok();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleWatched(int movieId)
         {
-            
+
             var success = await _watchlistRepo.ToggleWatchedStatus(movieId, _userId);
 
             if (success) return Ok();

@@ -1,11 +1,11 @@
- 
+
 using Microsoft.AspNetCore.Mvc;
- 
+
 using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Domain.Entities;
 using System.Security.Claims;
 using Movie_Watchlist.Application.Helpers;
- 
+
 
 namespace Movie_Watchlist.Presintation.Controllers
 {
@@ -13,23 +13,23 @@ namespace Movie_Watchlist.Presintation.Controllers
     {
         private readonly IHomeRepository _homeRepo;
         private readonly ITmdbService _tmdbService;
-        
 
-        public HomeController(IHomeRepository homeRepo,ITmdbService tmdbService)
+
+        public HomeController(IHomeRepository homeRepo, ITmdbService tmdbService)
         {
             _homeRepo = homeRepo;
             _tmdbService = tmdbService;
 
         }
-       
+
         public async Task<IActionResult> Index(string sTerm = "", int genreId = 0, int page = 1)
         {
-            
-            var  userId = User.GetUserId();
-            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId! , sTerm, genreId);
+            int pageSize = 20;
+            var userId = User.GetUserId();
+            var (movies, totalCount) = await _homeRepo.GetMoviesForUser(userId!, sTerm, genreId, page, pageSize);
             var genres = await _homeRepo.Genres();
 
-            var pagedResult = moviesFromRepo.ToPagedResult(page);
+            var pagedResult = movies.ToPagedResultServer(page, totalCount, pageSize);
 
             var model = new MovieDisplayModel
             {
@@ -49,12 +49,12 @@ namespace Movie_Watchlist.Presintation.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var movie = await _homeRepo.GetMovieById(id);
-           
+
             if (movie == null)
             {
                 return NotFound();
             }
-           var model = await BuildModelAsync(movie);
+            var model = await BuildModelAsync(movie);
 
             return View(model);
         }

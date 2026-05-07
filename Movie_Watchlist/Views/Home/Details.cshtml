@@ -42,6 +42,18 @@
                             </div>
                         </div>
                     }
+                    else
+                    {
+                        <div class="mt-4">
+                            <h4 class="fw-bold mb-3 text-muted">Official Trailer</h4>
+                            <div class="ratio ratio-16x9 rounded bg-light border d-flex align-items-center justify-content-center text-center">
+                                <div class="p-3">
+                                    <span class="bi bi-play-btn fs-1 text-secondary opacity-50"></span>
+                                    <p class="text-secondary small mt-2">Trailer not found</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
 
                 </div>
             </div>
@@ -53,7 +65,9 @@
         <h3 class="fw-bold mb-4">More Like This</h3>
 
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
-            @foreach (var sim in Model.SimilarMovies ?? Enumerable.Empty<MovieApiResult>())
+            @if (Model.SimilarMovies != null && Model.SimilarMovies.Any())
+            {
+            @foreach (var sim in Model.SimilarMovies)
             {
                 <div class="col">
                     <div class="card h-100 border-0 shadow-sm">
@@ -72,6 +86,11 @@
 
                     </div>
                 </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No similar movies found.</p>
             }
         </div>
     </div>
