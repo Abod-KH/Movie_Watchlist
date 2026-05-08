@@ -41,7 +41,8 @@ namespace Movie_Watchlist.Presintation.Controllers
 
 
             ViewBag.CurrentPage = pagedResult.CurrentPage;
-            ViewBag.TotalPages = pagedResult.TotalPages;
+            ViewBag.TotalItems = pagedResult.TotalItems;
+            ViewBag.PageSize = pagedResult.PageSize;
 
             return View(model);
         }

@@ -17,6 +17,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
         {
             var command = new SqlCommand(storedProcedure, connection);
             command.CommandType = CommandType.StoredProcedure;
+            command.CommandTimeout = 60;
             foreach (var param in parameters)
             {
                 command.Parameters.AddWithValue(param.name, param.value ?? DBNull.Value);
@@ -89,6 +90,33 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                 return list;
             }, parameters);
 
+        }
+
+        protected async Task<(List<T> List, int TotalCount)> ExecuteQueryListWithOutputAsync<T>(
+            string storedProcedure,
+            string outputParamName,
+            params (string name, object? value)[] parameters) where T : new()
+        {
+            return await ExecuteWithCommandAsync(storedProcedure, async (command) =>
+            {
+                var totalCountParam = new SqlParameter(outputParamName, SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                command.Parameters.Add(totalCountParam);
+
+                var list = new List<T>();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        list.Add(MapReaderToObject<T>(reader));
+                    }
+                }
+
+                int totalCount = totalCountParam.Value != DBNull.Value ? (int)totalCountParam.Value : 0;
+                return (list, totalCount);
+            }, parameters);
         }
 
         protected async Task ExecuteTableValueNonQueryAsync(string storedProcedure, string paramName, DataTable table, string typeName)

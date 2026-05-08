@@ -19,12 +19,13 @@ namespace Movie_Watchlist.Presintation.Controllers
         {
             int pageSize = 20;
             var (movies, total, watched) = await _watchlistRepo.GetUserWatchlist(_userId, page, pageSize);
-            
+
             var pagedResult = movies.ToPagedResultServer(page, total, pageSize);
             var percentage = total == 0 ? 0 : (int)((double)watched / total * 100);
 
             ViewBag.CurrentPage = pagedResult.CurrentPage;
-            ViewBag.TotalPages = pagedResult.TotalPages;
+            ViewBag.TotalItems = pagedResult.TotalItems;
+            ViewBag.PageSize = pagedResult.PageSize;
 
             return new WatchlistDashboardViewModel
             {

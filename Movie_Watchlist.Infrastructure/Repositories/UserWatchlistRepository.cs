@@ -18,17 +18,22 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             return result == 1;
         }
 
-        public async Task<(IEnumerable<WatchlistViewModel> Movies, int TotalCount, int WatchedCount)> GetUserWatchlist(string userId, int pageNumber = 1, int pageSize = 20)
-        {
-            var movies = await ExecuteQueryListAsync<WatchlistViewModel>("sp_GetUserWatchlist", 
-                ("@UserId", userId),
-                ("@PageNumber", pageNumber),
-                ("@PageSize", pageSize));
+      public async Task<(IEnumerable<WatchlistViewModel> Movies, int TotalCount, int WatchedCount)>
+    GetUserWatchlist(string userId, int pageNumber = 1, int pageSize = 20)
+    {
+    var movies = await ExecuteQueryListAsync<WatchlistViewModel>(
+        "sp_GetUserWatchlist",
+        ("@UserId", userId),
+        ("@PageNumber", pageNumber),
+        ("@PageSize", pageSize));
 
-            var stats = await ExecuteQuerySingleAsync<WatchlistStats>("sp_GetUserWatchlistStats", ("@UserId", userId));
+    var firstMovie = movies.FirstOrDefault();
 
-            return (movies, stats?.TotalCount ?? 0, stats?.WatchedCount ?? 0);
-        }
+    int totalCount = firstMovie?.TotalCount ?? 0;
+    int watchedCount = firstMovie?.WatchedCount ?? 0;
+
+    return (movies, totalCount, watchedCount);
+    }
 
         public async Task<bool> RemoveFromWatchlist(int movieId, string userId)
         {

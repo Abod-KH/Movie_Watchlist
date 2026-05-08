@@ -20,18 +20,15 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
         public async Task<(IEnumerable<MovieHomeViewModel> Movies, int TotalCount)> GetMoviesForUser(string userId, string sTerm = "", int genreId = 0, int pageNumber = 1, int pageSize = 20)
         {
-            var movies = await ExecuteQueryListAsync<MovieHomeViewModel>("sp_GetMoviesForUser",
+            var (movies, totalCount) = await ExecuteQueryListWithOutputAsync<MovieHomeViewModel>("sp_GetMoviesForUser",
+                "@TotalCount",
                 ("@UserId", userId),
                 ("@SearchTerm", sTerm),
                 ("@GenreId", genreId),
                 ("@PageNumber", pageNumber),
                 ("@PageSize", pageSize));
 
-            var count = await ExecuteScalarAsync<int>("sp_GetMoviesForUserCount",
-                ("@SearchTerm", sTerm),
-                ("@GenreId", genreId));
-
-            return (movies, count);
+            return (movies, totalCount);
         }
 
         public async Task<Movie?> GetMovieById(int id)

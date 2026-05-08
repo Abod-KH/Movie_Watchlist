@@ -82,11 +82,12 @@ else
         }
     </div>
 
-    @if (ViewBag.TotalPages > 1)
+    @if (ViewBag.TotalItems > ViewBag.PageSize)
     {
         @await Component.InvokeAsync("Pagination", new { 
             currentPage = ViewBag.CurrentPage, 
-            totalPages = ViewBag.TotalPages, 
+            totalItems = ViewBag.TotalItems, 
+            pageSize = ViewBag.PageSize,
             actionName = "UserWatchlist", 
             controllerName = "Watchlist" 
         })

@@ -18,7 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 
-builder.Services.AddScoped<SqlConnectionFactory>();
+builder.Services.AddSingleton<SqlConnectionFactory>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();

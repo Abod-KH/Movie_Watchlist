@@ -92,17 +92,18 @@
         }
     </div>
 
-    @if (ViewBag.TotalPages > 1)
+    @if (ViewBag.TotalItems > ViewBag.PageSize)
     {
-        @await Component.InvokeAsync("Pagination", new { 
-            currentPage = ViewBag.CurrentPage, 
-            totalPages = ViewBag.TotalPages, 
-            actionName = "Index", 
-            routeParams = new Dictionary<string, string> { 
-                { "sTerm", Model.STerm ?? "" }, 
-                { "genreId", Model.GenreId.ToString() } 
-            } 
-        })
+        @await Component.InvokeAsync("Pagination", new {
+    currentPage = ViewBag.CurrentPage,
+    totalItems = ViewBag.TotalItems,
+    pageSize = ViewBag.PageSize,
+    actionName = "Index",
+    routeParams = new Dictionary<string, string> {
+    { "sTerm", Model.STerm ?? "" },
+    { "genreId", Model.GenreId.ToString() }
+    }
+    })
     }
 </div>
 
