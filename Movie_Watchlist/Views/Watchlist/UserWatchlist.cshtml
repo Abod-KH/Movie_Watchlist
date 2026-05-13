@@ -22,7 +22,7 @@
             
             $.ajax({
                 url: "/Watchlist/ToggleWatched",
-
+                type: "POST",
                 data: { movieId: movieId },
 
                 success: function () {
@@ -30,10 +30,6 @@
                     $("#watchlist-content").load("/Watchlist/GetWatchlistPartial");
                 },
 
-
-                error: function () {
-                    alert("Could not update status. Check if you are logged in.");
-                }
             });
         });
     </script>

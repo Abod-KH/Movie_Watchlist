@@ -133,21 +133,10 @@
 
                 $.ajax({
                     url: config.url,
+                     type: "POST",
                     data: { movieId: movieId },
-                    success: function () {
-                        btn.removeClass(config.removeCls).addClass(config.addCls);
-                        btn.attr("data-action", config.newAction);
-                        btn.html(config.icon);
-                        
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 401) {
-                            window.location.href = "/Account/Login";
-                            return;
-                        }
-
-                        alert("Something went wrong. Please try again.");
-                    }
+                    success: () => switchButtonState(btn, config),
+                   
                 });
             });
         });
