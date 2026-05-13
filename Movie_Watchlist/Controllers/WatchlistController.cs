@@ -73,17 +73,15 @@ namespace Movie_Watchlist.Presintation.Controllers
                 return BadRequest();
             }
 
-           
-                bool success =
-                    await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
 
-                if (!success)
-                {
-                    return NotFound();
-                }
+            bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
 
-                return RedirectToAction(nameof(UserWatchlist));
-           
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(UserWatchlist));
 
         }
 
@@ -91,11 +89,12 @@ namespace Movie_Watchlist.Presintation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromWatchlist(int movieId)
         {
-            
+
             bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+
             if (!success)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok();

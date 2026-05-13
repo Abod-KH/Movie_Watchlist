@@ -68,14 +68,16 @@ else
                         </div>
                     </div>
 
-                    <form asp-controller="Watchlist"asp-action="RemoveItem"method="post">
+                    <form asp-controller="Watchlist"
+                          asp-action="RemoveItem"
+                          method="post">
 
                         <input type="hidden"
                                name="movieId"
                                value="@movie.MovieId" />
 
                         <button type="submit"
-                                class="btn btn-outline-danger btn-sm">
+                                class="btn btn-outline-danger btn-sm w-100">
 
                             <i class="bi bi-trash"></i>
                             Remove
