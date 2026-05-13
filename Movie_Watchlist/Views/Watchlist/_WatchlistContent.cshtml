@@ -68,15 +68,21 @@ else
                         </div>
                     </div>
 
-                    <div class="card-footer bg-white border-top-0 d-grid gap-2">
-                        <a asp-controller="Watchlist"
-                           asp-action="RemoveItem"
-                           asp-route-movieId="@movie.MovieId"
-                           class="btn btn-outline-danger btn-sm"
-                           >
-                            <i class="bi bi-trash"></i> Remove
-                        </a>
-                    </div>
+                    <form asp-controller="Watchlist"asp-action="RemoveItem"method="post">
+
+                        <input type="hidden"
+                               name="movieId"
+                               value="@movie.MovieId" />
+
+                        <button type="submit"
+                                class="btn btn-outline-danger btn-sm">
+
+                            <i class="bi bi-trash"></i>
+                            Remove
+
+                        </button>
+
+                    </form>
                 </div>
             </div>
         }

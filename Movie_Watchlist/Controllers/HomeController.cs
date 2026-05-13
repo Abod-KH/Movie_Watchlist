@@ -100,6 +100,12 @@ namespace Movie_Watchlist.Presintation.Controllers
             };
         }
 
+        public async Task<IActionResult> Index1()
+        {
+          
+
+            return View();
+        }
 
     }
 }

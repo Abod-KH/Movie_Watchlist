@@ -8,11 +8,11 @@ namespace Movie_Watchlist.Presintation.Controllers
     {
         private readonly IUserWatchlistRepository _watchlistRepo;
         private string _userId => User.GetUserId()!;
-
+        
         public WatchlistController(IUserWatchlistRepository watchlistRepo)
         {
             _watchlistRepo = watchlistRepo;
-
+          
         }
 
         private async Task<WatchlistDashboardViewModel> GetViewModelData(int page = 1)
@@ -68,16 +68,36 @@ namespace Movie_Watchlist.Presintation.Controllers
         }
         public async Task<IActionResult> RemoveItem(int movieId)
         {
+            if (movieId <= 0)
+            {
+                return BadRequest();
+            }
 
-            await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
-            return RedirectToAction("UserWatchlist");
+           
+                bool success =
+                    await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+
+                if (!success)
+                {
+                    return NotFound();
+                }
+
+                return RedirectToAction(nameof(UserWatchlist));
+           
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveItemAjax(int movieId)
+        public async Task<IActionResult> RemoveFromWatchlist(int movieId)
         {
-            await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+            
+            bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+            if (!success)
+            {
+                return BadRequest();
+            }
+
             return Ok();
         }
 

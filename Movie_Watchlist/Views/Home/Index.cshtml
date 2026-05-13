@@ -112,16 +112,16 @@
         $(document).ready(function () {
             $(document).on("click", ".toggle-watchlist", function (e) {
                 e.preventDefault();
-
+                
                 var btn = $(this);
                 var movieId = btn.data("movieid");
                 var action = btn.attr("data-action");
 
-
+                
                 var isAdd = action === "add";
 
                 var config = {
-                    url: isAdd ? '/Watchlist/AddItem' : '/Watchlist/RemoveItemAjax',
+                    url: isAdd ? '/Watchlist/AddItem' : '/Watchlist/RemoveFromWatchlist',
                     newAction: isAdd ? 'remove' : 'add',
                     removeCls: isAdd ? 'btn-light border' : 'btn-success',
                     addCls: isAdd ? 'btn-success' : 'btn-light border',
@@ -138,6 +138,7 @@
                         btn.removeClass(config.removeCls).addClass(config.addCls);
                         btn.attr("data-action", config.newAction);
                         btn.html(config.icon);
+                        
                     },
                     error: function (xhr) {
                         if (xhr.status === 401) {
