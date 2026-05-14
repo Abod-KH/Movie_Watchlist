@@ -45,9 +45,8 @@ else
             <div class="col">
                 <div class="card h-100 shadow-sm border-0 @(movie.IsWatched ? "opacity-75" : "")">
                     <img src="@movie.PosterPath"
-                         class="card-img-top"
+                         class="card-img-top card-img"
                          alt="@movie.Title"
-                         style="height: 350px; object-fit: cover;"
                          onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
 
                     <div class="card-body">

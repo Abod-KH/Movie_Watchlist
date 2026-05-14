@@ -47,23 +47,22 @@
                     <div class="position-absolute top-0 start-0 m-2" style="z-index: 5;">
                         @if (movie.IsInWatchlist)
                         {
-                            <button class="btn btn-success btn-sm rounded-circle shadow toggle-watchlist"
-                                data-movieid="@movie.Id" data-action="remove" type="button" style="width: 45px; height: 45px;">
+                            <button class="btn btn-success btn-sm rounded-circle shadow toggle-watchlist btn-watchlist"
+                                data-movieid="@movie.Id" data-action="remove" type="button" >
                                 <i class="bi bi-bookmark-check-fill text-white fs-4"></i>
                             </button>
                         }
                         else
                         {
-                            <button class="btn btn-light btn-sm rounded-circle shadow border toggle-watchlist"
-                                data-movieid="@movie.Id" data-action="add" type="button" style="width: 45px; height: 45px;">
+                            <button class="btn btn-light btn-sm rounded-circle shadow border toggle-watchlist btn-watchlist"
+                                data-movieid="@movie.Id" data-action="add" type="button">
                                 <i class="bi bi-bookmark-plus text-primary fs-4"></i>
                             </button>
                         }
                     </div>
                     <div class="card h-100 shadow-sm">
                         <a asp-action="Details" asp-route-id="@movie.Id" class="text-decoration-none">
-                            <img src="@movie.PosterPath" class="card-img-top" alt="@movie.Title"
-                                style="height: 350px; object-fit: cover; cursor: pointer;">
+                            <img src="@movie.PosterPath" class="card-img-top card-img" alt="@movie.Title">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title text-truncate">@movie.Title</h5>
