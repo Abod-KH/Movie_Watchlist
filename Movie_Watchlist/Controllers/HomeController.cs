@@ -34,9 +34,12 @@ namespace Movie_Watchlist.Presintation.Controllers
             var model = new MovieDisplayModel
             {
                 Movies = movies,
-                Genres = genres,
-                STerm = sTerm,
-                GenreId = genreId
+                Filter= new MovieFilterViewModel
+                {
+                    Genres = genres,
+                    STerm = sTerm,
+                    GenreId = genreId
+                }
             };
 
 
@@ -101,6 +104,12 @@ namespace Movie_Watchlist.Presintation.Controllers
         }
 
         public async Task<IActionResult> Index1()
+        {
+          
+
+            return View();
+        }
+        public async Task<IActionResult> Index2()
         {
           
 

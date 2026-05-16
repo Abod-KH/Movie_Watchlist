@@ -6,9 +6,6 @@ namespace Movie_Watchlist.Application.ViewModels
     {
         public IEnumerable<MovieHomeViewModel> Movies { get; set; } = [];
 
-        public IEnumerable<Genre> Genres { get; set; } = [];
-
-        public string STerm { get; set; } = string.Empty;
-        public int GenreId { get; set; } = 0;
+        public MovieFilterViewModel Filter { get; set; } = new();
     }
 }
