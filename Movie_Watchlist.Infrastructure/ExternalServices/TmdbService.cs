@@ -47,7 +47,7 @@ namespace Movie_Watchlist.Application.Services
 
             do
             {
-                var url = $"{TmdbUrl}/movie/changes?api_key={_apiKey}&page={currentPage}";
+                var url = $"{TmdbUrl}/movie/changes?api_key={_apiKey}&page={currentPage}&language=en-US";
                 var response = await SafeGetAsync<TmdbChangesResponse>(
                     url,
                     $"TMDB GetChangedMovieIdsAsync (page {currentPage})"

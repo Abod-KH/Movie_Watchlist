@@ -22,7 +22,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var delay = CalculateDelayUntilNextRun(16, 55); 
+                var delay = CalculateDelayUntilNextRun(11,20); 
                 _logger.LogInformation($"TmdbSyncWorker is waiting for {delay.TotalHours:F2} hours until the next run.");
 
                 try
@@ -84,7 +84,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
                             Description = apiMovie.Description,
                             PosterPath = apiMovie.FullPosterPath,
                             ReleaseYear = releaseYear,
-                            GenreId = genreToUse
+                            GenreId = genreToUse,
+                            VoteAverage = apiMovie.VoteAverage
                         });
 
                         

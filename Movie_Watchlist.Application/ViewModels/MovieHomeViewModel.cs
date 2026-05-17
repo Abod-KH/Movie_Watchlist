@@ -9,6 +9,7 @@ namespace Movie_Watchlist.Application.ViewModels
         public string? PosterPath { get; set; }
         public int ReleaseYear { get; set; }
         public int GenreId { get; set; }
+        public double VoteAverage { get; set; }
         public bool IsInWatchlist { get; set; }
         public string? GenreName { get; set; }
     }

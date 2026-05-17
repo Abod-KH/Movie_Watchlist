@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Movie_Watchlist.Application.DTOs
 {
@@ -18,6 +18,9 @@ namespace Movie_Watchlist.Application.DTOs
 
         [JsonPropertyName("genre_ids")]
         public List<int>? Genre_ids { get; set; }
+
+        [JsonPropertyName("vote_average")]
+        public double VoteAverage { get; set; }
 
 
 

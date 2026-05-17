@@ -1,4 +1,4 @@
-﻿//using Humanizer.Localisation;
+//using Humanizer.Localisation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Movie_Watchlist.Domain.Entities
@@ -18,6 +18,8 @@ namespace Movie_Watchlist.Domain.Entities
         public string? PosterPath { get; set; } 
 
         public int ReleaseYear { get; set; }
+
+        public double VoteAverage { get; set; }
 
         public int GenreId { get; set; }
         public Genre? Genre { get; set; }

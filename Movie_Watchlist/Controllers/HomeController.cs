@@ -82,7 +82,8 @@ namespace Movie_Watchlist.Presintation.Controllers
                 Title = apiMovie.Title ?? "Unknown",
                 Description = apiMovie.Description ?? string.Empty,
                 PosterPath = apiMovie.FullPosterPath,
-                TmdbId = apiMovie.Id
+                TmdbId = apiMovie.Id,
+                VoteAverage = apiMovie.VoteAverage
             };
 
             var modelFromApi = await BuildModelAsync(mappedMovie);

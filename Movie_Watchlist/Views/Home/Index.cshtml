@@ -44,7 +44,12 @@
                         </a>
                         <div class="card-body">
                             <h5 class="card-title text-truncate">@movie.Title</h5>
-                            <p class="card-text text-muted">@movie.ReleaseYear</p>
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="bi bi-star-fill text-warning me-1"></i>
+                                <span class="fw-semibold">@movie.VoteAverage.ToString("0.0")</span>
+                                <span class="text-muted small ms-1">/ 10</span>
+                            </div>
+                            <p class="card-text text-muted mb-1">@movie.ReleaseYear</p>
                             <p class="card-text text-muted">@movie.GenreName</p>
 
                         </div>

@@ -53,6 +53,10 @@ else
                         <h5 class="card-title text-truncate">@movie.Title</h5>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small">@movie.ReleaseYear</span>
+                            <span class="small">
+                                <i class="bi bi-star-fill text-warning me-1"></i>
+                                <span class="fw-semibold">@movie.VoteAverage.ToString("0.0")</span>
+                            </span>
                         </div>
 
                         <div class="form-check mt-2">
