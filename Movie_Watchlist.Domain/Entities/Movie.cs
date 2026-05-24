@@ -8,7 +8,7 @@ namespace Movie_Watchlist.Domain.Entities
     {
         public int Id { get; set; }
 
-        [Required]
+        
         [MaxLength(200)]
         public string Title { get; set; } = "Unknown";
         public int TmdbId { get; set; }
