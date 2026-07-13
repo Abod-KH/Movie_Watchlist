@@ -86,6 +86,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 await _adminRepo.UpdateMovie(movie);
+
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
             return View(movie);
@@ -97,6 +98,14 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _adminRepo.DeleteMovie(id);
+
+           
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrEmpty(referer))
+            {
+                return Redirect(referer);
+            }
+
             return RedirectToAction("Index", "Home", new { area = "" });
         }
     }

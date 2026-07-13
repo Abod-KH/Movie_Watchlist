@@ -13,7 +13,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
             public async Task AddMovie(Movie movie)
             {
-                await ExecuteNonQueryAsync("sp_InsertMovie",  
+                await ExecuteNonQueryAsync("sp_InsertMovie",
                     ("@Title", movie.Title),
                     ("@TmdbId", movie.TmdbId),
                     ("@Description", movie.Description),
@@ -47,4 +47,3 @@ namespace Movie_Watchlist.Infrastructure.Repositories
 
         }
     }
-

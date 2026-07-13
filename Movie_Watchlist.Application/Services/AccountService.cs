@@ -47,6 +47,7 @@ public class AccountService : IAccountService
         catch (Exception ex)
         {
             
+
             _logger.LogError(ex, "Error registering user");
 
             return false;
