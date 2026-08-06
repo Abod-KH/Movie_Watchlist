@@ -1,44 +1,43 @@
-@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
+@model Movie_Watchlist.Application.ViewModels.TvShowWatchlistDashboardViewModel
 
 
-
-@if (!Model.Movies.Any())
+@if (!Model.TvShows.Any())
 {
     <div class="alert alert-info shadow-sm">
-        Your watchlist is currently empty. Start adding some movies from the <a href="/Home/Index">Home Page</a>!
+        Your TV show watchlist is currently empty. Start adding some shows from the <a href="/TvShow/Index">TV Shows Page</a>!
     </div>
 }
 else
 {
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        @foreach (var movie in Model.Movies)
+        @foreach (var show in Model.TvShows)
         {
             <div class="col">
                 <div class="card h-100 shadow-sm border-0">
-                    <img src="@movie.PosterPath"
+                    <img src="@show.PosterPath"
                          class="card-img-top card-img"
-                         alt="@movie.Title"
+                         alt="@show.Title"
                          onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
 
                     <div class="card-body">
-                        <h5 class="card-title text-truncate">@movie.Title</h5>
+                        <h5 class="card-title text-truncate">@show.Title</h5>
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-muted small">@movie.ReleaseYear</span>
+                            <span class="text-muted small">@show.ReleaseYear</span>
                             <span class="small">
                                 <i class="bi bi-star-fill text-warning me-1"></i>
-                                <span class="fw-semibold">@movie.VoteAverage.ToString("0.0")</span>
+                                <span class="fw-semibold">@show.Rating.ToString("0.0")</span>
                             </span>
                         </div>
                     </div>
 
-                    <form asp-controller="Watchlist"
+                    <form asp-controller="TvShowWatchlist"
                           asp-action="RemoveFromWatchlist"
                           method="post"
                           class="remove-form">
 
                         <input type="hidden"
-                               name="movieId"
-                               value="@movie.MovieId" />
+                               name="id"
+                               value="@show.TvShowId" />
 
                         <button type="submit"
                                 class="btn btn-outline-danger btn-sm w-100">
@@ -54,14 +53,14 @@ else
         }
     </div>
 
-    @if (ViewBag.TotalItems > ViewBag.PageSize)
+    @if (Model.TotalCount > 20)
     {
         @await Component.InvokeAsync("Pagination", new { 
-            currentPage = ViewBag.CurrentPage, 
-            totalItems = ViewBag.TotalItems, 
-            pageSize = ViewBag.PageSize,
+            currentPage = Model.PageNumber, 
+            totalItems = Model.TotalCount, 
+            pageSize = 20,
             actionName = "UserWatchlist", 
-            controllerName = "Watchlist" 
+            controllerName = "TvShowWatchlist" 
         })
     }
 }

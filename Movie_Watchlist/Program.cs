@@ -26,11 +26,16 @@ builder.Services.AddScoped<IUserWatchlistRepository, UserWatchlistRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
+builder.Services.AddSingleton<IHomepageCacheService, HomepageCacheService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+builder.Services.AddScoped<ITvShowHomeRepository, TvShowHomeRepository>();
+builder.Services.AddScoped<ITvShowRepository, TvShowRepository>();
+builder.Services.AddScoped<ITvShowWatchlistRepository, TvShowWatchlistRepository>();
 
 builder.Services.AddHostedService<TmdbSyncWorker>();
 

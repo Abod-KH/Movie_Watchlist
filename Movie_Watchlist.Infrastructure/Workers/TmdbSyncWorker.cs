@@ -20,9 +20,13 @@ namespace Movie_Watchlist.Infrastructure.Workers
         {
             _logger.LogInformation("TmdbSyncWorker is starting.");
 
+            // Populate cache immediately on startup
+            _logger.LogInformation("Populating homepage cache on startup...");
+            await RefreshHomepageCacheAsync(stoppingToken);
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var delay = CalculateDelayUntilNextRun(11,20); 
+                var delay = CalculateDelayUntilNextRun(14,55); 
                 _logger.LogInformation($"TmdbSyncWorker is waiting for {delay.TotalHours:F2} hours until the next run.");
 
                 try
@@ -31,6 +35,10 @@ namespace Movie_Watchlist.Infrastructure.Workers
 
                     _logger.LogInformation("TmdbSyncWorker is starting the daily sync.");
                     await PerformDailySyncAsync(stoppingToken);
+                    
+                    _logger.LogInformation("TmdbSyncWorker is refreshing homepage cache.");
+                    await RefreshHomepageCacheAsync(stoppingToken);
+                    
                     _logger.LogInformation("TmdbSyncWorker completed the daily sync.");
                 }
                 catch (TaskCanceledException)
@@ -48,8 +56,15 @@ namespace Movie_Watchlist.Infrastructure.Workers
         {
             using var scope = _serviceProvider.CreateScope();
             var movieRepo = scope.ServiceProvider.GetRequiredService<IMovieRepository>();
+            var tvShowRepo = scope.ServiceProvider.GetRequiredService<ITvShowRepository>();
             var tmdbService = scope.ServiceProvider.GetRequiredService<ITmdbService>();
 
+            // await SyncMoviesAsync(movieRepo, tmdbService, stoppingToken);
+            await SyncTvShowsAsync(tvShowRepo, tmdbService, stoppingToken);
+        }
+
+        private async Task SyncMoviesAsync(IMovieRepository movieRepo, ITmdbService tmdbService, CancellationToken stoppingToken)
+        {
             var changedIds = await tmdbService.GetChangedMovieIdsAsync();
             if (changedIds == null || !changedIds.Any())
             {
@@ -88,7 +103,6 @@ namespace Movie_Watchlist.Infrastructure.Workers
                             VoteAverage = apiMovie.VoteAverage
                         });
 
-                        
                         if (movies.Count >= 50)
                         {
                             await movieRepo.InsertOrUpdateAsync(movies);
@@ -108,8 +122,117 @@ namespace Movie_Watchlist.Infrastructure.Workers
             {
                 await movieRepo.InsertOrUpdateAsync(movies);
             }
+        }
 
-            
+        private async Task SyncTvShowsAsync(ITvShowRepository tvShowRepo, ITmdbService tmdbService, CancellationToken stoppingToken)
+        {
+            var changedIds = await tmdbService.GetChangedTvShowIdsAsync();
+            if (changedIds == null || !changedIds.Any())
+            {
+                _logger.LogInformation("No changed TV shows found in the last 24 hours.");
+                return;
+            }
+
+            _logger.LogInformation($"Found {changedIds.Count()} changed TV shows. Processing...");
+
+            var tvShows = new List<TvShow>();
+
+            foreach (var id in changedIds)
+            {
+                if (stoppingToken.IsCancellationRequested) break;
+
+                try
+                {
+                    var apiTvShow = await tmdbService.GetTvShowDetailsAsync(id);
+                    if (apiTvShow != null)
+                    {
+                        int genreToUse = (apiTvShow.GenreIds != null && apiTvShow.GenreIds.Any()) ? apiTvShow.GenreIds.First() : 18; // 18 is Drama
+                        int releaseYear = 0;
+                        if (DateTime.TryParse(apiTvShow.FirstAirDate, out var date))
+                        {
+                            releaseYear = date.Year;
+                        }
+
+                        tvShows.Add(new TvShow
+                        {
+                            Title = apiTvShow.Title ?? "Unknown",
+                            TmdbId = apiTvShow.Id,
+                            Description = apiTvShow.Description ?? "",
+                            PosterPath = apiTvShow.FullPosterPath,
+                            ReleaseYear = releaseYear,
+                            GenreId = genreToUse,
+                            Rating = apiTvShow.Rating
+                        });
+
+                        if (tvShows.Count >= 50)
+                        {
+                            await tvShowRepo.InsertOrUpdateAsync(tvShows);
+                            tvShows.Clear();
+                        }
+                    }
+
+                    await Task.Delay(250, stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to process changed TV show ID {id}.");
+                }
+            }
+
+            if (tvShows.Any())
+            {
+                await tvShowRepo.InsertOrUpdateAsync(tvShows);
+            }
+        }
+
+        private async Task RefreshHomepageCacheAsync(CancellationToken stoppingToken)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var tmdbService = scope.ServiceProvider.GetRequiredService<ITmdbService>();
+            var cacheService = scope.ServiceProvider.GetRequiredService<IHomepageCacheService>();
+
+            var data = new HomepageData();
+
+            try
+            {
+                var trendingMovies = await tmdbService.GetTrendingMoviesAsync(1);
+                if (trendingMovies != null) data.TrendingMovies = trendingMovies.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var trendingTv = await tmdbService.GetTrendingTvShowsAsync(1);
+                if (trendingTv != null) data.TrendingTvShows = trendingTv.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var nowPlaying = await tmdbService.GetNowPlayingMoviesAsync(1);
+                if (nowPlaying != null) data.NowPlaying = nowPlaying.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var upcoming = await tmdbService.GetUpcomingMoviesAsync(1);
+                if (upcoming != null) data.Upcoming = upcoming.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var topRatedMovies = await tmdbService.GetTopRatedMoviesAsync(1);
+                if (topRatedMovies != null) data.TopRatedMovies = topRatedMovies.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var topRatedTv = await tmdbService.GetTopRatedTvShowsAsync(1);
+                if (topRatedTv != null) data.TopRatedTvShows = topRatedTv.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var popularMovies = await tmdbService.GetPopularMoviesAsync(1);
+                if (popularMovies != null) data.PopularMovies = popularMovies.Results.Take(20).ToList();
+                await Task.Delay(250, stoppingToken);
+
+                var popularTv = await tmdbService.GetPopularTvShowsAsync(1);
+                if (popularTv != null) data.PopularTvShows = popularTv.Results.Take(20).ToList();
+
+                cacheService.SetHomepageData(data);
+                _logger.LogInformation("Successfully refreshed homepage cache.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to refresh homepage cache.");
+            }
         }
 
         private TimeSpan CalculateDelayUntilNextRun(int targetHour, int targetMinute)

@@ -100,15 +100,6 @@ namespace Movie_Watchlist.Presintation.Controllers
             return Ok();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleWatched(int movieId)
-        {
 
-            var success = await _watchlistRepo.ToggleWatchedStatus(movieId, _userId);
-
-            if (success) return Ok();
-            return BadRequest();
-        }
     }
 }

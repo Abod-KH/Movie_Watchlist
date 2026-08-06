@@ -1,0 +1,42 @@
+@model dynamic
+@{
+    var title = Model.Title;
+    var items = Model.Items;
+    var category = Model.Category;
+    var isMovie = Model.IsMovie;
+    
+    // We expect items to be IEnumerable<dynamic> (either MovieApiResult or TvShowApiResult)
+}
+
+@if (items != null)
+{
+    <div class="carousel-section position-relative">
+        <div class="section-header">
+            <h2 class="section-title mb-0">@title</h2>
+            <a asp-action="ShowMore" asp-route-category="@category" class="show-more-link fw-bold ms-2">
+                Show More <i class="bi bi-chevron-right small"></i>
+            </a>
+        </div>
+
+        <div class="swiper standard-carousel">
+            <div class="swiper-wrapper">
+                @foreach (var item in items)
+                {
+                    <div class="swiper-slide">
+                        <a asp-controller="@(isMovie ? "Home" : "TvShow")" 
+                           asp-action="DetailsByTmdb" 
+                           asp-route-tmdbId="@item.Id" 
+                           class="text-decoration-none">
+                            <div class="poster-card">
+                                <img src="@item.FullPosterPath" alt="@item.Title" loading="lazy">
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+            
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+}

@@ -1,0 +1,103 @@
+@model Movie_Watchlist.Application.ViewModels.ShowMoreViewModel
+@{
+    ViewData["Title"] = Model.SectionTitle;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>@Model.SectionTitle</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    @if (Model.IsMovieSection && Model.Movies != null && Model.Movies.Any())
+    {
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+            @foreach (var movie in Model.Movies)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 bg-dark text-white">
+                        <a asp-action="DetailsByTmdb" asp-route-tmdbId="@movie.Id" class="text-decoration-none">
+                            <img src="@movie.FullPosterPath" class="card-img-top" alt="@movie.Title" style="aspect-ratio: 2/3; object-fit: cover;">
+                        </a>
+                        <div class="card-body p-2">
+                            <h6 class="card-title text-truncate mb-1">@movie.Title</h6>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="text-muted">@(string.IsNullOrEmpty(movie.ReleaseDate) ? "" : (movie.ReleaseDate.Length >= 4 ? movie.ReleaseDate.Substring(0, 4) : movie.ReleaseDate))</span>
+                                <span>
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    @movie.VoteAverage.ToString("0.0")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (!Model.IsMovieSection && Model.TvShows != null && Model.TvShows.Any())
+    {
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+            @foreach (var show in Model.TvShows)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 bg-dark text-white">
+                        <a asp-controller="TvShow" asp-action="DetailsByTmdb" asp-route-tmdbId="@show.Id" class="text-decoration-none">
+                            <img src="@show.FullPosterPath" class="card-img-top" alt="@show.Title" style="aspect-ratio: 2/3; object-fit: cover;">
+                        </a>
+                        <div class="card-body p-2">
+                            <h6 class="card-title text-truncate mb-1">@show.Title</h6>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="text-muted">@(string.IsNullOrEmpty(show.FirstAirDate) ? "" : (show.FirstAirDate.Length >= 4 ? show.FirstAirDate.Substring(0, 4) : show.FirstAirDate))</span>
+                                <span>
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    @show.Rating.ToString("0.0")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No items found for this category.</div>
+    }
+
+    <!-- Simple Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-5 mb-5 d-flex justify-content-center">
+            <ul class="pagination pagination-lg">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+                    </li>
+                }
+
+                @{
+                    int startPage = Math.Max(1, Model.CurrentPage - 2);
+                    int endPage = Math.Min(Model.TotalPages, startPage + 4);
+                    startPage = Math.Max(1, endPage - 4);
+                }
+
+                @for (int i = startPage; i <= endPage; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@i">@i</a>
+                    </li>
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
