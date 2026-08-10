@@ -28,6 +28,14 @@
                         <i class="bi bi-star-fill text-warning me-1 fs-5"></i>
                         <span class="fw-bold fs-5">@Model.Movie.VoteAverage.ToString("0.0")</span>
                         <span class="text-muted ms-1">/ 10</span>
+                        
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button class="btn btn-outline-primary ms-4 btn-sm fw-bold toggle-watchlist"
+                                    data-movieid="@Model.Movie.Id" data-action="add" type="button">
+                                <i class="bi bi-plus-lg me-1"></i> Add to Watchlist
+                            </button>
+                        }
                     </div>
 
                     <hr />
@@ -72,24 +80,26 @@
         <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
             @if (Model.SimilarMovies != null && Model.SimilarMovies.Any())
             {
-            @foreach (var sim in Model.SimilarMovies)
-            {
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm">
-
-                        <a asp-action="DetailsByTmdb" asp-route-tmdbId="@sim.Id">
-                            <img src="@sim.FullPosterPath"
-                                     class="card-img-top card-img">
-                        </a>
-
-                        <div class="card-body p-2">
-                            <p class="small fw-semibold text-truncate mb-0">
-                                @sim.Title
-                            </p>
-                        </div>
-
+                @foreach (var sim in Model.SimilarMovies)
+                {
+                    <div class="col">
+                        @{
+                            var mediaVM = new Movie_Watchlist.Application.ViewModels.MediaHomeViewModel
+                            {
+                                TmdbId = sim.Id,
+                                Title = sim.Title ?? "Unknown",
+                                PosterPath = sim.FullPosterPath,
+                                Rating = sim.VoteAverage,
+                                MediaType = "movie",
+                                ReleaseYear = 0
+                            };
+                            
+                            if (!string.IsNullOrEmpty(sim.ReleaseDate) && sim.ReleaseDate.Length >= 4) {
+                                mediaVM.ReleaseYear = int.Parse(sim.ReleaseDate.Substring(0, 4));
+                            }
+                        }
+                        <partial name="_PosterCard" model="mediaVM" />
                     </div>
-                </div>
                 }
             }
             else
@@ -98,7 +108,25 @@
             }
         </div>
     </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".toggle-watchlist").click(function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var movieId = btn.data("movieid");
+                
+                $.post('/Watchlist/AddItem', { movieId: movieId, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() }, function() {
+                    btn.removeClass('btn-outline-primary').addClass('btn-success').html('<i class="bi bi-check-lg me-1"></i> Added');
+                    btn.attr('disabled', true);
+                }).fail(function() {
+                    alert('Failed to add to watchlist or already added.');
+                });
+            });
+        });
+    </script>
+}
 
 

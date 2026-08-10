@@ -8,7 +8,8 @@
     <form asp-action="Index" method="get" class="mb-4">
         <div class="row g-2 align-items-center">
             <div class="col-md-4">
-                <input type="text" name="sTerm" class="form-control" placeholder="Search TV Shows..." value="@Model.STerm">
+                <input type="text" name="sTerm" class="form-control" placeholder="Search TV Shows..."
+                    value="@Model.STerm">
             </div>
             <div class="col-md-3">
                 <select name="genreId" class="form-select">
@@ -78,16 +79,16 @@
     @if (Model.TotalItems > 20)
     {
         @await Component.InvokeAsync("Pagination", new {
-            currentPage = ViewBag.CurrentPage,
-            totalItems = ViewBag.TotalItems,
-            pageSize = ViewBag.PageSize,
-            actionName = "Index",
-            controllerName = "TvShow",
-            routeParams = new Dictionary<string, string> {
-                { "sTerm", Model.STerm ?? "" },
-                { "genreId", Model.GenreId.ToString() }
-            }
-        })
+    currentPage = ViewBag.CurrentPage,
+    totalItems = ViewBag.TotalItems,
+    pageSize = ViewBag.PageSize,
+    actionName = "Index",
+    controllerName = "TvShow",
+    routeParams = new Dictionary<string, string> {
+    { "sTerm", Model.STerm ?? "" },
+    { "genreId", Model.GenreId.ToString() }
+    }
+    })
     }
 </div>
 
@@ -96,11 +97,11 @@
         $(document).ready(function () {
             $(document).on("click", ".toggle-tv-watchlist", function (e) {
                 e.preventDefault();
-                
+
                 var btn = $(this);
                 var id = btn.data("id");
                 var action = btn.attr("data-action");
-                
+
                 var isAdd = action === "add";
 
                 var config = {
@@ -117,7 +118,7 @@
                     url: config.url,
                     type: "POST",
                     data: { tvShowId: id },
-                    success: function() {
+                    success: function () {
                         btn.attr("data-action", config.newAction);
                         btn.removeClass(config.removeCls).addClass(config.addCls);
                         btn.html(config.icon);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Domain.Entities;
+using Movie_Watchlist.Application.DTOs;
 using System.Security.Claims;
 
 
@@ -29,21 +30,21 @@ namespace Movie_Watchlist.Presintation.Controllers
             var data = _cacheService.GetHomepageData();
             if (data == null)
             {
-                // Fallback if cache is empty
+                // Fallback if cache is empty - worker may not have run yet
                 data = new HomepageData();
             }
 
             var model = new HomepageViewModel
             {
-                HeroMovies = data.TrendingMovies.Take(5).ToList(), // Top 5 for rotating hero
-                TrendingMovies = data.TrendingMovies,
-                TrendingTvShows = data.TrendingTvShows,
-                NowPlaying = data.NowPlaying,
-                Upcoming = data.Upcoming,
-                TopRatedMovies = data.TopRatedMovies,
-                TopRatedTvShows = data.TopRatedTvShows,
-                PopularMovies = data.PopularMovies,
-                PopularTvShows = data.PopularTvShows
+                HeroMovies = data.TrendingMovies?.Take(5).ToList() ?? new List<MovieApiResult>(),
+                TrendingMovies = data.TrendingMovies ?? new List<MovieApiResult>(),
+                TrendingTvShows = data.TrendingTvShows ?? new List<TvShowApiResult>(),
+                NowPlaying = data.NowPlaying ?? new List<MovieApiResult>(),
+                Upcoming = data.Upcoming ?? new List<MovieApiResult>(),
+                TopRatedMovies = data.TopRatedMovies ?? new List<MovieApiResult>(),
+                TopRatedTvShows = data.TopRatedTvShows ?? new List<TvShowApiResult>(),
+                PopularMovies = data.PopularMovies ?? new List<MovieApiResult>(),
+                PopularTvShows = data.PopularTvShows ?? new List<TvShowApiResult>()
             };
 
             return View(model);
@@ -54,63 +55,42 @@ namespace Movie_Watchlist.Presintation.Controllers
             var model = new ShowMoreViewModel
             {
                 Category = category,
-                CurrentPage = page,
-                TotalPages = 500 // TMDB usually limits to 500 pages
+                CurrentPage = page
             };
+
+            string dbCategory = "";
+            string mediaType = "";
 
             switch (category)
             {
                 case "trending-movies":
-                    model.SectionTitle = "🔥 Trending Movies";
-                    model.IsMovieSection = true;
-                    var tmRes = await _tmdbService.GetTrendingMoviesAsync(page);
-                    if (tmRes != null) { model.Movies = tmRes.Results; model.TotalPages = tmRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "🔥 Trending Movies"; dbCategory = "trending"; mediaType = "movie"; break;
                 case "trending-tv":
-                    model.SectionTitle = "🔥 Trending TV Shows";
-                    model.IsMovieSection = false;
-                    var ttRes = await _tmdbService.GetTrendingTvShowsAsync(page);
-                    if (ttRes != null) { model.TvShows = ttRes.Results; model.TotalPages = ttRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "🔥 Trending TV Shows"; dbCategory = "trending"; mediaType = "tv"; break;
                 case "now-playing":
-                    model.SectionTitle = "🎬 Now Playing";
-                    model.IsMovieSection = true;
-                    var npRes = await _tmdbService.GetNowPlayingMoviesAsync(page);
-                    if (npRes != null) { model.Movies = npRes.Results; model.TotalPages = npRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "🎬 Now Playing"; dbCategory = "now_playing"; mediaType = "movie"; break;
                 case "upcoming":
-                    model.SectionTitle = "📅 Upcoming";
-                    model.IsMovieSection = true;
-                    var uRes = await _tmdbService.GetUpcomingMoviesAsync(page);
-                    if (uRes != null) { model.Movies = uRes.Results; model.TotalPages = uRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "📅 Upcoming"; dbCategory = "upcoming"; mediaType = "movie"; break;
                 case "top-rated-movies":
-                    model.SectionTitle = "⭐ Top Rated Movies";
-                    model.IsMovieSection = true;
-                    var trmRes = await _tmdbService.GetTopRatedMoviesAsync(page);
-                    if (trmRes != null) { model.Movies = trmRes.Results; model.TotalPages = trmRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "⭐ Top Rated Movies"; dbCategory = "top_rated"; mediaType = "movie"; break;
                 case "top-rated-tv":
-                    model.SectionTitle = "📺 Top Rated TV Shows";
-                    model.IsMovieSection = false;
-                    var trtRes = await _tmdbService.GetTopRatedTvShowsAsync(page);
-                    if (trtRes != null) { model.TvShows = trtRes.Results; model.TotalPages = trtRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "📺 Top Rated TV Shows"; dbCategory = "top_rated"; mediaType = "tv"; break;
                 case "popular-movies":
-                    model.SectionTitle = "🔥 Popular Movies";
-                    model.IsMovieSection = true;
-                    var pmRes = await _tmdbService.GetPopularMoviesAsync(page);
-                    if (pmRes != null) { model.Movies = pmRes.Results; model.TotalPages = pmRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "🔥 Popular Movies"; dbCategory = "popular"; mediaType = "movie"; break;
                 case "popular-tv":
-                    model.SectionTitle = "📺 Popular TV Shows";
-                    model.IsMovieSection = false;
-                    var ptRes = await _tmdbService.GetPopularTvShowsAsync(page);
-                    if (ptRes != null) { model.TvShows = ptRes.Results; model.TotalPages = ptRes.TotalPages; }
-                    break;
+                    model.SectionTitle = "📺 Popular TV Shows"; dbCategory = "popular"; mediaType = "tv"; break;
                 default:
                     return NotFound();
             }
+
+            model.IsMovieSection = mediaType == "movie";
+            int pageSize = 20;
+
+            var (items, totalCount) = await _homeRepo.GetCategoryItemsAsync(dbCategory, mediaType, page, pageSize);
+            
+            model.Items = items.ToList();
+            model.TotalItems = totalCount;
+            model.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
             return View(model);
         }

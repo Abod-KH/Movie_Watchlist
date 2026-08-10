@@ -40,5 +40,33 @@ namespace Movie_Watchlist.Infrastructure.Repositories
         {
             return await ExecuteQuerySingleAsync<Movie>("sp_GetMovieByTmdbId", ("@TmdbId", tmdbId));
         }
+
+        public async Task<(IEnumerable<MediaHomeViewModel> Items, int TotalCount)> GetCategoryItemsAsync(string category, string mediaType, int pageNumber = 1, int pageSize = 20)
+        {
+            return await ExecuteQueryListWithOutputAsync<MediaHomeViewModel>("sp_GetCategoryItems",
+                "@TotalCount",
+                ("@Category", category),
+                ("@MediaType", mediaType),
+                ("@Page", pageNumber),
+                ("@PageSize", pageSize));
+        }
+
+        public async Task<(IEnumerable<MediaHomeViewModel> Items, int TotalCount)> SearchMediaAsync(string query, string mediaType, int pageNumber = 1, int pageSize = 20)
+        {
+            return await ExecuteQueryListWithOutputAsync<MediaHomeViewModel>("sp_SearchMedia",
+                "@TotalCount",
+                ("@SearchTerm", query),
+                ("@MediaType", mediaType),
+                ("@Page", pageNumber),
+                ("@PageSize", pageSize));
+        }
+
+        public async Task UpdateCategoryMappingsAsync(string category, string mediaType, string mappingsJson)
+        {
+            await ExecuteNonQueryAsync("sp_UpdateCategoryMappings",
+                ("@Category", category),
+                ("@MediaType", mediaType),
+                ("@MappingsJson", mappingsJson));
+        }
     }
 }

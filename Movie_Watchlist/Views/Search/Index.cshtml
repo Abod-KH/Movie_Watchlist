@@ -1,0 +1,77 @@
+@model Movie_Watchlist.Application.ViewModels.SearchViewModel
+@{
+    ViewData["Title"] = "Search Results";
+    var query = ViewBag.SearchTerm as string ?? "";
+    var currentType = ViewBag.SearchType as string ?? "all";
+}
+
+<div class="container mt-4 pt-5">
+    <h2 class="mb-4">Search Results for "@query"</h2>
+
+    <!-- Tabs -->
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link @(currentType == "all" ? "active" : "text-white")" href="/Search?q=@query&type=all">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentType == "movie" ? "active" : "text-white")" href="/Search?q=@query&type=movie">Movies</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(currentType == "tv" ? "active" : "text-white")" href="/Search?q=@query&type=tv">TV Shows</a>
+        </li>
+    </ul>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 mb-5">
+        @if (Model.Items.Any())
+        {
+            @foreach (var item in Model.Items)
+            {
+                <div class="col">
+                    <partial name="_PosterCard" model="item" />
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center text-muted">
+                <h4>No results found.</h4>
+                <p>Try adjusting your search query.</p>
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalItems > Model.PageSize)
+    {
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination pagination-sm custom-pagination">
+                @if (Model.HasPreviousPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Search?q=@query&type=@currentType&page=@(Model.CurrentPage - 1)">&laquo; Prev</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    if (i == 1 || i == Model.TotalPages || (i >= Model.CurrentPage - 2 && i <= Model.CurrentPage + 2))
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/Search?q=@query&type=@currentType&page=@i">@i</a>
+                        </li>
+                    }
+                    else if (i == Model.CurrentPage - 3 || i == Model.CurrentPage + 3)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Search?q=@query&type=@currentType&page=@(Model.CurrentPage + 1)">Next &raquo;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

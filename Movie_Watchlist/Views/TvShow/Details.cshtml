@@ -10,10 +10,18 @@
         </div>
         <div class="col-md-8">
             <h2>@Model.TvShow.Title</h2>
-            <div class="mb-3">
-                <span class="badge bg-secondary">@Model.TvShow.ReleaseYear</span>
-                <span class="badge bg-info text-dark">@Model.TvShow.GenreName</span>
+            <div class="mb-3 d-flex align-items-center">
+                <span class="badge bg-secondary me-2">@Model.TvShow.ReleaseYear</span>
+                <span class="badge bg-info text-dark me-2">@Model.TvShow.GenreName</span>
                 <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> @Model.TvShow.Rating.ToString("0.0")</span>
+                
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button class="btn btn-outline-primary ms-4 btn-sm fw-bold toggle-tv-watchlist"
+                            data-showid="@Model.TvShow.Id" data-action="add" type="button">
+                        <i class="bi bi-plus-lg me-1"></i> Add to Watchlist
+                    </button>
+                }
             </div>
             
             <h4>Overview</h4>
@@ -36,16 +44,43 @@
             @foreach (var show in Model.SimilarTvShows)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <a asp-action="DetailsByTmdb" asp-route-tmdbId="@show.Id" class="text-decoration-none">
-                            <img src="@show.FullPosterPath" class="card-img-top" alt="@show.Title">
-                        </a>
-                        <div class="card-body p-2 text-center">
-                            <p class="card-title text-truncate small mb-0 fw-bold" title="@show.Title">@show.Title</p>
-                        </div>
-                    </div>
+                    @{
+                        var mediaVM = new Movie_Watchlist.Application.ViewModels.MediaHomeViewModel
+                        {
+                            TmdbId = show.Id,
+                            Title = show.Title ?? "Unknown",
+                            PosterPath = show.FullPosterPath,
+                            Rating = show.Rating,
+                            MediaType = "tv",
+                            ReleaseYear = 0
+                        };
+                        
+                        if (!string.IsNullOrEmpty(show.FirstAirDate) && show.FirstAirDate.Length >= 4) {
+                            mediaVM.ReleaseYear = int.Parse(show.FirstAirDate.Substring(0, 4));
+                        }
+                    }
+                    <partial name="_PosterCard" model="mediaVM" />
                 </div>
             }
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".toggle-tv-watchlist").click(function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var showId = btn.data("showid");
+                
+                $.post('/TvShowWatchlist/AddItem', { tvShowId: showId, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() }, function() {
+                    btn.removeClass('btn-outline-primary').addClass('btn-success').html('<i class="bi bi-check-lg me-1"></i> Added');
+                    btn.attr('disabled', true);
+                }).fail(function() {
+                    alert('Failed to add to watchlist or already added.');
+                });
+            });
+        });
+    </script>
+}

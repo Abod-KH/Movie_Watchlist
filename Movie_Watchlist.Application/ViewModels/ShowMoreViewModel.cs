@@ -6,10 +6,10 @@ namespace Movie_Watchlist.Application.ViewModels
     {
         public string SectionTitle { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
-        public List<MovieApiResult> Movies { get; set; } = new();
-        public List<TvShowApiResult> TvShows { get; set; } = new();
+        public List<MediaHomeViewModel> Items { get; set; } = new();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
+        public int TotalItems { get; set; }
         public bool IsMovieSection { get; set; }
     }
 }

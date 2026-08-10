@@ -23,14 +23,29 @@
                 @foreach (var item in items)
                 {
                     <div class="swiper-slide">
-                        <a asp-controller="@(isMovie ? "Home" : "TvShow")" 
-                           asp-action="DetailsByTmdb" 
-                           asp-route-tmdbId="@item.Id" 
-                           class="text-decoration-none">
-                            <div class="poster-card">
-                                <img src="@item.FullPosterPath" alt="@item.Title" loading="lazy">
-                            </div>
-                        </a>
+                        @{
+                            var isTv = item.GetType().Name.Contains("TvShow");
+                            double rating = 0;
+                            try { rating = item.VoteAverage; } catch { try { rating = item.Rating; } catch { } }
+
+                            var mediaVM = new Movie_Watchlist.Application.ViewModels.MediaHomeViewModel
+                            {
+                                TmdbId = item.Id,
+                                Title = item.Title ?? "Unknown",
+                                PosterPath = item.FullPosterPath,
+                                Rating = rating,
+                                MediaType = isMovie ? "movie" : "tv",
+                                ReleaseYear = 0
+                            };
+                            
+                            try {
+                                string dateStr = isTv ? item.FirstAirDate : item.ReleaseDate;
+                                if (!string.IsNullOrEmpty(dateStr) && dateStr.Length >= 4) {
+                                    mediaVM.ReleaseYear = int.Parse(dateStr.Substring(0, 4));
+                                }
+                            } catch { }
+                        }
+                        <partial name="_PosterCard" model="mediaVM" />
                     </div>
                 }
             </div>

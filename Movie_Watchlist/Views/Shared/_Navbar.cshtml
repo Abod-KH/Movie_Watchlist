@@ -37,6 +37,12 @@
                 </ul>
              
                 <div class="d-flex align-items-center gap-2">
+                    <form class="d-flex position-relative me-3" action="/Search/Index" method="get">
+                        <input class="form-control bg-dark text-white border-secondary" type="search" name="q" placeholder="Search movies, TV..." aria-label="Search" id="globalSearchInput" autocomplete="off">
+                        <button class="btn btn-outline-primary ms-1" type="submit"><i class="bi bi-search"></i></button>
+                        <div id="autocompleteResults" class="dropdown-menu w-100 mt-1 shadow-lg" style="display: none; position: absolute; top: 100%; left: 0; max-height: 400px; overflow-y: auto;">
+                        </div>
+                    </form>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
