@@ -1,21 +1,19 @@
-//using Humanizer.Localisation;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Movie_Watchlist.Domain.Entities
 {
-    
     public class Movie
     {
         public int Id { get; set; }
 
-        
         [MaxLength(200)]
         public string Title { get; set; } = "Unknown";
         public int TmdbId { get; set; }
         [MaxLength(1000)]
         public string Description { get; set; } = string.Empty;
 
-        public string? PosterPath { get; set; } 
+        public string? PosterPath { get; set; }
+        public string? BackdropPath { get; set; }
 
         public int ReleaseYear { get; set; }
 

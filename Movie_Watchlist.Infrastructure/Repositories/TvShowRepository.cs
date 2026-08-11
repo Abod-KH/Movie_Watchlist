@@ -20,6 +20,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             table.Columns.Add("Title", typeof(string));
             table.Columns.Add("Description", typeof(string));
             table.Columns.Add("PosterPath", typeof(string));
+            table.Columns.Add("BackdropPath", typeof(string));
             table.Columns.Add("Rating", typeof(double));
             table.Columns.Add("ReleaseYear", typeof(int));
             table.Columns.Add("GenreId", typeof(int));
@@ -31,6 +32,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     show.Title ?? string.Empty,
                     show.Description ?? string.Empty,
                     show.PosterPath ?? string.Empty,
+                    show.BackdropPath ?? string.Empty,
                     show.Rating,
                     show.ReleaseYear,
                     show.GenreId

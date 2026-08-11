@@ -20,6 +20,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             table.Columns.Add("Title", typeof(string));
             table.Columns.Add("Description", typeof(string));
             table.Columns.Add("PosterPath", typeof(string));
+            table.Columns.Add("BackdropPath", typeof(string));
             table.Columns.Add("ReleaseYear", typeof(int));
             table.Columns.Add("GenreId", typeof(int));
             table.Columns.Add("VoteAverage", typeof(double));
@@ -31,6 +32,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     movie.Title ?? string.Empty,
                     movie.Description ?? string.Empty,
                     movie.PosterPath ?? string.Empty,
+                    movie.BackdropPath ?? string.Empty,
                     movie.ReleaseYear,
                     movie.GenreId,
                     movie.VoteAverage

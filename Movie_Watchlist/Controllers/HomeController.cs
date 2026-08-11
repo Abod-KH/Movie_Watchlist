@@ -1,12 +1,9 @@
-
 using Microsoft.AspNetCore.Mvc;
-
-using Microsoft.Extensions.Caching.Memory;
 using Movie_Watchlist.Domain.Entities;
 using Movie_Watchlist.Application.DTOs;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.ViewModels;
 using System.Security.Claims;
-
-
 
 namespace Movie_Watchlist.Presintation.Controllers
 {
@@ -14,24 +11,38 @@ namespace Movie_Watchlist.Presintation.Controllers
     {
         private readonly IHomeRepository _homeRepo;
         private readonly ITmdbService _tmdbService;
-
-
         private readonly IHomepageCacheService _cacheService;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IHomeRepository homeRepo, ITmdbService tmdbService, IHomepageCacheService cacheService)
+        public HomeController(
+            IHomeRepository homeRepo,
+            ITmdbService tmdbService,
+            IHomepageCacheService cacheService,
+            ILogger<HomeController> logger)
         {
             _homeRepo = homeRepo;
             _tmdbService = tmdbService;
             _cacheService = cacheService;
+            _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var data = _cacheService.GetHomepageData();
+
             if (data == null)
             {
-                // Fallback if cache is empty - worker may not have run yet
-                data = new HomepageData();
+                _logger.LogInformation("Homepage cache miss on request. Loading from database...");
+                try
+                {
+                    data = await _cacheService.LoadHomepageFromDatabaseAsync(HttpContext.RequestAborted);
+                    _logger.LogInformation("Successfully loaded homepage from database on cache miss.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to load homepage from database on cache miss. Returning empty data.");
+                    data = new HomepageData();
+                }
             }
 
             var model = new HomepageViewModel

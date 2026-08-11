@@ -6,5 +6,6 @@ namespace Movie_Watchlist.Application.Interfaces
     {
         HomepageData? GetHomepageData();
         void SetHomepageData(HomepageData data);
+        Task<HomepageData> LoadHomepageFromDatabaseAsync(CancellationToken cancellationToken = default);
     }
 }
