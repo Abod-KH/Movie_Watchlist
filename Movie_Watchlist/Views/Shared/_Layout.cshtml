@@ -15,6 +15,7 @@
 
 </head>
 <body>
+    @Html.AntiForgeryToken()
     <partial name="_Navbar" />
     @if (ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Home")
     {

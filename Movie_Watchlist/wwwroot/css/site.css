@@ -22,15 +22,6 @@ body {
 .card {
     border-radius: 1.5rem;
 }
-.card-img {
-    height: 350px;
-    object-fit: cover;
-    cursor: pointer;
-}
-btn-watchlist {
-    width: 45px;
-    height: 45px;
-}
 /* Custom focus ring for accessibility */
 .btn:focus, .btn:active:focus,
 .btn-link.nav-link:focus,
