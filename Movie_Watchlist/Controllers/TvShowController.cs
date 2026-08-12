@@ -11,11 +11,16 @@ namespace Movie_Watchlist.Controllers
     {
         private readonly ITvShowHomeRepository _tvShowHomeRepo;
         private readonly ITmdbService _tmdbService;
+        private readonly ITvShowWatchlistRepository _tvShowWatchlistRepo;
 
-        public TvShowController(ITvShowHomeRepository tvShowHomeRepo, ITmdbService tmdbService)
+        public TvShowController(
+            ITvShowHomeRepository tvShowHomeRepo,
+            ITmdbService tmdbService,
+            ITvShowWatchlistRepository tvShowWatchlistRepo)
         {
             _tvShowHomeRepo = tvShowHomeRepo;
             _tmdbService = tmdbService;
+            _tvShowWatchlistRepo = tvShowWatchlistRepo;
         }
 
         public async Task<IActionResult> Index(string sTerm = "", int genreId = 0, int page = 1)
@@ -38,7 +43,7 @@ namespace Movie_Watchlist.Controllers
                 TotalItems = totalCount,
                 TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
             };
-ViewBag.CurrentPage = page;
+            ViewBag.CurrentPage = page;
             ViewBag.TotalItems = totalCount;
             ViewBag.PageSize = pageSize;
             return View(model);
@@ -58,6 +63,12 @@ ViewBag.CurrentPage = page;
                 TrailerKey = trailerKey,
                 SimilarTvShows = similarShows.ToList()
             };
+
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId) && tvShow.Id > 0)
+            {
+                model.IsInWatchlist = await _tvShowWatchlistRepo.IsInWatchlistAsync(tvShow.Id, userId);
+            }
 
             return View(model);
         }

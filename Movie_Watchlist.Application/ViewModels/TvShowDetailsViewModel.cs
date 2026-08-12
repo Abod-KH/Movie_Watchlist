@@ -8,5 +8,6 @@ namespace Movie_Watchlist.Application.ViewModels
         public TvShow TvShow { get; set; } = new();
         public string? TrailerKey { get; set; }
         public List<TvShowApiResult> SimilarTvShows { get; set; } = new();
+        public bool IsInWatchlist { get; set; }
     }
 }

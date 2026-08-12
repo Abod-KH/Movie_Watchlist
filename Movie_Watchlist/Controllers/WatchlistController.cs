@@ -49,57 +49,39 @@ namespace Movie_Watchlist.Presintation.Controllers
             var model = await GetViewModelData(page);
             return PartialView("_WatchlistContent", model);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(int movieId)
         {
-
             bool isSuccess = await _watchlistRepo.AddToWatchlist(movieId, _userId);
-
-            if (isSuccess)
-            {
-                return Ok();
-            }
-            else
-            {
-
-                return BadRequest();
-            }
+            return isSuccess ? Ok() : BadRequest();
         }
+
         public async Task<IActionResult> RemoveItem(int movieId)
         {
-            if (movieId <= 0)
-            {
-                return BadRequest();
-            }
-
+            if (movieId <= 0) return BadRequest();
 
             bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
-
-            if (!success)
-            {
-                return NotFound();
-            }
-
+            if (!success) return NotFound();
             return RedirectToAction(nameof(UserWatchlist));
-
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromWatchlist(int movieId)
         {
-
             bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
-
-            if (!success)
-            {
-                return NotFound();
-            }
-
-            return Ok();
+            return success ? Ok() : NotFound();
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Toggle(int movieId)
+        {
+            if (movieId <= 0) return BadRequest(new { isInWatchlist = false });
+            bool isInWatchlist = await _watchlistRepo.ToggleInWatchlistAsync(movieId, _userId);
+            return Ok(new { isInWatchlist });
+        }
     }
 }

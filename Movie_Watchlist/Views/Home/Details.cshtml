@@ -1,6 +1,7 @@
 @model Movie_Watchlist.Application.ViewModels.MovieDetailsViewModel
 @{
     ViewData["Title"] = Model.Movie!.Title;
+    var initialInWatchlist = Model.IsInWatchlist ? "true" : "false";
 }
 
 <div class="container mt-5">
@@ -20,20 +21,30 @@
             <div class="col-lg-8">
                 <div class="card-body p-4 p-lg-5">
 
-                    <h1 class="fw-bold">@Model.Movie.Title</h1>
-                    <p class="text-muted">
-                        @Model.Movie.ReleaseYear • @Model.Movie.Genre?.Name
-                    </p>
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-star-fill text-warning me-1 fs-5"></i>
-                        <span class="fw-bold fs-5">@Model.Movie.VoteAverage.ToString("0.0")</span>
-                        <span class="text-muted ms-1">/ 10</span>
-                        
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div class="flex-grow-1">
+                            <h1 class="fw-bold">@Model.Movie.Title</h1>
+                            <p class="text-muted">
+                                @Model.Movie.ReleaseYear • @Model.Movie.Genre?.Name
+                            </p>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-star-fill text-warning me-1 fs-5"></i>
+                                <span class="fw-bold fs-5">@Model.Movie.VoteAverage.ToString("0.0")</span>
+                                <span class="text-muted ms-1">/ 10</span>
+                            </div>
+                        </div>
+
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <button class="btn btn-outline-primary ms-4 btn-sm fw-bold toggle-watchlist"
-                                    data-movieid="@Model.Movie.Id" data-action="add" type="button">
-                                <i class="bi bi-plus-lg me-1"></i> Add to Watchlist
+                            <button id="watchlistToggle"
+                                    type="button"
+                                    data-movieid="@Model.Movie.Id"
+                                    data-url="@Url.Action("Toggle", "Watchlist")"
+                                    data-initial-in="@initialInWatchlist"
+                                    class="btn btn-link p-2 me-2 text-decoration-none watchlist-bookmark @(Model.IsInWatchlist ? "is-in-watchlist" : "")"
+                                    aria-label="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")"
+                                    title="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")">
+                                <i class="bi @(Model.IsInWatchlist ? "bi-bookmark-fill" : "bi-bookmark") fs-3"></i>
                             </button>
                         }
                     </div>
@@ -113,20 +124,66 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $(".toggle-watchlist").click(function (e) {
+            var btn = $("#watchlistToggle");
+            var icon = btn.find("i");
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            var toggleUrl = btn.data("url");
+            var movieId = btn.data("movieid");
+
+            function setVisualState(isInWatchlist) {
+                if (isInWatchlist) {
+                    btn.addClass("is-in-watchlist");
+                    icon.removeClass("bi-bookmark").addClass("bi-bookmark-fill");
+                } else {
+                    btn.removeClass("is-in-watchlist");
+                    icon.removeClass("bi-bookmark-fill").addClass("bi-bookmark");
+                }
+            }
+
+            btn.click(function (e) {
                 e.preventDefault();
-                var btn = $(this);
-                var movieId = btn.data("movieid");
-                
-                $.post('/Watchlist/AddItem', { movieId: movieId, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() }, function() {
-                    btn.removeClass('btn-outline-primary').addClass('btn-success').html('<i class="bi bi-check-lg me-1"></i> Added');
-                    btn.attr('disabled', true);
-                }).fail(function() {
-                    alert('Failed to add to watchlist or already added.');
-                });
+                btn.prop("disabled", true);
+
+                $.post(toggleUrl, { movieId: movieId, __RequestVerificationToken: token })
+                    .done(function (res) {
+                        setVisualState(!!res.isInWatchlist);
+                    })
+                    .fail(function () {
+                        alert("Failed to update watchlist. Please try again.");
+                    })
+                    .always(function () {
+                        btn.prop("disabled", false);
+                    });
             });
         });
     </script>
 }
+
+<style>
+    .watchlist-bookmark {
+        transition: transform 0.2s ease, color 0.2s ease;
+        color: #fff;
+        background: rgba(20,20,20,0.55);
+        border-radius: 50% !important;
+        width: 52px;
+        height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .watchlist-bookmark:hover {
+        transform: scale(1.08);
+        color: #fff;
+        background: rgba(20,20,20,0.8);
+    }
+    .watchlist-bookmark.is-in-watchlist,
+    .watchlist-bookmark.is-in-watchlist:hover {
+        color: #E50914;
+    }
+    .watchlist-bookmark:active {
+        transform: scale(0.9);
+    }
+</style>
+
 
 

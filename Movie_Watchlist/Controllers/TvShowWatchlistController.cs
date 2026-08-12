@@ -91,6 +91,14 @@ namespace Movie_Watchlist.Controllers
             return Ok();
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Toggle(int tvShowId)
+        {
+            if (tvShowId <= 0) return BadRequest(new { isInWatchlist = false });
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            bool isInWatchlist = await _watchlistRepo.ToggleInWatchlistAsync(tvShowId, userId);
+            return Ok(new { isInWatchlist });
+        }
     }
 }

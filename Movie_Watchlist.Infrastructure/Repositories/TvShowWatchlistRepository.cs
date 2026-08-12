@@ -82,5 +82,41 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> IsInWatchlistAsync(int tvShowId, string userId)
+        {
+            const string sql = @"
+                SELECT CASE WHEN EXISTS (
+                    SELECT 1 FROM dbo.TvShowWatchlistItem
+                    WHERE TvShowId = @TvShowId AND UserId = @UserId
+                ) THEN 1 ELSE 0 END";
+            return await ExecuteTextScalarAsync(sql,
+                ("@TvShowId", tvShowId),
+                ("@UserId", userId)) == 1;
+        }
+
+        public async Task<bool> ToggleInWatchlistAsync(int tvShowId, string userId)
+        {
+            const string sql = @"
+                DECLARE @Exists BIT;
+                SELECT @Exists = CASE WHEN EXISTS (
+                    SELECT 1 FROM dbo.TvShowWatchlistItem WHERE TvShowId = @TvShowId AND UserId = @UserId
+                ) THEN 1 ELSE 0 END;
+
+                IF @Exists = 1
+                BEGIN
+                    DELETE FROM dbo.TvShowWatchlistItem WHERE TvShowId = @TvShowId AND UserId = @UserId;
+                    SELECT 0;
+                END
+                ELSE
+                BEGIN
+                    INSERT INTO dbo.TvShowWatchlistItem (UserId, TvShowId, DateAdded, IsWatched)
+                    VALUES (@UserId, @TvShowId, GETDATE(), 0);
+                    SELECT 1;
+                END";
+            return await ExecuteTextScalarAsync(sql,
+                ("@TvShowId", tvShowId),
+                ("@UserId", userId)) == 1;
+        }
     }
 }

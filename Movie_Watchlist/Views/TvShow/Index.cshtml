@@ -4,34 +4,7 @@
 }
 
 <div class="container mt-4">
-    <!-- Quick filter form -->
-    <form asp-action="Index" method="get" class="mb-4">
-        <div class="row g-2 align-items-center">
-            <div class="col-md-4">
-                <input type="text" name="sTerm" class="form-control" placeholder="Search TV Shows..."
-                    value="@Model.STerm">
-            </div>
-            <div class="col-md-3">
-                <select name="genreId" class="form-select">
-                    <option value="0">All Genres</option>
-                    @foreach (var genre in Model.Genres)
-                    {
-                        if (genre.Id == Model.GenreId)
-                        {
-                            <option value="@genre.Id" selected>@genre.Name</option>
-                        }
-                        else
-                        {
-                            <option value="@genre.Id">@genre.Name</option>
-                        }
-                    }
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Filter</button>
-            </div>
-        </div>
-    </form>
+   
 
     <h2 class="text-center mb-4">Latest TV Shows</h2>
 

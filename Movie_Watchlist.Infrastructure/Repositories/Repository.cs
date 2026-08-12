@@ -133,6 +133,36 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             await command.ExecuteNonQueryAsync();
         }
 
+        protected async Task<int> ExecuteTextScalarAsync(string sql, params (string name, object? value)[] parameters)
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            using var command = new SqlCommand(sql, connection);
+            command.CommandType = CommandType.Text;
+            command.CommandTimeout = 60;
+            foreach (var p in parameters)
+            {
+                command.Parameters.AddWithValue(p.name, p.value ?? DBNull.Value);
+            }
+            await connection.OpenAsync();
+            var result = await command.ExecuteScalarAsync();
+            if (result == null || result == DBNull.Value) return 0;
+            return (int)Convert.ChangeType(result, typeof(int));
+        }
+
+        protected async Task<int> ExecuteTextNonQueryAsync(string sql, params (string name, object? value)[] parameters)
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            using var command = new SqlCommand(sql, connection);
+            command.CommandType = CommandType.Text;
+            command.CommandTimeout = 60;
+            foreach (var p in parameters)
+            {
+                command.Parameters.AddWithValue(p.name, p.value ?? DBNull.Value);
+            }
+            await connection.OpenAsync();
+            return await command.ExecuteNonQueryAsync();
+        }
+
         protected static T MapReaderToObject<T>(SqlDataReader reader) where T : new()
         {
             var obj = new T();

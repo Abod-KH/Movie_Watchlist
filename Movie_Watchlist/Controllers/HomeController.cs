@@ -13,17 +13,20 @@ namespace Movie_Watchlist.Presintation.Controllers
         private readonly ITmdbService _tmdbService;
         private readonly IHomepageCacheService _cacheService;
         private readonly ILogger<HomeController> _logger;
+        private readonly IUserWatchlistRepository _userWatchlistRepo;
 
         public HomeController(
             IHomeRepository homeRepo,
             ITmdbService tmdbService,
             IHomepageCacheService cacheService,
-            ILogger<HomeController> logger)
+            ILogger<HomeController> logger,
+            IUserWatchlistRepository userWatchlistRepo)
         {
             _homeRepo = homeRepo;
             _tmdbService = tmdbService;
             _cacheService = cacheService;
             _logger = logger;
+            _userWatchlistRepo = userWatchlistRepo;
         }
 
         public async Task<IActionResult> Index()
@@ -180,11 +183,19 @@ namespace Movie_Watchlist.Presintation.Controllers
             var trailerKey = await _tmdbService.GetMovieTrailerKeyAsync(movie.TmdbId);
             var similarMovies = await _tmdbService.GetSimilarMoviesAsync(movie.TmdbId);
 
+            bool isInWatchlist = false;
+            string? userId = User.GetUserId();
+            if (!string.IsNullOrEmpty(userId) && movie.Id > 0)
+            {
+                isInWatchlist = await _userWatchlistRepo.IsInWatchlistAsync(movie.Id, userId);
+            }
+
             return new MovieDetailsViewModel
             {
                 Movie = movie,
                 TrailerKey = trailerKey,
-                SimilarMovies = similarMovies
+                SimilarMovies = similarMovies,
+                IsInWatchlist = isInWatchlist
             };
         }
 
