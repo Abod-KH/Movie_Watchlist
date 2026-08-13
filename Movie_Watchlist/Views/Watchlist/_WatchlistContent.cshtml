@@ -1,6 +1,5 @@
+@using Movie_Watchlist.Application.ViewModels
 @model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
-
-
 
 @if (!Model.Movies.Any())
 {
@@ -10,58 +9,24 @@
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
         @foreach (var movie in Model.Movies)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm border-0">
-                    <img src="@movie.PosterPath"
-                         class="card-img-top card-img"
-                         alt="@movie.Title"
-                         onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
-
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">@movie.Title</h5>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-muted small">@movie.ReleaseYear</span>
-                            <span class="small">
-                                <i class="bi bi-star-fill text-warning me-1"></i>
-                                <span class="fw-semibold">@movie.VoteAverage.ToString("0.0")</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <form asp-controller="Watchlist"
-                          asp-action="RemoveFromWatchlist"
-                          method="post"
-                          class="remove-form">
-
-                        <input type="hidden"
-                               name="movieId"
-                               value="@movie.MovieId" />
-
-                        <button type="submit"
-                                class="btn btn-outline-danger btn-sm w-100">
-
-                            <i class="bi bi-trash"></i>
-                            Remove
-
-                        </button>
-
-                    </form>
-                </div>
+                <partial name="_PosterCard" model="movie.ToMediaCard()" />
             </div>
         }
     </div>
 
     @if (ViewBag.TotalItems > ViewBag.PageSize)
     {
-        @await Component.InvokeAsync("Pagination", new { 
-            currentPage = ViewBag.CurrentPage, 
-            totalItems = ViewBag.TotalItems, 
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewBag.CurrentPage,
+            totalItems = ViewBag.TotalItems,
             pageSize = ViewBag.PageSize,
-            actionName = "UserWatchlist", 
-            controllerName = "Watchlist" 
+            actionName = "UserWatchlist",
+            controllerName = "Watchlist"
         })
     }
 }

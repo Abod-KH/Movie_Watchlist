@@ -1,103 +1,37 @@
-@model Movie_Watchlist.Application.ViewModels.TvShowDisplayModel
+@using Movie_Watchlist.Application.ViewModels
+@model TvShowDisplayModel
 @{
     ViewData["Title"] = "TV Shows";
 }
 
 <div class="container mt-4">
-   
+  
 
     <h2 class="text-center mb-4">Latest TV Shows</h2>
 
-    <div class="row row-cols-1 row-cols-md-4 g-4">
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
         @foreach (var show in Model.TvShows)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm position-relative">
-                    <div class="position-absolute top-0 start-0 m-2" style="z-index: 5;">
-                        @if (show.IsInWatchlist)
-                        {
-                            <button class="btn btn-success btn-sm rounded-circle shadow toggle-tv-watchlist btn-watchlist"
-                                data-id="@show.Id" data-action="remove" type="button">
-                                <i class="bi bi-bookmark-check-fill text-white fs-4"></i>
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-light btn-sm rounded-circle shadow border toggle-tv-watchlist btn-watchlist"
-                                data-id="@show.Id" data-action="add" type="button">
-                                <i class="bi bi-bookmark-plus text-primary fs-4"></i>
-                            </button>
-                        }
-                    </div>
-                    <div class="card h-100 shadow-sm">
-                        <a asp-action="Details" asp-route-id="@show.Id" class="text-decoration-none">
-                            <img src="@show.PosterPath" class="card-img-top card-img" alt="@show.Title">
-                        </a>
-                        <div class="card-body">
-                            <h5 class="card-title text-truncate">@show.Title</h5>
-                            <div class="d-flex align-items-center mb-1">
-                                <i class="bi bi-star-fill text-warning me-1"></i>
-                                <span class="fw-semibold">@show.Rating.ToString("0.0")</span>
-                                <span class="text-muted small ms-1">/ 10</span>
-                            </div>
-                            <p class="card-text text-muted mb-1">@show.ReleaseYear</p>
-                            <p class="card-text text-muted">@show.GenreName</p>
-                        </div>
-                    </div>
-                </div>
+                <partial name="_PosterCard" model="show.ToMediaCard()" />
             </div>
         }
     </div>
 
     @if (Model.TotalItems > 20)
     {
-        @await Component.InvokeAsync("Pagination", new {
-    currentPage = ViewBag.CurrentPage,
-    totalItems = ViewBag.TotalItems,
-    pageSize = ViewBag.PageSize,
-    actionName = "Index",
-    controllerName = "TvShow",
-    routeParams = new Dictionary<string, string> {
-    { "sTerm", Model.STerm ?? "" },
-    { "genreId", Model.GenreId.ToString() }
-    }
-    })
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewBag.CurrentPage,
+            totalItems = ViewBag.TotalItems,
+            pageSize = ViewBag.PageSize,
+            actionName = "Index",
+            controllerName = "TvShow",
+            routeParams = new Dictionary<string, string>
+            {
+                { "sTerm", Model.STerm ?? "" },
+                { "genreId", Model.GenreId.ToString() }
+            }
+        })
     }
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $(document).on("click", ".toggle-tv-watchlist", function (e) {
-                e.preventDefault();
-
-                var btn = $(this);
-                var id = btn.data("id");
-                var action = btn.attr("data-action");
-
-                var isAdd = action === "add";
-
-                var config = {
-                    url: isAdd ? '/TvShowWatchlist/AddItem' : '/TvShowWatchlist/RemoveFromWatchlist',
-                    newAction: isAdd ? 'remove' : 'add',
-                    removeCls: isAdd ? 'btn-light border' : 'btn-success',
-                    addCls: isAdd ? 'btn-success' : 'btn-light border',
-                    icon: isAdd ?
-                        '<i class="bi bi-bookmark-check-fill text-white fs-4"></i>' :
-                        '<i class="bi bi-bookmark-plus text-primary fs-4"></i>'
-                };
-
-                $.ajax({
-                    url: config.url,
-                    type: "POST",
-                    data: { tvShowId: id },
-                    success: function () {
-                        btn.attr("data-action", config.newAction);
-                        btn.removeClass(config.removeCls).addClass(config.addCls);
-                        btn.html(config.icon);
-                    }
-                });
-            });
-        });
-    </script>
-}

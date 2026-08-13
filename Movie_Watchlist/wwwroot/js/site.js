@@ -53,6 +53,32 @@ function switchButtonState(btn, config) {
     btn.html(config.icon);
 
 }
+// Watchlist toggle for the shared poster card (_PosterCard.cshtml)
+$(document).on("click", ".toggle-watchlist", function (e) {
+    e.preventDefault();
+
+    const btn = $(this);
+    const id = btn.data("id");
+    const isTv = btn.data("media-type") === "tv";
+    const isAdd = btn.attr("data-action") === "add";
+
+    const controller = isTv ? "TvShowWatchlist" : "Watchlist";
+    const config = {
+        newAction: isAdd ? "remove" : "add",
+        removeCls: isAdd ? "btn-light border" : "btn-success",
+        addCls: isAdd ? "btn-success" : "btn-light border",
+        icon: isAdd
+            ? '<i class="bi bi-bookmark-check-fill text-white fs-5"></i>'
+            : '<i class="bi bi-bookmark-plus text-primary fs-5"></i>'
+    };
+
+    $.ajax({
+        url: `/${controller}/${isAdd ? "AddItem" : "RemoveFromWatchlist"}`,
+        type: "POST",
+        data: isTv ? (isAdd ? { tvShowId: id } : { id: id }) : { movieId: id },
+        success: () => switchButtonState(btn, config)
+    });
+});
 
 // Global Search Autocomplete
 $(document).ready(function () {

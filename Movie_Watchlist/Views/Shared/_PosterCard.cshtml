@@ -2,30 +2,62 @@
 @model MediaHomeViewModel
 
 @{
+    var isTv = Model.MediaType == "tv";
+
     var posterUrl = Model.PosterPath != null
         ? (Model.PosterPath.StartsWith("http") ? Model.PosterPath : $"https://image.tmdb.org/t/p/w500{Model.PosterPath}")
         : "/images/no-poster.jpg";
 
-    var detailsUrl = Model.MediaType == "tv"
+    var detailsUrl = isTv
         ? Url.Action("Details", "TvShow", new { id = Model.Id })
         : Url.Action("Details", "Home", new { id = Model.Id });
 
+    // Id is 0 for API results that have no local DB row yet, fall back to the TMDB route
     if (Model.Id == 0 && Model.TmdbId > 0)
     {
-        detailsUrl = Model.MediaType == "tv"
+        detailsUrl = isTv
             ? Url.Action("DetailsByTmdb", "TvShow", new { tmdbId = Model.TmdbId })
             : Url.Action("DetailsByTmdb", "Home", new { tmdbId = Model.TmdbId });
     }
 }
 
-<a href="@detailsUrl" class="text-decoration-none d-block poster-card-container">
+<div class="poster-card-container">
     <div class="poster-card position-relative overflow-hidden rounded shadow-sm">
-        <img src="@posterUrl" alt="@Model.Title" class="w-100 h-100 object-fit-cover" loading="lazy" style="aspect-ratio: 2/3;">
+        <img src="@posterUrl" alt="@Model.Title" class="w-100 h-100 object-fit-cover" loading="lazy"
+             onerror="this.onerror=null;this.src='https://placehold.co/500x750?text=No+Poster+Found';">
+
+        <a href="@detailsUrl" class="stretched-link" aria-label="@Model.Title"></a>
 
         <!-- Rating Badge (Top Right) -->
-        <div class="position-absolute top-0 end-0 m-2 px-2 py-1 bg-dark bg-opacity-75 text-white fw-bold rounded-1 z-2" style="font-size: 0.85rem;">
+        <div class="poster-badge position-absolute top-0 end-0 m-2 px-2 py-1 bg-dark bg-opacity-75 text-white fw-bold rounded-1 z-2">
             @(Model.Rating > 0 ? Model.Rating.ToString("0.0") : "NR")
         </div>
+
+        <!-- Watchlist Action (Top Left) -->
+        @if (Model.Action == PosterCardAction.ToggleWatchlist)
+        {
+            <div class="position-absolute top-0 start-0 m-2 z-3">
+                <button type="button"
+                        class="btn btn-sm rounded-circle shadow toggle-watchlist @(Model.IsInWatchlist ? "btn-success" : "btn-light border")"
+                        data-id="@Model.Id"
+                        data-media-type="@Model.MediaType"
+                        data-action="@(Model.IsInWatchlist ? "remove" : "add")">
+                    <i class="bi @(Model.IsInWatchlist ? "bi-bookmark-check-fill text-white" : "bi-bookmark-plus text-primary") fs-5"></i>
+                </button>
+            </div>
+        }
+        else if (Model.Action == PosterCardAction.RemoveFromWatchlist)
+        {
+            <form asp-controller="@(isTv ? "TvShowWatchlist" : "Watchlist")"
+                  asp-action="RemoveFromWatchlist"
+                  method="post"
+                  class="remove-form position-absolute top-0 start-0 m-2 z-3">
+                <input type="hidden" name="@(isTv ? "id" : "movieId")" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger btn-sm rounded-circle shadow" title="Remove from watchlist">
+                    <i class="bi bi-trash fs-6"></i>
+                </button>
+            </form>
+        }
 
         <!-- Title + Info Bar (always visible at the bottom) -->
         <div class="poster-title-bar position-absolute bottom-0 start-0 w-100 p-2 text-white">
@@ -33,7 +65,7 @@
             <div class="d-flex justify-content-between align-items-center small text-white-50">
                 <span>@(Model.ReleaseYear > 0 ? Model.ReleaseYear.ToString() : "")</span>
                 <span>
-                    @if (Model.MediaType == "tv")
+                    @if (isTv)
                     {
                         <i class="bi bi-tv text-info"></i>
                     }
@@ -45,24 +77,15 @@
             </div>
         </div>
     </div>
-</a>
 
-<style>
-    .poster-card-container .poster-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    @if (Model.ShowAdminActions && User.IsInRole("Admin") && Model.Id > 0)
+    {
+        <div class="d-flex justify-content-between mt-2 position-relative z-3">
+            <a asp-area="Admin" asp-controller="Admin" asp-action="Edit" asp-route-id="@Model.Id"
+               class="btn btn-sm btn-outline-primary">Edit</a>
+            <form asp-area="Admin" asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+        </div>
     }
-    .poster-card-container:hover .poster-card {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
-        z-index: 10;
-    }
-    .poster-title-bar {
-        background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.75) 55%, rgba(0,0,0,0) 100%);
-        padding-top: 2rem !important;
-    }
-    .poster-title-bar h6 {
-        text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-        font-size: 0.95rem;
-        margin-bottom: 0.15rem !important;
-    }
-</style>
+</div>

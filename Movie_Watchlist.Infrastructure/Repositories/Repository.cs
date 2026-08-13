@@ -17,7 +17,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
         {
             var command = new SqlCommand(storedProcedure, connection);
             command.CommandType = CommandType.StoredProcedure;
-            command.CommandTimeout = 60;
+            command.CommandTimeout = 120;
             foreach (var param in parameters)
             {
                 command.Parameters.AddWithValue(param.name, param.value ?? DBNull.Value);
