@@ -20,7 +20,7 @@
         @foreach (var movie in Model.Movies)
         {
             var card = movie.ToMediaCard();
-            card.ShowAdminActions = true;
+        
 
             <div class="col">
                 <partial name="_PosterCard" model="card" />

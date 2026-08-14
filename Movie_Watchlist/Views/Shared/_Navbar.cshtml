@@ -1,50 +1,119 @@
 <header>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top shadow-lg py-2 ">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top shadow-lg py-2">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold d-flex align-items-center"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+
                 <i class="bi bi-film text-primary me-2 fs-3"></i>
                 <span class="text-white">MOVIE</span><span class="text-primary">HUB</span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler border-0"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
                 <i class="bi bi-list fs-1 text-white"></i>
             </button>
 
+
+            <!-- Navbar Content -->
             <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav me-auto mb-2 mb-sm-0 ms-sm-3">
+
+                <!-- Navigation Links -->
+                <ul class="navbar-nav mb-2 mb-sm-0 ms-sm-3 flex-shrink-0">
+
+                    
+
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" asp-area="" asp-controller="Home" asp-action="Index">
-                            <i class="bi bi-house-door me-1"></i> Home
+                        <a class="nav-link text-white-50"
+                               asp-area=""
+                               asp-controller="Home"
+                               asp-action="Movies">
+
+                            <i class="bi bi-film me-1"></i>
+                            Movies
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" asp-area="" asp-controller="Home" asp-action="Movies">
-                            <i class="bi bi-film me-1"></i> Movies
+                        <a class="nav-link text-white-50"
+                               asp-area=""
+                               asp-controller="Watchlist"
+                               asp-action="UserWatchlist">
+
+                            <i class="bi bi-bookmark-heart me-1"></i>
+                            My Watchlist
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link text-white-50" asp-area="" asp-controller="Watchlist" asp-action="UserWatchlist">
-                            <i class="bi bi-bookmark-heart me-1"></i> My Watchlist
+                        <a class="nav-link text-white-50"
+                               asp-area=""
+                               asp-controller="TvShow"
+                               asp-action="Index">
+
+                            <i class="bi bi-tv me-1"></i>
+                            TV Shows
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white-50" asp-area="" asp-controller="TvShow" asp-action="Index">
-                            <i class="bi bi-tv me-1"></i> TV Shows
-                        </a>
-                    </li>
-               
+
                 </ul>
-             
-                <div class="d-flex align-items-center gap-2">
-                    <form class="d-flex position-relative me-3" action="/Search/Index" method="get">
-                        <input class="form-control bg-dark text-white border-secondary" type="search" name="q" placeholder="Search movies, TV..." aria-label="Search" id="globalSearchInput" autocomplete="off">
-                        <button class="btn btn-outline-primary ms-1" type="submit"><i class="bi bi-search"></i></button>
-                        <div id="autocompleteResults" class="dropdown-menu w-100 mt-1 shadow-lg" style="display: none; position: absolute; top: 100%; left: 0; max-height: 400px; overflow-y: auto;">
+
+
+                <!-- Search + Login -->
+                <div class="d-flex align-items-center flex-grow-1 ms-sm-4">
+
+                    <!-- Search -->
+                    <form class="d-flex position-relative flex-grow-1"
+                          action="/Search/Index"
+                          method="get">
+
+                        <input class="form-control bg-dark text-white border-secondary"
+                               type="search"
+                               name="q"
+                               placeholder="Search movies, TV..."
+                               aria-label="Search"
+                               id="globalSearchInput"
+                               autocomplete="off">
+
+                        <button class="btn btn-outline-primary ms-1"
+                                type="submit">
+
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                        <!-- Autocomplete -->
+                        <div id="autocompleteResults"
+                             class="dropdown-menu w-100 mt-1 shadow-lg"
+                             style="
+                            display: none;
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            max-height: 400px;
+                            overflow-y: auto;
+                            ">
                         </div>
+
                     </form>
-                    <partial name="_LoginPartial" />
+
+
+                    <!-- Login -->
+                    <div class="ms-3 flex-shrink-0">
+                        <partial name="_LoginPartial" />
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </nav>

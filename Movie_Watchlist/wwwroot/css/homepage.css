@@ -92,13 +92,11 @@ body {
     font-size: 0.9rem;
     color: #54b9c5;
     text-decoration: none;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.3s, color 0.3s;
 }
 
-.section-header:hover .show-more-link {
-    opacity: 1;
-}
+
 
 .show-more-link:hover {
     color: #fff;

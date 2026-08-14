@@ -13,7 +13,7 @@ namespace Movie_Watchlist.Application.ViewModels
         public string? Description { get; set; }
         public int GenreId { get; set; }
         public bool IsInWatchlist { get; set; }
-        public bool ShowAdminActions { get; set; }
+       
         public PosterCardAction Action { get; set; } = PosterCardAction.None;
     }
 }
