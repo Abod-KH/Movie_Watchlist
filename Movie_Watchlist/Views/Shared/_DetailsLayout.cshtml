@@ -1,0 +1,114 @@
+@* 
+    Shared Details Layout Partial
+    Usage: <partial name="_DetailsLayout" model="new DetailsLayoutModel { ... }" />
+    
+    Expected ViewData keys:
+      - "Title"           (string)  – Media title
+      - "PosterPath"      (string)  – Full poster URL
+      - "ReleaseYear"     (int)     – Year of release
+      - "GenreName"       (string)  – Genre display name
+      - "Rating"          (double)  – Vote average
+      - "Description"     (string)  – Overview text
+      - "TrailerKey"      (string?) – YouTube trailer key
+      - "IsInWatchlist"   (bool)    – Whether item is in the user's watchlist
+      - "ItemId"          (int)     – Local DB Id for toggle
+      - "MediaType"       (string)  – "movie" or "tv"
+      - "ToggleUrl"       (string)  – URL for watchlist toggle action
+      - "ToggleParamName" (string)  – POST param name (e.g. "movieId" or "tvShowId")
+*@
+
+@{
+    var title       = (string)ViewData["Title"]!;
+    var posterPath  = (string)ViewData["PosterPath"]!;
+    var releaseYear = (int)ViewData["ReleaseYear"]!;
+    var genreName   = (string?)ViewData["GenreName"] ?? "";
+    var rating      = (double)ViewData["Rating"]!;
+    var description = (string?)ViewData["Description"] ?? "";
+    var trailerKey  = (string?)ViewData["TrailerKey"];
+    var isInWatchlist  = (bool)ViewData["IsInWatchlist"]!;
+    var itemId         = (int)ViewData["ItemId"]!;
+    var mediaType      = (string)ViewData["MediaType"]!;
+    var toggleUrl      = (string?)ViewData["ToggleUrl"];
+    var toggleParamName = (string)ViewData["ToggleParamName"]!;
+}
+
+<div class="card shadow-lg border-0 mb-5">
+    <div class="row g-0">
+
+        <!-- Poster -->
+        <div class="col-lg-4">
+            <img src="@posterPath"
+                 alt="@title"
+                 class="img-fluid h-100 w-100"
+                 style="object-fit: cover;">
+        </div>
+
+        <!-- Info -->
+        <div class="col-lg-8">
+            <div class="card-body p-4 p-lg-5">
+
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="flex-grow-1">
+                        <h1 class="fw-bold">@title</h1>
+                        <p class="text-muted">
+                            @releaseYear • @genreName
+                        </p>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-star-fill text-warning me-1 fs-5"></i>
+                            <span class="fw-bold fs-5">@rating.ToString("0.0")</span>
+                            <span class="text-muted ms-1">/ 10</span>
+                        </div>
+                    </div>
+
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <button type="button"
+                                class="btn btn-sm rounded-circle shadow toggle-watchlist @(isInWatchlist ? "btn-success" : "btn-light border")"
+                                style="width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;"
+                                data-id="@itemId"
+                                data-media-type="@mediaType"
+                                data-action="@(isInWatchlist ? "remove" : "add")"
+                                aria-label="@(isInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")"
+                                title="@(isInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")">
+                            <i class="bi @(isInWatchlist ? "bi-bookmark-check-fill text-white" : "bi-bookmark-plus text-primary") fs-4"></i>
+                        </button>
+                    }
+                </div>
+
+                <hr />
+
+                <h5 class="fw-bold">Overview</h5>
+                <p class="text-secondary">
+                    @description
+                </p>
+
+                <!-- Trailer -->
+                @if (!string.IsNullOrEmpty(trailerKey))
+                {
+                    <div class="mt-4">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/@trailerKey"
+                                    title="YouTube video player"
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-4">
+                        <h4 class="fw-bold mb-3 text-muted">Official Trailer</h4>
+                        <div class="ratio ratio-16x9 rounded bg-light border d-flex align-items-center justify-content-center text-center">
+                            <div class="p-3">
+                                <span class="bi bi-play-btn fs-1 text-secondary opacity-50"></span>
+                                <p class="text-secondary small mt-2">Trailer not found</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

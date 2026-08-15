@@ -1,90 +1,26 @@
 @model Movie_Watchlist.Application.ViewModels.MovieDetailsViewModel
 @{
     ViewData["Title"] = Model.Movie!.Title;
-    var initialInWatchlist = Model.IsInWatchlist ? "true" : "false";
 }
 
 <div class="container mt-5">
 
-    
-    <div class="card shadow-lg border-0 mb-5">
-        <div class="row g-0">
+    @{
+        ViewData["PosterPath"]      = Model.Movie.PosterPath;
+        ViewData["ReleaseYear"]     = Model.Movie.ReleaseYear;
+        ViewData["GenreName"]       = Model.Movie.Genre?.Name ?? "";
+        ViewData["Rating"]          = Model.Movie.VoteAverage;
+        ViewData["Description"]     = Model.Movie.Description;
+        ViewData["TrailerKey"]      = Model.TrailerKey;
+        ViewData["IsInWatchlist"]   = Model.IsInWatchlist;
+        ViewData["ItemId"]          = Model.Movie.Id;
+        ViewData["MediaType"]       = "movie";
+        ViewData["ToggleUrl"]       = Url.Action("Toggle", "Watchlist");
+        ViewData["ToggleParamName"] = "movieId";
+    }
+    <partial name="_DetailsLayout" />
 
-          
-            <div class="col-lg-4">
-                <img src="@Model.Movie.PosterPath"
-                     class="img-fluid h-100 w-100"
-                     style="object-fit: cover;">
-            </div>
-
-            
-            <div class="col-lg-8">
-                <div class="card-body p-4 p-lg-5">
-
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="flex-grow-1">
-                            <h1 class="fw-bold">@Model.Movie.Title</h1>
-                            <p class="text-muted">
-                                @Model.Movie.ReleaseYear • @Model.Movie.Genre?.Name
-                            </p>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="bi bi-star-fill text-warning me-1 fs-5"></i>
-                                <span class="fw-bold fs-5">@Model.Movie.VoteAverage.ToString("0.0")</span>
-                                <span class="text-muted ms-1">/ 10</span>
-                            </div>
-                        </div>
-
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <button id="watchlistToggle"
-                                    type="button"
-                                    data-movieid="@Model.Movie.Id"
-                                    data-url="@Url.Action("Toggle", "Watchlist")"
-                                    data-initial-in="@initialInWatchlist"
-                                    class="btn btn-link p-2 me-2 text-decoration-none watchlist-bookmark @(Model.IsInWatchlist ? "is-in-watchlist" : "")"
-                                    aria-label="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")"
-                                    title="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")">
-                                <i class="bi @(Model.IsInWatchlist ? "bi-bookmark-fill" : "bi-bookmark") fs-3"></i>
-                            </button>
-                        }
-                    </div>
-
-                    <hr />
-
-                    <h5 class="fw-bold">Overview</h5>
-                    <p class="text-secondary">
-                        @Model.Movie.Description
-                    </p>
-
-                   
-                    @if (!string.IsNullOrEmpty(Model.TrailerKey))
-                    {
-                        <div class="mt-4">
-                            <div class="ratio ratio-16x9">
-                                <iframe src="https://www.youtube.com/embed/@Model.TrailerKey"
-                                        allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="mt-4">
-                            <h4 class="fw-bold mb-3 text-muted">Official Trailer</h4>
-                            <div class="ratio ratio-16x9 rounded bg-light border d-flex align-items-center justify-content-center text-center">
-                                <div class="p-3">
-                                    <span class="bi bi-play-btn fs-1 text-secondary opacity-50"></span>
-                                    <p class="text-secondary small mt-2">Trailer not found</p>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
+    <!-- Similar Movies -->
     <div class="mt-5">
         <h3 class="fw-bold mb-4">More Like This</h3>
 
@@ -120,70 +56,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            var btn = $("#watchlistToggle");
-            var icon = btn.find("i");
-            var token = $('input[name="__RequestVerificationToken"]').val();
-            var toggleUrl = btn.data("url");
-            var movieId = btn.data("movieid");
-
-            function setVisualState(isInWatchlist) {
-                if (isInWatchlist) {
-                    btn.addClass("is-in-watchlist");
-                    icon.removeClass("bi-bookmark").addClass("bi-bookmark-fill");
-                } else {
-                    btn.removeClass("is-in-watchlist");
-                    icon.removeClass("bi-bookmark-fill").addClass("bi-bookmark");
-                }
-            }
-
-            btn.click(function (e) {
-                e.preventDefault();
-                btn.prop("disabled", true);
-
-                $.post(toggleUrl, { movieId: movieId, __RequestVerificationToken: token })
-                    .done(function (res) {
-                        setVisualState(!!res.isInWatchlist);
-                    })
-                    .fail(function () {
-                        alert("Failed to update watchlist. Please try again.");
-                    })
-                    .always(function () {
-                        btn.prop("disabled", false);
-                    });
-            });
-        });
-    </script>
-}
-
-<style>
-    .watchlist-bookmark {
-        transition: transform 0.2s ease, color 0.2s ease;
-        color: #fff;
-        background: rgba(20,20,20,0.55);
-        border-radius: 50% !important;
-        width: 52px;
-        height: 52px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .watchlist-bookmark:hover {
-        transform: scale(1.08);
-        color: #fff;
-        background: rgba(20,20,20,0.8);
-    }
-    .watchlist-bookmark.is-in-watchlist,
-    .watchlist-bookmark.is-in-watchlist:hover {
-        color: #E50914;
-    }
-    .watchlist-bookmark:active {
-        transform: scale(0.9);
-    }
-</style>
-
-
-

@@ -27,38 +27,13 @@
         <div class="alert alert-info">No items found for this category.</div>
     }
 
-    <!-- Simple Pagination -->
-    @if (Model.TotalPages > 1)
-    {
-        <nav aria-label="Page navigation" class="mt-5 mb-5 d-flex justify-content-center">
-            <ul class="pagination pagination-lg">
-                @if (Model.CurrentPage > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
-                    </li>
-                }
-
-                @{
-                    int startPage = Math.Max(1, Model.CurrentPage - 2);
-                    int endPage = Math.Min(Model.TotalPages, startPage + 4);
-                    startPage = Math.Max(1, endPage - 4);
-                }
-
-                @for (int i = startPage; i <= endPage; i++)
-                {
-                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@i">@i</a>
-                    </li>
-                }
-
-                @if (Model.CurrentPage < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="ShowMore" asp-route-category="@Model.Category" asp-route-page="@(Model.CurrentPage + 1)">Next</a>
-                    </li>
-                }
-            </ul>
-        </nav>
-    }
+    <!-- Pagination using the shared ViewComponent -->
+    @await Component.InvokeAsync("Pagination", new {
+        currentPage = Model.CurrentPage,
+        totalItems = Model.TotalItems,
+        pageSize = 20,
+        actionName = "ShowMore",
+        controllerName = "Home",
+        routeParams = new Dictionary<string, string> { { "category", Model.Category } }
+    })
 </div>

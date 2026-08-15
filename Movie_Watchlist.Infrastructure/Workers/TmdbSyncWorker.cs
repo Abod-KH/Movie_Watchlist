@@ -48,7 +48,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var delay = TimeSpan.FromMinutes(30);
+                // var delay = TimeSpan.FromMinutes(30); // For testing: run every 30 minutes
+                var delay = CalculateDelayUntilNextRun(3, 0); // Run daily at 3:00 AM
                 _logger.LogInformation($"TmdbSyncWorker scheduler is waiting for {delay.TotalMinutes:F1} minutes until the next run.");
 
                 try

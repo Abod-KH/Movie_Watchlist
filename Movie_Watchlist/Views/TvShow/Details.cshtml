@@ -1,72 +1,30 @@
 @model Movie_Watchlist.Application.ViewModels.TvShowDetailsViewModel
 @{
     ViewData["Title"] = Model.TvShow.Title;
-    var initialInWatchlist = Model.IsInWatchlist ? "true" : "false";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-lg border-0 mb-5">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img src="@Model.TvShow.PosterPath" alt="@Model.TvShow.Title" class="img-fluid w-100 h-100" style="object-fit: cover;">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body p-4 p-lg-5">
 
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div class="flex-grow-1">
-                            <h2 class="fw-bold">@Model.TvShow.Title</h2>
-                            <div class="mb-3 d-flex align-items-center">
-                                <span class="badge bg-secondary me-2">@Model.TvShow.ReleaseYear</span>
-                                <span class="badge bg-info text-dark me-2">@Model.TvShow.GenreName</span>
-                                <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> @Model.TvShow.Rating.ToString("0.0")</span>
-                            </div>
-                        </div>
+    @{
+        ViewData["PosterPath"]      = Model.TvShow.PosterPath;
+        ViewData["ReleaseYear"]     = Model.TvShow.ReleaseYear;
+        ViewData["GenreName"]       = Model.TvShow.GenreName ?? "";
+        ViewData["Rating"]          = Model.TvShow.Rating;
+        ViewData["Description"]     = Model.TvShow.Description;
+        ViewData["TrailerKey"]      = Model.TrailerKey;
+        ViewData["IsInWatchlist"]   = Model.IsInWatchlist;
+        ViewData["ItemId"]          = Model.TvShow.Id;
+        ViewData["MediaType"]       = "tv";
+        ViewData["ToggleUrl"]       = Url.Action("Toggle", "TvShowWatchlist");
+        ViewData["ToggleParamName"] = "tvShowId";
+    }
+    <partial name="_DetailsLayout" />
 
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <button id="tvWatchlistToggle"
-                                    type="button"
-                                    data-showid="@Model.TvShow.Id"
-                                    data-url="@Url.Action("Toggle", "TvShowWatchlist")"
-                                    data-initial-in="@initialInWatchlist"
-                                    class="btn btn-link p-2 ms-3 text-decoration-none watchlist-bookmark @(Model.IsInWatchlist ? "is-in-watchlist" : "")"
-                                    aria-label="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")"
-                                    title="@(Model.IsInWatchlist ? "Remove from Watchlist" : "Save to Watchlist")">
-                                <i class="bi @(Model.IsInWatchlist ? "bi-bookmark-fill" : "bi-bookmark") fs-3"></i>
-                            </button>
-                        }
-                    </div>
-                    
-                    <h4 class="fw-bold">Overview</h4>
-                    <p>@Model.TvShow.Description</p>
-
-                    @if (!string.IsNullOrEmpty(Model.TrailerKey))
-                    {
-                        <h4 class="mt-4 fw-bold">Trailer</h4>
-                        <div class="ratio ratio-16x9 mt-2">
-                            <iframe src="https://www.youtube.com/embed/@Model.TrailerKey" title="YouTube video player" allowfullscreen></iframe>
-                        </div>
-                    }
-                    else
-                    {
-                        <h4 class="mt-4 fw-bold text-muted">Official Trailer</h4>
-                        <div class="ratio ratio-16x9 mt-2 rounded bg-light border d-flex align-items-center justify-content-center text-center">
-                            <div class="p-3">
-                                <span class="bi bi-play-btn fs-1 text-secondary opacity-50"></span>
-                                <p class="text-secondary small mt-2">Trailer not found</p>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Similar TV Shows -->
     @if (Model.SimilarTvShows.Any())
     {
         <h3 class="mt-5 mb-4 fw-bold">Similar TV Shows</h3>
-        <div class="row row-cols-2 row-cols-md-5 g-3">
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
             @foreach (var show in Model.SimilarTvShows)
             {
                 <div class="col">
@@ -91,68 +49,3 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            var btn = $("#tvWatchlistToggle");
-            var icon = btn.find("i");
-            var token = $('input[name="__RequestVerificationToken"]').val();
-            var toggleUrl = btn.data("url");
-            var showId = btn.data("showid");
-
-            function setVisualState(isInWatchlist) {
-                if (isInWatchlist) {
-                    btn.addClass("is-in-watchlist");
-                    icon.removeClass("bi-bookmark").addClass("bi-bookmark-fill");
-                } else {
-                    btn.removeClass("is-in-watchlist");
-                    icon.removeClass("bi-bookmark-fill").addClass("bi-bookmark");
-                }
-            }
-
-            btn.click(function (e) {
-                e.preventDefault();
-                btn.prop("disabled", true);
-
-                $.post(toggleUrl, { tvShowId: showId, __RequestVerificationToken: token })
-                    .done(function (res) {
-                        setVisualState(!!res.isInWatchlist);
-                    })
-                    .fail(function () {
-                        alert("Failed to update watchlist. Please try again.");
-                    })
-                    .always(function () {
-                        btn.prop("disabled", false);
-                    });
-            });
-        });
-    </script>
-}
-
-<style>
-    .watchlist-bookmark {
-        transition: transform 0.2s ease, color 0.2s ease;
-        color: #fff;
-        background: rgba(20,20,20,0.55);
-        border-radius: 50% !important;
-        width: 52px;
-        height: 52px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .watchlist-bookmark:hover {
-        transform: scale(1.08);
-        color: #fff;
-        background: rgba(20,20,20,0.8);
-    }
-    .watchlist-bookmark.is-in-watchlist,
-    .watchlist-bookmark.is-in-watchlist:hover {
-        color: #E50914;
-    }
-    .watchlist-bookmark:active {
-        transform: scale(0.9);
-    }
-</style>
-

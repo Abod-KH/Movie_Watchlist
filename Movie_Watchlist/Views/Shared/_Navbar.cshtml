@@ -1,19 +1,53 @@
 <header>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top shadow-lg py-2">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg py-2">
         <div class="container">
 
             <!-- Brand -->
             <a class="navbar-brand fw-bold d-flex align-items-center"
-                   asp-area=""
-                   asp-controller="Home"
-                   asp-action="Index">
+               asp-area=""
+               asp-controller="Home"
+               asp-action="Index">
 
                 <i class="bi bi-film text-primary me-2 fs-3"></i>
                 <span class="text-white">MOVIE</span><span class="text-primary">HUB</span>
             </a>
 
+            <!-- Search Bar – always visible, sits between brand and toggle -->
+            <div class="navbar-search-wrapper order-lg-1 flex-grow-1 mx-2 mx-lg-4">
+                <form class="d-flex position-relative w-100"
+                      action="/Search/Index"
+                      method="get">
+
+                    <input class="form-control form-control-sm bg-dark text-white border-secondary rounded-pill ps-3"
+                           type="search"
+                           name="q"
+                           placeholder="Search movies, TV..."
+                           aria-label="Search"
+                           id="globalSearchInput"
+                           autocomplete="off">
+
+                    <button class="btn btn-outline-primary btn-sm ms-1 rounded-pill px-3"
+                            type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                    <!-- Autocomplete -->
+                    <div id="autocompleteResults"
+                         class="dropdown-menu w-100 mt-1 shadow-lg"
+                         style="
+                            display: none;
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            max-height: 400px;
+                            overflow-y: auto;
+                            ">
+                    </div>
+                </form>
+            </div>
+
             <!-- Mobile Toggle -->
-            <button class="navbar-toggler border-0"
+            <button class="navbar-toggler border-0 order-lg-2 ms-auto"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#mainNavbar"
@@ -25,13 +59,11 @@
             </button>
 
 
-            <!-- Navbar Content -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
+            <!-- Navbar Content (collapsible: nav links + login) -->
+            <div class="collapse navbar-collapse order-lg-3" id="mainNavbar">
 
                 <!-- Navigation Links -->
-                <ul class="navbar-nav mb-2 mb-sm-0 ms-sm-3 flex-shrink-0">
-
-                    
+                <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-3 flex-shrink-0">
 
                     <li class="nav-item">
                         <a class="nav-link text-white-50"
@@ -69,52 +101,49 @@
                 </ul>
 
 
-                <!-- Search + Login -->
-                <div class="d-flex align-items-center flex-grow-1 ms-sm-4">
-
-                    <!-- Search -->
-                    <form class="d-flex position-relative flex-grow-1"
-                          action="/Search/Index"
-                          method="get">
-
-                        <input class="form-control bg-dark text-white border-secondary"
-                               type="search"
-                               name="q"
-                               placeholder="Search movies, TV..."
-                               aria-label="Search"
-                               id="globalSearchInput"
-                               autocomplete="off">
-
-                        <button class="btn btn-outline-primary ms-1"
-                                type="submit">
-
-                            <i class="bi bi-search"></i>
-                        </button>
-
-                        <!-- Autocomplete -->
-                        <div id="autocompleteResults"
-                             class="dropdown-menu w-100 mt-1 shadow-lg"
-                             style="
-                            display: none;
-                            position: absolute;
-                            top: 100%;
-                            left: 0;
-                            max-height: 400px;
-                            overflow-y: auto;
-                            ">
-                        </div>
-
-                    </form>
-
-
-                    <!-- Login -->
-                    <div class="ms-3 flex-shrink-0">
-                        <partial name="_LoginPartial" />
-                    </div>
-
+                <!-- Login -->
+                <div class="ms-lg-auto flex-shrink-0">
+                    <partial name="_LoginPartial" />
                 </div>
 
             </div>
         </div>
     </nav>
 </header>
+
+<style>
+    /* Responsive search bar sizing */
+    .navbar-search-wrapper {
+        min-width: 0;
+        max-width: 420px;
+    }
+
+    /* On mobile (below lg), shrink search to fit between brand and hamburger */
+    @@media (max-width: 991.98px) {
+        .navbar-search-wrapper {
+            max-width: 100%;
+            flex: 1 1 0;
+            min-width: 100px;
+        }
+        /* Reduce font size on very small screens */
+        .navbar-search-wrapper .form-control {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* On very small screens, reduce padding */
+    @@media (max-width: 575.98px) {
+        .navbar-search-wrapper {
+            margin-left: 0.25rem !important;
+            margin-right: 0.25rem !important;
+        }
+        .navbar-search-wrapper .form-control {
+            font-size: 0.75rem;
+            padding-left: 0.5rem;
+        }
+        .navbar-search-wrapper .btn {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+        }
+    }
+</style>
