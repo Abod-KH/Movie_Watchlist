@@ -24,7 +24,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IHomeRepository, HomeRepository>();
 builder.Services.AddScoped<IUserWatchlistRepository, UserWatchlistRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddHttpClient<ITmdbService, TmdbService>();
 builder.Services.AddSingleton<IHomepageCacheService, HomepageCacheService>();
 builder.Services.AddMemoryCache();
