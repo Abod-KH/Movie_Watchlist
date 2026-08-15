@@ -1,0 +1,39 @@
+@model Movie_Watchlist.Application.ViewModels.ShowMoreViewModel
+@{
+    ViewData["Title"] = Model.SectionTitle;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>@Model.SectionTitle</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+            @foreach (var item in Model.Items)
+            {
+                <div class="col">
+                    <partial name="_PosterCard" model="item" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No items found for this category.</div>
+    }
+
+    <!-- Pagination using the shared ViewComponent -->
+    @await Component.InvokeAsync("Pagination", new {
+        currentPage = Model.CurrentPage,
+        totalItems = Model.TotalItems,
+        pageSize = 20,
+        actionName = "ShowMore",
+        controllerName = "Home",
+        routeParams = new Dictionary<string, string> { { "category", Model.Category } }
+    })
+</div>

@@ -1,0 +1,46 @@
+@using Movie_Watchlist.Application.ViewModels
+@model MovieDisplayModel
+@{
+    ViewData["Title"] = "Browse Movies";
+}
+
+<div class="container mt-4">
+   
+    <h2 class="text-center mb-4">Latest Movies</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+        @foreach (var movie in Model.Movies)
+        {
+            var card = movie.ToMediaCard();
+        
+
+            <div class="col">
+                <partial name="_PosterCard" model="card" />
+            </div>
+        }
+    </div>
+
+    @if (ViewBag.TotalItems > ViewBag.PageSize)
+    {
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewBag.CurrentPage,
+            totalItems = ViewBag.TotalItems,
+            pageSize = ViewBag.PageSize,
+            actionName = "Movies",
+            routeParams = new Dictionary<string, string>
+            {
+                { "sTerm", Model.Filter.STerm ?? "" },
+                { "genreId", Model.Filter.GenreId.ToString() }
+            }
+        })
+    }
+</div>

@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container text-center" style="margin-top: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="display-1 text-danger"><i class="bi bi-shield-lock"></i></h1>
+            <h2 class="text-danger">Access Denied</h2>
+            <hr />
+            <p class="lead">
+                Sorry, you don't have the "Admin" clearance required to view this page.
+                If you think this is a mistake, please contact your system administrator.
+            </p>
+            <div class="mt-4">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                    Return to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

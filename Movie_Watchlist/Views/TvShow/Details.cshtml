@@ -1,0 +1,51 @@
+@model Movie_Watchlist.Application.ViewModels.TvShowDetailsViewModel
+@{
+    ViewData["Title"] = Model.TvShow.Title;
+}
+
+<div class="container mt-4">
+
+    @{
+        ViewData["PosterPath"]      = Model.TvShow.PosterPath;
+        ViewData["ReleaseYear"]     = Model.TvShow.ReleaseYear;
+        ViewData["GenreName"]       = Model.TvShow.GenreName ?? "";
+        ViewData["Rating"]          = Model.TvShow.Rating;
+        ViewData["Description"]     = Model.TvShow.Description;
+        ViewData["TrailerKey"]      = Model.TrailerKey;
+        ViewData["IsInWatchlist"]   = Model.IsInWatchlist;
+        ViewData["ItemId"]          = Model.TvShow.Id;
+        ViewData["MediaType"]       = "tv";
+        ViewData["ToggleUrl"]       = Url.Action("Toggle", "TvShowWatchlist");
+        ViewData["ToggleParamName"] = "tvShowId";
+    }
+    <partial name="_DetailsLayout" />
+
+    <!-- Similar TV Shows -->
+    @if (Model.SimilarTvShows.Any())
+    {
+        <h3 class="mt-5 mb-4 fw-bold">Similar TV Shows</h3>
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+            @foreach (var show in Model.SimilarTvShows)
+            {
+                <div class="col">
+                    @{
+                        var mediaVM = new Movie_Watchlist.Application.ViewModels.MediaHomeViewModel
+                        {
+                            TmdbId = show.Id,
+                            Title = show.Title ?? "Unknown",
+                            PosterPath = show.FullPosterPath,
+                            Rating = show.Rating,
+                            MediaType = "tv",
+                            ReleaseYear = 0
+                        };
+                        
+                        if (!string.IsNullOrEmpty(show.FirstAirDate) && show.FirstAirDate.Length >= 4) {
+                            mediaVM.ReleaseYear = int.Parse(show.FirstAirDate.Substring(0, 4));
+                        }
+                    }
+                    <partial name="_PosterCard" model="mediaVM" />
+                </div>
+            }
+        </div>
+    }
+</div>

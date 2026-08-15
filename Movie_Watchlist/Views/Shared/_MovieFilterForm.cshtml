@@ -1,0 +1,29 @@
+﻿@model Movie_Watchlist.Application.ViewModels.MovieFilterViewModel
+@{
+}
+
+
+
+<form asp-action="Index" method="get" class="row g-3 align-items-center bg-light p-3 rounded shadow-sm">
+    <div class="col-md-4">
+        <label class="form-label fw-bold" for="genreId">Filter by Genre</label>
+        <select class="form-select" id="genreId" name="genreId">
+            <option value="0">All Genres</option>
+            @foreach (var genre in Model.Genres)
+            {
+                <option selected="@(genre.Id == Model.GenreId)" value="@genre.Id">@genre.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-5">
+        <label class="form-label fw-bold" for="sTerm">Search Movie</label>
+        <input type="text" class="form-control" value="@Model.STerm" id="sTerm" name="sTerm"
+               placeholder="Enter movie title...">
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <a href="/Home/Index" class="btn btn-secondary">Reset</a>
+    </div>
+</form>

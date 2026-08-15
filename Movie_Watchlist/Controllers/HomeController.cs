@@ -1,73 +1,216 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Movie_Watchlist.Models.DTOs;
-using Movie_Watchlist.Repositories;
-using Movie_Watchlist.Services;
+using Movie_Watchlist.Domain.Entities;
+using Movie_Watchlist.Application.DTOs;
+using Movie_Watchlist.Application.Interfaces;
+using Movie_Watchlist.Application.ViewModels;
+using System.Security.Claims;
 
-namespace Movie_Watchlist.Controllers
+namespace Movie_Watchlist.Presintation.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IHomeRepository _homeRepo;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IMovieService _movieService;
-        private readonly IMemoryCache _cache;
-        public HomeController(IHomeRepository homeRepo, UserManager<IdentityUser> userManager, IMovieService movieService, IMemoryCache cache)
+        private readonly ITmdbService _tmdbService;
+        private readonly IHomepageCacheService _cacheService;
+        private readonly ILogger<HomeController> _logger;
+        private readonly IUserWatchlistRepository _userWatchlistRepo;
+
+        public HomeController(
+            IHomeRepository homeRepo,
+            ITmdbService tmdbService,
+            IHomepageCacheService cacheService,
+            ILogger<HomeController> logger,
+            IUserWatchlistRepository userWatchlistRepo)
         {
             _homeRepo = homeRepo;
-            _userManager = userManager;
-            _movieService = movieService;
-            _cache = cache;
+            _tmdbService = tmdbService;
+            _cacheService = cacheService;
+            _logger = logger;
+            _userWatchlistRepo = userWatchlistRepo;
         }
 
-        public async Task<IActionResult> Index(string sTerm = "", int genreId = 0, int page = 1)
+        public async Task<IActionResult> Index()
         {
-            const string cacheKey = "LastImportTime";
+            var data = _cacheService.GetHomepageData();
 
-
-            if (!_cache.TryGetValue(cacheKey, out DateTime lastImport))
+            if (data == null)
             {
-                lastImport = DateTime.MinValue;
+                _logger.LogInformation("Homepage cache miss on request. Loading from database...");
+                try
+                {
+                    data = await _cacheService.LoadHomepageFromDatabaseAsync(HttpContext.RequestAborted);
+                    _logger.LogInformation("Successfully loaded homepage from database on cache miss.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to load homepage from database on cache miss. Returning empty data.");
+                    data = new HomepageData();
+                }
             }
 
-            if (DateTime.Now > lastImport.AddMinutes(2))
+            var model = new HomepageViewModel
             {
-                await _movieService.ImportMoviesAsync();
-
-
-                _cache.Set(cacheKey, DateTime.Now);
-            }
-            var userId = _userManager.GetUserId(User);
-
-            var moviesFromRepo = await _homeRepo.GetMoviesForUser(userId, sTerm, genreId);
-            var genres = await _homeRepo.Genres();
-
-            
-            int pageSize = 20;
-            int totalMovies = moviesFromRepo.Count();
-            int totalPages = (int)Math.Ceiling((double)totalMovies / pageSize);
-
-            var pagedMovies = moviesFromRepo
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-          
-            var model = new MovieDisplayModel
-            {
-                Movies = pagedMovies,
-                Genres = genres,
-                STerm = sTerm,
-                GenreId = genreId
+                HeroMovies = data.TrendingMovies?.Take(5).ToList() ?? new List<MovieApiResult>(),
+                TrendingMovies = data.TrendingMovies ?? new List<MovieApiResult>(),
+                TrendingTvShows = data.TrendingTvShows ?? new List<TvShowApiResult>(),
+                NowPlaying = data.NowPlaying ?? new List<MovieApiResult>(),
+                Upcoming = data.Upcoming ?? new List<MovieApiResult>(),
+                TopRatedMovies = data.TopRatedMovies ?? new List<MovieApiResult>(),
+                TopRatedTvShows = data.TopRatedTvShows ?? new List<TvShowApiResult>(),
+                PopularMovies = data.PopularMovies ?? new List<MovieApiResult>(),
+                PopularTvShows = data.PopularTvShows ?? new List<TvShowApiResult>()
             };
-
-            
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
 
             return View(model);
         }
+
+        public async Task<IActionResult> ShowMore(string category, int page = 1)
+        {
+            var model = new ShowMoreViewModel
+            {
+                Category = category,
+                CurrentPage = page
+            };
+
+            string dbCategory = "";
+            string mediaType = "";
+
+            switch (category)
+            {
+                case "trending-movies":
+                    model.SectionTitle = "🔥 Trending Movies"; dbCategory = "trending"; mediaType = "movie"; break;
+                case "trending-tv":
+                    model.SectionTitle = "🔥 Trending TV Shows"; dbCategory = "trending"; mediaType = "tv"; break;
+                case "now-playing":
+                    model.SectionTitle = "🎬 Now Playing"; dbCategory = "now_playing"; mediaType = "movie"; break;
+                case "upcoming":
+                    model.SectionTitle = "📅 Upcoming"; dbCategory = "upcoming"; mediaType = "movie"; break;
+                case "top-rated-movies":
+                    model.SectionTitle = "⭐ Top Rated Movies"; dbCategory = "top_rated"; mediaType = "movie"; break;
+                case "top-rated-tv":
+                    model.SectionTitle = "📺 Top Rated TV Shows"; dbCategory = "top_rated"; mediaType = "tv"; break;
+                case "popular-movies":
+                    model.SectionTitle = "🔥 Popular Movies"; dbCategory = "popular"; mediaType = "movie"; break;
+                case "popular-tv":
+                    model.SectionTitle = "📺 Popular TV Shows"; dbCategory = "popular"; mediaType = "tv"; break;
+                default:
+                    return NotFound();
+            }
+
+            model.IsMovieSection = mediaType == "movie";
+            int pageSize = 20;
+
+            var (items, totalCount) = await _homeRepo.GetCategoryItemsAsync(dbCategory, mediaType, page, pageSize);
+            
+            model.Items = items.ToList();
+            model.TotalItems = totalCount;
+            model.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Movies(string sTerm = "", int genreId = 0, int page = 1)
+        {
+            int pageSize = 20;
+            var userId = User.GetUserId();
+            var (movies, totalCount) = await _homeRepo.GetMoviesForUser(userId!, sTerm, genreId, page, pageSize);
+            var genres = await _homeRepo.Genres();
+
+           
+
+            var model = new MovieDisplayModel
+            {
+                Movies = movies,
+                Filter= new MovieFilterViewModel
+                {
+                    Genres = genres,
+                    STerm = sTerm,
+                    GenreId = genreId
+                }
+            };
+
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalItems = totalCount;
+            ViewBag.PageSize = pageSize;
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var movie = await _homeRepo.GetMovieById(id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            var model = await BuildModelAsync(movie);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DetailsByTmdb(int tmdbId)
+        {
+            var movie = await _homeRepo.GetMovieByTmdbId(tmdbId);
+
+            if (movie != null)
+            {
+                var model = await BuildModelAsync(movie);
+                return View("Details", model);
+            }
+
+            var apiMovie = await _tmdbService.GetMovieDetailsAsync(tmdbId);
+            if (apiMovie == null)
+                return NotFound();
+
+            var mappedMovie = new Movie
+            {
+                Title = apiMovie.Title ?? "Unknown",
+                Description = apiMovie.Description ?? string.Empty,
+                PosterPath = apiMovie.FullPosterPath,
+                TmdbId = apiMovie.Id,
+                VoteAverage = apiMovie.VoteAverage
+            };
+
+            var modelFromApi = await BuildModelAsync(mappedMovie);
+
+            return View("Details", modelFromApi);
+        }
+
+        private async Task<MovieDetailsViewModel> BuildModelAsync(Movie movie)
+        {
+            var trailerKey = await _tmdbService.GetMovieTrailerKeyAsync(movie.TmdbId);
+            var similarMovies = await _tmdbService.GetSimilarMoviesAsync(movie.TmdbId);
+
+            bool isInWatchlist = false;
+            string? userId = User.GetUserId();
+            if (!string.IsNullOrEmpty(userId) && movie.Id > 0)
+            {
+                isInWatchlist = await _userWatchlistRepo.IsInWatchlistAsync(movie.Id, userId);
+            }
+
+            return new MovieDetailsViewModel
+            {
+                Movie = movie,
+                TrailerKey = trailerKey,
+                SimilarMovies = similarMovies,
+                IsInWatchlist = isInWatchlist
+            };
+        }
+
+        public async Task<IActionResult> Index1()
+        {
+          
+
+            return View();
+        }
+        public async Task<IActionResult> Index2()
+        {
+          
+
+            return View();
+        }
+
     }
 }

@@ -1,0 +1,37 @@
+@using Movie_Watchlist.Application.ViewModels
+@model TvShowDisplayModel
+@{
+    ViewData["Title"] = "TV Shows";
+}
+
+<div class="container mt-4">
+  
+
+    <h2 class="text-center mb-4">Latest TV Shows</h2>
+
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+        @foreach (var show in Model.TvShows)
+        {
+            <div class="col">
+                <partial name="_PosterCard" model="show.ToMediaCard()" />
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalItems > 20)
+    {
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewBag.CurrentPage,
+            totalItems = ViewBag.TotalItems,
+            pageSize = ViewBag.PageSize,
+            actionName = "Index",
+            controllerName = "TvShow",
+            routeParams = new Dictionary<string, string>
+            {
+                { "sTerm", Model.STerm ?? "" },
+                { "genreId", Model.GenreId.ToString() }
+            }
+        })
+    }
+</div>

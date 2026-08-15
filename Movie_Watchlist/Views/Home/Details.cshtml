@@ -1,0 +1,58 @@
+@model Movie_Watchlist.Application.ViewModels.MovieDetailsViewModel
+@{
+    ViewData["Title"] = Model.Movie!.Title;
+}
+
+<div class="container mt-5">
+
+    @{
+        ViewData["PosterPath"]      = Model.Movie.PosterPath;
+        ViewData["ReleaseYear"]     = Model.Movie.ReleaseYear;
+        ViewData["GenreName"]       = Model.Movie.Genre?.Name ?? "";
+        ViewData["Rating"]          = Model.Movie.VoteAverage;
+        ViewData["Description"]     = Model.Movie.Description;
+        ViewData["TrailerKey"]      = Model.TrailerKey;
+        ViewData["IsInWatchlist"]   = Model.IsInWatchlist;
+        ViewData["ItemId"]          = Model.Movie.Id;
+        ViewData["MediaType"]       = "movie";
+        ViewData["ToggleUrl"]       = Url.Action("Toggle", "Watchlist");
+        ViewData["ToggleParamName"] = "movieId";
+    }
+    <partial name="_DetailsLayout" />
+
+    <!-- Similar Movies -->
+    <div class="mt-5">
+        <h3 class="fw-bold mb-4">More Like This</h3>
+
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
+            @if (Model.SimilarMovies != null && Model.SimilarMovies.Any())
+            {
+                @foreach (var sim in Model.SimilarMovies)
+                {
+                    <div class="col">
+                        @{
+                            var mediaVM = new Movie_Watchlist.Application.ViewModels.MediaHomeViewModel
+                            {
+                                TmdbId = sim.Id,
+                                Title = sim.Title ?? "Unknown",
+                                PosterPath = sim.FullPosterPath,
+                                Rating = sim.VoteAverage,
+                                MediaType = "movie",
+                                ReleaseYear = 0
+                            };
+                            
+                            if (!string.IsNullOrEmpty(sim.ReleaseDate) && sim.ReleaseDate.Length >= 4) {
+                                mediaVM.ReleaseYear = int.Parse(sim.ReleaseDate.Substring(0, 4));
+                            }
+                        }
+                        <partial name="_PosterCard" model="mediaVM" />
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No similar movies found.</p>
+            }
+        </div>
+    </div>
+</div>

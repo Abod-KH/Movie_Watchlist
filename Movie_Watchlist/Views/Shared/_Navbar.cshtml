@@ -1,0 +1,218 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg py-2">
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold d-flex align-items-center flex-shrink-0"
+               asp-area=""
+               asp-controller="Home"
+               asp-action="Index">
+
+                <i class="bi bi-film text-primary me-2 fs-3"></i>
+                <span class="text-white">MOVIE</span><span class="text-primary">HUB</span>
+            </a>
+
+
+            <!-- Mobile Search - stays visible -->
+            <div class="navbar-search-wrapper order-lg-2 flex-grow-1 mx-2 mx-lg-4">
+
+                <form class="d-flex position-relative w-100"
+                      action="/Search/Index"
+                      method="get">
+
+                    <input class="form-control form-control-sm bg-dark text-white border-secondary rounded-pill ps-3"
+                           type="search"
+                           name="q"
+                           placeholder="Search movies, TV..."
+                           aria-label="Search"
+                           id="globalSearchInput"
+                           autocomplete="off">
+
+                    <button class="btn btn-outline-primary btn-sm ms-1 rounded-pill px-3"
+                            type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                    <!-- Autocomplete -->
+                    <div id="autocompleteResults"
+                         class="dropdown-menu w-100 mt-1 shadow-lg"
+                         style="
+                        display:none;
+                        position:absolute;
+                        top:100%;
+                        left:0;
+                        max-height:400px;
+                        overflow-y:auto;
+                        ">
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- Mobile Hamburger -->
+            <button class="navbar-toggler border-0 order-lg-4 ms-2"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <i class="bi bi-list fs-1 text-white"></i>
+
+            </button>
+
+
+            <!-- Drawer / Collapsible Menu -->
+            <div class="collapse navbar-collapse order-lg-1" id="mainNavbar">
+
+                <!-- Navigation Links -->
+                <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-3 flex-shrink-0">
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="Home"
+                           asp-action="Movies">
+
+                            <i class="bi bi-film me-1"></i>
+                            Movies
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="Watchlist"
+                           asp-action="UserWatchlist">
+
+                            <i class="bi bi-bookmark-heart me-1"></i>
+                            My Watchlist
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="TvShow"
+                           asp-action="Index">
+
+                            <i class="bi bi-tv me-1"></i>
+                            TV Shows
+                        </a>
+                    </li>
+
+                </ul>
+
+
+                <!-- Login inside mobile drawer -->
+                <div class="mobile-login mt-2">
+                    <partial name="_LoginPartial" />
+                </div>
+
+            </div>
+
+
+            <!-- Desktop Login -->
+            <div class="desktop-login order-lg-3 flex-shrink-0 ms-lg-2">
+                <partial name="_LoginPartial" />
+            </div>
+
+        </div>
+    </nav>
+</header>
+
+
+<style>
+
+    .navbar-search-wrapper {
+        min-width: 0;
+        max-width: 420px;
+    }
+
+
+    /* Desktop */
+    @@media (min-width: 992px) {
+
+        .navbar-search-wrapper {
+            max-width: none;
+            flex: 1 1 auto;
+        }
+
+        #mainNavbar {
+            flex: 0 0 auto;
+            width: auto;
+            order: 1 !important;
+        }
+
+        .navbar-search-wrapper {
+            order: 2 !important;
+        }
+
+        .desktop-login {
+            order: 3 !important;
+        }
+
+        .mobile-login {
+            display: none;
+        }
+    }
+
+
+    /* Mobile / Tablet */
+    @@media (max-width: 991.98px) {
+
+        .navbar-search-wrapper {
+            max-width: 100%;
+            flex: 1 1 0;
+            min-width: 100px;
+        }
+
+            .navbar-search-wrapper .form-control {
+                font-size: 0.8rem;
+            }
+
+        .desktop-login {
+            display: none;
+        }
+        /*
+             * Drawer styling
+             */
+        #mainNavbar {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-login {
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .navbar-nav .nav-link {
+            padding: 0.6rem 0;
+        }
+    }
+
+
+    /* Very small screens */
+    @@media (max-width: 575.98px) {
+
+        .navbar-search-wrapper {
+            margin-left: 0.25rem !important;
+            margin-right: 0.25rem !important;
+        }
+
+            .navbar-search-wrapper .form-control {
+                font-size: 0.75rem;
+                padding-left: 0.5rem;
+            }
+
+            .navbar-search-wrapper .btn {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.5rem;
+            }
+    }
+</style>

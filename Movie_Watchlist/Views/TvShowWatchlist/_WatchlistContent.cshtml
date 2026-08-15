@@ -1,0 +1,32 @@
+@using Movie_Watchlist.Application.ViewModels
+@model TvShowWatchlistDashboardViewModel
+
+@if (!Model.TvShows.Any())
+{
+    <div class="alert alert-info shadow-sm">
+        Your TV show watchlist is currently empty. Start adding some shows from the <a href="/TvShow/Index">TV Shows Page</a>!
+    </div>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+        @foreach (var show in Model.TvShows)
+        {
+            <div class="col">
+                <partial name="_PosterCard" model="show.ToMediaCard()" />
+            </div>
+        }
+    </div>
+
+    @if (Model.TotalCount > 20)
+    {
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = Model.PageNumber,
+            totalItems = Model.TotalCount,
+            pageSize = 20,
+            actionName = "UserWatchlist",
+            controllerName = "TvShowWatchlist"
+        })
+    }
+}

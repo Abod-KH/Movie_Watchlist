@@ -1,63 +1,87 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Movie_Watchlist.Models;
-using Movie_Watchlist.Repositories;
-namespace Movie_Watchlist.Controllers
+
+namespace Movie_Watchlist.Presintation.Controllers
 {
-    [Authorize] 
+    [Authorize]
     public class WatchlistController : Controller
     {
-        private readonly IUserWatchlistRepository _watchlistRepo; // New Repo
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public WatchlistController(IUserWatchlistRepository watchlistRepo, UserManager<IdentityUser> userManager)
+        private readonly IUserWatchlistRepository _watchlistRepo;
+        private string _userId => User.GetUserId()!;
+        
+        public WatchlistController(IUserWatchlistRepository watchlistRepo)
         {
             _watchlistRepo = watchlistRepo;
-            _userManager = userManager;
+          
         }
 
-        public async Task<IActionResult> UserWatchlist()
+        private async Task<WatchlistDashboardViewModel> GetViewModelData(int page = 1)
         {
-            var userId = _userManager.GetUserId(User);
-            var movies = await _watchlistRepo.GetUserWatchlist(userId);
+            int pageSize = 20;
+            var (movies, total, watched) = await _watchlistRepo.GetUserWatchlist(_userId, page, pageSize);
 
-            var total = movies.Count();
-            var watched = movies.Count(m => m.IsWatched);
+           
             var percentage = total == 0 ? 0 : (int)((double)watched / total * 100);
 
-            
-            var model = new WatchlistDashboardViewModel
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalItems = total;
+            ViewBag.PageSize = pageSize;
+
+            return new WatchlistDashboardViewModel
             {
                 Movies = movies,
                 TotalMovies = total,
                 MoviesWatched = watched,
                 Percentage = percentage
             };
+        }
 
+
+        public async Task<IActionResult> UserWatchlist(int page = 1)
+        {
+            var model = await GetViewModelData(page);
             return View(model);
         }
 
+
+        public async Task<IActionResult> GetWatchlistPartial(int page = 1)
+        {
+            var model = await GetViewModelData(page);
+            return PartialView("_WatchlistContent", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(int movieId)
         {
-            var userId = _userManager.GetUserId(User);
-            await _watchlistRepo.AddToWatchlist(movieId, userId);
-            return RedirectToAction("Index", "Home");
+            bool isSuccess = await _watchlistRepo.AddToWatchlist(movieId, _userId);
+            return isSuccess ? Ok() : BadRequest();
         }
+
         public async Task<IActionResult> RemoveItem(int movieId)
         {
-            var userId = _userManager.GetUserId(User);
-            await _watchlistRepo.RemoveFromWatchlist(movieId, userId);
-            return RedirectToAction("UserWatchlist");
-        }
-        [HttpPost]
-        public async Task<IActionResult> ToggleWatched(int movieId)
-        {
-            var userId = _userManager.GetUserId(User);
-            var success = await _watchlistRepo.ToggleWatchedStatus(movieId, userId);
+            if (movieId <= 0) return BadRequest();
 
-            if (success) return Ok();
-            return BadRequest();
+            bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+            if (!success) return NotFound();
+            return RedirectToAction(nameof(UserWatchlist));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveFromWatchlist(int movieId)
+        {
+            bool success = await _watchlistRepo.RemoveFromWatchlist(movieId, _userId);
+            return success ? Ok() : NotFound();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Toggle(int movieId)
+        {
+            if (movieId <= 0) return BadRequest(new { isInWatchlist = false });
+            bool isInWatchlist = await _watchlistRepo.ToggleInWatchlistAsync(movieId, _userId);
+            return Ok(new { isInWatchlist });
         }
     }
 }

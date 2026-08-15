@@ -1,0 +1,32 @@
+@using Movie_Watchlist.Application.ViewModels
+@model Movie_Watchlist.Application.Models.WatchlistDashboardViewModel
+
+@if (!Model.Movies.Any())
+{
+    <div class="alert alert-info shadow-sm">
+        Your watchlist is currently empty. Start adding some movies from the <a href="/Home/Index">Home Page</a>!
+    </div>
+}
+else
+{
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+        @foreach (var movie in Model.Movies)
+        {
+            <div class="col">
+                <partial name="_PosterCard" model="movie.ToMediaCard()" />
+            </div>
+        }
+    </div>
+
+    @if (ViewBag.TotalItems > ViewBag.PageSize)
+    {
+        @await Component.InvokeAsync("Pagination", new
+        {
+            currentPage = ViewBag.CurrentPage,
+            totalItems = ViewBag.TotalItems,
+            pageSize = ViewBag.PageSize,
+            actionName = "UserWatchlist",
+            controllerName = "Watchlist"
+        })
+    }
+}
