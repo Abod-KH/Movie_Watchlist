@@ -199,18 +199,6 @@ namespace Movie_Watchlist.Presintation.Controllers
             };
         }
 
-        public async Task<IActionResult> Index1()
-        {
-          
-
-            return View();
-        }
-        public async Task<IActionResult> Index2()
-        {
-          
-
-            return View();
-        }
 
     }
 }

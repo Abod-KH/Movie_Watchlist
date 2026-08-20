@@ -108,8 +108,17 @@ namespace Movie_Watchlist.Infrastructure.Workers
             data.PopularMovies = await FetchAndSyncCategoryMoviesAsync("popular", page => tmdbService.GetPopularMoviesAsync(page), movieRepo, homeRepo, stoppingToken);
             data.PopularTvShows = await FetchAndSyncCategoryTvShowsAsync("popular", page => tmdbService.GetPopularTvShowsAsync(page), tvShowRepo, homeRepo, stoppingToken);
 
-            cacheService.SetHomepageData(data);
-            _logger.LogInformation("Successfully synced TMDB data to database and refreshed homepage cache.");
+            bool hasAnyData = (data.TrendingMovies?.Any() == true) || (data.TrendingTvShows?.Any() == true) || (data.NowPlaying?.Any() == true);
+
+            if (hasAnyData)
+            {
+                cacheService.SetHomepageData(data);
+                _logger.LogInformation("Successfully synced TMDB data to database and refreshed homepage cache.");
+            }
+            else
+            {
+                _logger.LogWarning("TMDB sync returned no data. Skipping cache refresh to preserve existing data.");
+            }
         }
 
         private async Task PerformDailySyncAsync(CancellationToken stoppingToken)
