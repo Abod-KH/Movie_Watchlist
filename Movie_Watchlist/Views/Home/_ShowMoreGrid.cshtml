@@ -1,0 +1,8 @@
+@model IEnumerable<Movie_Watchlist.Application.ViewModels.MediaHomeViewModel>
+
+@foreach (var item in Model)
+{
+    <div class="col">
+        <partial name="_PosterCard" model="item" />
+    </div>
+}

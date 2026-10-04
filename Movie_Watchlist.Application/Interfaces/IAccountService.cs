@@ -1,4 +1,4 @@
-﻿using Movie_Watchlist.Application.Models;
+using Movie_Watchlist.Application.Models;
 using Movie_Watchlist.Domain.Entities;
 
 namespace Movie_Watchlist.Application.Interfaces
@@ -7,5 +7,6 @@ namespace Movie_Watchlist.Application.Interfaces
     {
         Task<bool> RegisterUserAsync(UserRegister register);
         Task<User?> ValidateUserAsync(UserLogin login);
+        Task<User?> GetOrCreateExternalUserAsync(string email, string name);
     }
 }

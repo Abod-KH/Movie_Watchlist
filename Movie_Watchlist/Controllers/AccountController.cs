@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +19,65 @@ namespace Movie_Watchlist.Presintation.Controllers
 
         [HttpGet]
         public IActionResult Login() => View();
+
+        [HttpGet]
+        public IActionResult GoogleLogin(string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(GoogleCallback), "Account", new { returnUrl });
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, Microsoft.AspNetCore.Authentication.Google.GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GoogleCallback(string? returnUrl = null)
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded || result.Principal == null)
+            {
+                result = await HttpContext.AuthenticateAsync(Microsoft.AspNetCore.Authentication.Google.GoogleDefaults.AuthenticationScheme);
+            }
+
+            if (!result.Succeeded || result.Principal == null)
+            {
+                TempData["ErrorMessage"] = "Google authentication failed.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var principal = result.Principal;
+            var email = principal.FindFirstValue(ClaimTypes.Email);
+            var name = principal.FindFirstValue(ClaimTypes.Name) ?? email?.Split('@')[0] ?? "User";
+
+            if (string.IsNullOrEmpty(email))
+            {
+                TempData["ErrorMessage"] = "Could not retrieve email from Google account.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var user = await _accountService.GetOrCreateExternalUserAsync(email, name);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Failed to create or find user account.";
+                return RedirectToAction(nameof(Login));
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.RoleName ?? "User")
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            return Redirect(returnUrl ?? "/");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]

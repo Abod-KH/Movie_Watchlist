@@ -28,7 +28,7 @@ namespace Movie_Watchlist.Controllers
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             if (page < 1) page = 1;
-            int pageSize = 20;
+            int pageSize = 30;
 
             var (tvShows, totalCount) = await _tvShowHomeRepo.GetTvShowsForUser(userId, sTerm, genreId, page, pageSize);
             var genres = await _tvShowHomeRepo.Genres();
@@ -46,6 +46,12 @@ namespace Movie_Watchlist.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.TotalItems = totalCount;
             ViewBag.PageSize = pageSize;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_TvShowsGrid", tvShows);
+            }
+
             return View(model);
         }
 

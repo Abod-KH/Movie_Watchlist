@@ -1,0 +1,8 @@
+@model IEnumerable<Movie_Watchlist.Application.ViewModels.TvShowHomeViewModel>
+
+@foreach (var show in Model)
+{
+    <div class="col">
+        <partial name="_PosterCard" model="show.ToMediaCard()" />
+    </div>
+}

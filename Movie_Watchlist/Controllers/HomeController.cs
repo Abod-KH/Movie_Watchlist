@@ -98,7 +98,7 @@ namespace Movie_Watchlist.Presintation.Controllers
             }
 
             model.IsMovieSection = mediaType == "movie";
-            int pageSize = 20;
+            int pageSize = 30;
 
             var (items, totalCount) = await _homeRepo.GetCategoryItemsAsync(dbCategory, mediaType, page, pageSize);
             
@@ -106,17 +106,20 @@ namespace Movie_Watchlist.Presintation.Controllers
             model.TotalItems = totalCount;
             model.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_ShowMoreGrid", model.Items);
+            }
+
             return View(model);
         }
 
         public async Task<IActionResult> Movies(string sTerm = "", int genreId = 0, int page = 1)
         {
-            int pageSize = 20;
+            int pageSize = 30;
             var userId = User.GetUserId();
             var (movies, totalCount) = await _homeRepo.GetMoviesForUser(userId!, sTerm, genreId, page, pageSize);
             var genres = await _homeRepo.Genres();
-
-           
 
             var model = new MovieDisplayModel
             {
@@ -129,10 +132,14 @@ namespace Movie_Watchlist.Presintation.Controllers
                 }
             };
 
-
             ViewBag.CurrentPage = page;
             ViewBag.TotalItems = totalCount;
             ViewBag.PageSize = pageSize;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_MoviesGrid", movies);
+            }
 
             return View(model);
         }

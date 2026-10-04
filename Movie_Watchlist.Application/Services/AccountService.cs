@@ -1,4 +1,4 @@
-﻿
+
 using BCrypt.Net;
 using Microsoft.Extensions.Logging;
 using Movie_Watchlist.Application.Interfaces;
@@ -73,5 +73,40 @@ public class AccountService : IAccountService
         }
 
         return null; 
+    }
+
+    public async Task<User?> GetOrCreateExternalUserAsync(string email, string name)
+    {
+        var existingUser = await _accountRepository.GetUserByEmailAsync(email);
+        if (existingUser != null)
+        {
+            return existingUser;
+        }
+
+        string username = string.IsNullOrWhiteSpace(name) ? email.Split('@')[0] : name;
+        if (username.Length > 16) username = username.Substring(0, 16);
+
+        var newUser = new User
+        {
+            Username = username,
+            Email = email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()),
+            IsActive = true
+        };
+
+        try
+        {
+            int newUserId = await _accountRepository.CreateUserAsync(newUser);
+            if (newUserId > 0)
+            {
+                return await _accountRepository.GetUserByEmailAsync(email);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating external user for email {Email}", email);
+        }
+
+        return null;
     }
 }

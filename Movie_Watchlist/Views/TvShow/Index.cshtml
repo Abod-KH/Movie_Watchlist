@@ -5,11 +5,9 @@
 }
 
 <div class="container mt-4">
-  
-
     <h2 class="text-center mb-4">Latest TV Shows</h2>
 
-    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
+    <div id="media-grid" class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-4">
         @foreach (var show in Model.TvShows)
         {
             <div class="col">
@@ -18,20 +16,71 @@
         }
     </div>
 
-    @if (Model.TotalItems > 20)
-    {
-        @await Component.InvokeAsync("Pagination", new
-        {
-            currentPage = ViewBag.CurrentPage,
-            totalItems = ViewBag.TotalItems,
-            pageSize = ViewBag.PageSize,
-            actionName = "Index",
-            controllerName = "TvShow",
-            routeParams = new Dictionary<string, string>
-            {
-                { "sTerm", Model.STerm ?? "" },
-                { "genreId", Model.GenreId.ToString() }
-            }
-        })
-    }
+    <!-- Infinite Scroll Sentinel -->
+    <div id="scroll-sentinel" class="text-center py-4 mt-3" style="min-height: 70px;">
+        <div id="loading-spinner" class="spinner-border text-primary d-none" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p id="end-of-results" class="text-muted d-none mb-0 fs-6">You've reached the end!</p>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            let currentPage = @(ViewBag.CurrentPage ?? 1);
+            const totalItems = @(ViewBag.TotalItems ?? 0);
+            const pageSize = @(ViewBag.PageSize ?? 30);
+            let loading = false;
+            let allLoaded = currentPage * pageSize >= totalItems;
+
+            const grid = document.getElementById('media-grid');
+            const sentinel = document.getElementById('scroll-sentinel');
+            const spinner = document.getElementById('loading-spinner');
+            const endMsg = document.getElementById('end-of-results');
+
+            if (allLoaded) {
+                endMsg.classList.remove('d-none');
+            }
+
+            const observer = new IntersectionObserver(async (entries) => {
+                if (!entries[0].isIntersecting || loading || allLoaded) return;
+                loading = true;
+                spinner.classList.remove('d-none');
+
+                currentPage++;
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    sTerm: '@Html.Raw(Model.STerm ?? "")',
+                    genreId: '@Model.GenreId'
+                });
+
+                try {
+                    const response = await fetch(`/TvShow/Index?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to load next page');
+
+                    const html = await response.text();
+                    grid.insertAdjacentHTML('beforeend', html);
+
+                    if (currentPage * pageSize >= totalItems) {
+                        allLoaded = true;
+                        endMsg.classList.remove('d-none');
+                    }
+                } catch (err) {
+                    console.error('Error fetching TV shows:', err);
+                    currentPage--;
+                } finally {
+                    loading = false;
+                    spinner.classList.add('d-none');
+                }
+            }, { rootMargin: '250px' });
+
+            if (sentinel) {
+                observer.observe(sentinel);
+            }
+        })();
+    </script>
+}
