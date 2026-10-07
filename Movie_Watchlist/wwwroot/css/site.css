@@ -1,4 +1,7 @@
-/* --- 1. Global Styles --- */
+/* =========================================================
+   1. GLOBAL STYLES
+   ========================================================= */
+
 html {
     font-size: 14px;
     position: relative;
@@ -12,26 +15,35 @@ html {
 }
 
 body {
-    padding-top: 80px; /* Space for fixed header */
-    margin-bottom: 60px; /* Space for footer */
+    padding-top: 80px;
+    margin-bottom: 60px;
     background-color: #f8f9fa;
     line-height: 1.6;
 }
 
-/* --- 2. UI Components --- */
+
+/* =========================================================
+   2. UI COMPONENTS
+   ========================================================= */
+
 .card {
     border-radius: 1.5rem;
 }
 
-/* Custom focus ring for accessibility */
-.btn:focus, .btn:active:focus,
+
+/* Custom focus ring */
+
+.btn:focus,
+.btn:active:focus,
 .btn-link.nav-link:focus,
 .form-control:focus,
 .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+
 /* Form floating labels */
+
 .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;
@@ -41,11 +53,16 @@ body {
     text-align: start;
 }
 
-/* Pagination & Breadcrumbs */
+
+/* Pagination */
+
 .pagination .page-item.active .page-link {
     background-color: #f0ad4e;
     border-color: #f0ad4e;
 }
+
+
+/* Breadcrumbs */
 
 .breadcrumb-item a {
     text-decoration: none;
@@ -56,64 +73,322 @@ body {
     color: var(--bs-gray-600);
 }
 
-/* --- 3. Navbar & Branding --- */
-.navbar-brand {
-    font-size: 1.4rem;
-    letter-spacing: 1px;
+
+/* =========================================================
+   3. NAVBAR & BRANDING
+   =========================================================
+
+   Navbar styles have been moved to navbar.css for better
+   organization and maintainability.
+
+   ========================================================= */
+
+
+/* =========================================================
+   4. DESKTOP NAVBAR
+   =========================================================
+
+   Desktop navbar styles have been moved to navbar.css.
+
+   ========================================================= */
+
+
+/* =========================================================
+   5. TABLET / MOBILE NAVBAR
+   =========================================================
+
+   Mobile navbar styles have been moved to navbar.css.
+
+   ========================================================= */
+
+
+/* =========================================================
+   6. MOBILE DRAWER DESIGN
+
+   Mobile drawer styles have been moved to navbar.css.
+
+   ========================================================= */
+
+
+/* =========================================================
+   7. SEARCH OVERLAY
+
+   Search overlay styles have been moved to navbar.css.
+
+   ========================================================= */
+
+
+/* =========================================================
+   9. SEARCH RESULTS
+   ========================================================= */
+
+.search-results-container {
+    max-height: 60vh;
+
+    overflow-y: auto;
+
+    background: #0f172a;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    padding: 0.75rem;
 }
 
-.btn-link.nav-link {
-    border: none;
-    vertical-align: middle;
+
+/* Custom scrollbar */
+
+.search-results-container::-webkit-scrollbar {
+    width: 8px;
 }
 
-.collapsing {
-    transition: height 0.4s ease-in-out;
+.search-results-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
 }
 
-/* --- 4. Mobile Drawer (Small Screens Only) --- */
+.search-results-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+
+    border-radius: 10px;
+}
+
+.search-results-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+
+/* =========================================================
+   10. AUTOCOMPLETE GRID
+   ========================================================= */
+
+.search-results-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 0.5rem;
+}
+
+
+@media (min-width: 576px) {
+
+    .search-results-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+@media (min-width: 992px) {
+
+    .search-results-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+
+/* =========================================================
+   11. SEARCH RESULT ITEM
+   ========================================================= */
+
+.search-result-item {
+    display: block;
+
+    text-decoration: none;
+
+    border-radius: 0.5rem;
+
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        border-color 0.2s ease;
+}
+
+
+.search-result-item:hover,
+.search-result-item:focus {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+
+    transform: translateY(-2px);
+
+    border-color: rgba(59, 130, 246, 0.4);
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   12. RESULT POSTER
+   ========================================================= */
+
+.search-result-item .result-poster {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+}
+
+
+.search-result-item .result-poster-placeholder {
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    background: #1e293b;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 2rem;
+
+    color: rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================================
+   13. NO SEARCH RESULTS
+   ========================================================= */
+
+.search-no-results {
+    grid-column: 1 / -1;
+
+    padding: 1.5rem;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* =========================================================
+   14. SEARCH OVERLAY RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .prime-search-overlay {
+        top: 55px;
+    }
+
+
+    .search-panel-card {
+        margin-left: 0.5rem;
+
+        margin-right: 0.5rem;
+    }
+}
+
+
 @media (max-width: 575.98px) {
-    /* The Drawer Container */
-    .navbar-collapse {
-        background: #212529;
-        border-radius: 15px;
-        padding: 20px;
-        margin-top: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        border: 1px solid #343a40;
+
+    .prime-search-overlay {
+        top: 54px;
     }
 
-    /* Links inside Drawer */
-    .navbar-nav .nav-link {
-        padding: 12px 15px;
-        border-radius: 8px;
-        margin-bottom: 5px;
-        background: rgba(255,255,255,0.05);
-        transition: 0.3s;
-        padding-left: 10px;
+
+    .search-panel-card {
+        margin-left: 0.25rem;
+
+        margin-right: 0.25rem;
+
+        padding: 1rem !important;
     }
 
-        .navbar-nav .nav-link:hover {
-            background: var(--bs-primary);
-            color: white !important;
-        }
 
-    /* Login Partial Section */
-    .navbar-nav.align-items-center {
-        align-items: flex-start !important;
-        width: 100%;
+    .search-overlay-input {
+        font-size: 1rem !important;
+
+        min-height: 50px;
     }
 
-    ._LoginPartial_container {
-        width: 100%;
-        margin-top: 10px;
-        padding-top: 15px;
-        border-top: 1px solid #343a40;
+
+    .search-panel-card .btn-primary {
+        padding-left: 1rem !important;
+
+        padding-right: 1rem !important;
+    }
+}
+
+
+/* =========================================================
+   15. SEARCH OVERLAY ANIMATION
+   ========================================================= */
+
+.prime-search-backdrop,
+.prime-search-overlay {
+    animation-duration: 0.2s;
+
+    animation-timing-function: ease-out;
+
+    animation-fill-mode: both;
+}
+
+
+.prime-search-backdrop {
+    animation-name: searchBackdropFadeIn;
+}
+
+
+.prime-search-overlay {
+    animation-name: searchOverlaySlideDown;
+}
+
+
+@keyframes searchBackdropFadeIn {
+
+    from {
+        opacity: 0;
     }
 
-    .navbar-nav .btn {
-        width: 100%;
-        margin-top: 10px;
-        text-align: center;
+    to {
+        opacity: 1;
+    }
+}
+
+
+@keyframes searchOverlaySlideDown {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   16. ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .collapsing {
+        transition: none;
+    }
+
+    .prime-search-backdrop,
+    .prime-search-overlay,
+    .search-result-item,
+    .navbar-nav .nav-link,
+    .search-trigger-wrapper button {
+        animation: none !important;
+
+        transition: none !important;
     }
 }

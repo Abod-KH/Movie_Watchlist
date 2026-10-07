@@ -1,0 +1,769 @@
+/* =========================================================
+   3. NAVBAR & BRANDING
+   ========================================================= */
+
+.navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+
+.btn-link.nav-link {
+    border: none;
+    vertical-align: middle;
+}
+
+.collapsing {
+    transition: height 0.4s ease-in-out;
+}
+
+
+/* Hover */
+
+.hover-text-white:hover {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   4. DESKTOP NAVBAR
+   =========================================================
+
+   Desired layout:
+
+   MOVIEHUB   Movies   TV Shows   My Watchlist   [spacer]   ??   Login
+
+   Everything stays in one row.
+   No space-between between the elements.
+   ========================================================= */
+
+@media (min-width: 992px) {
+
+    /* ---------------------------------------------------------
+       Main navbar container
+       --------------------------------------------------------- */
+
+    .navbar .container {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+
+    /* ---------------------------------------------------------
+       1. BRAND
+       --------------------------------------------------------- */
+
+    .navbar-brand {
+        order: 1 !important;
+        flex-shrink: 0;
+        margin-right: 1rem;
+    }
+
+
+    /* ---------------------------------------------------------
+       2. NAVIGATION LINKS
+       --------------------------------------------------------- */
+
+    #mainNavbar {
+        order: 2 !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        display: flex !important;
+        align-items: center;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        flex-grow: 0 !important;
+    }
+
+
+    .movie-navbar-menu {
+        display: flex;
+        align-items: center;
+    }
+
+
+        .movie-navbar-menu .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            flex-wrap: nowrap;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+
+        .movie-navbar-menu .nav-item {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+
+        .movie-navbar-menu .nav-link {
+            white-space: nowrap;
+        }
+
+
+    /* ---------------------------------------------------------
+       3. SPACER
+       --------------------------------------------------------- */
+
+    .navbar-spacer {
+        order: 3 !important;
+        flex: 1 1 auto !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       4. SEARCH ICON
+       --------------------------------------------------------- */
+
+    .search-trigger-wrapper {
+        order: 4 !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0;
+        margin-left: 0 !important;
+        margin-right: 0.5rem !important;
+    }
+
+
+        .search-trigger-wrapper button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+
+            .search-trigger-wrapper button:hover {
+                color: #ffffff !important;
+                transform: scale(1.08);
+            }
+
+
+            .search-trigger-wrapper button:focus {
+                box-shadow: none;
+            }
+
+
+    /* ---------------------------------------------------------
+       5. DESKTOP LOGIN
+       --------------------------------------------------------- */
+
+    .desktop-login {
+        order: 5 !important;
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto !important;
+        flex-shrink: 0;
+        margin-left: 0 !important;
+        white-space: nowrap;
+    }
+
+
+        .desktop-login > * {
+            flex-shrink: 0;
+        }
+
+
+    /* ---------------------------------------------------------
+       6. MOBILE LOGIN HIDDEN
+       --------------------------------------------------------- */
+
+    .mobile-login {
+        display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       7. HAMBURGER HIDDEN
+       --------------------------------------------------------- */
+
+    .navbar-toggler {
+        display: none !important;
+    }
+}
+
+
+/* =========================================================
+   5. TABLET / MOBILE NAVBAR
+   =========================================================
+
+   Closed state:
+
+   MOVIEHUB   Movies   TV Shows   My Watchlist   ??   ?
+
+   When there is enough space, the links remain visible.
+
+   When the user clicks the hamburger:
+   A drawer opens containing the navigation links and Login.
+   ========================================================= */
+
+@media (max-width: 991.98px) {
+
+    /* ---------------------------------------------------------
+       Navbar container
+       --------------------------------------------------------- */
+
+    .navbar .container {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        position: relative;
+    }
+
+
+    /* ---------------------------------------------------------
+       0. SPACER HIDDEN
+       --------------------------------------------------------- */
+
+    .navbar-spacer {
+        display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       1. BRAND
+       --------------------------------------------------------- */
+
+    .navbar-brand {
+        order: 1 !important;
+        flex-shrink: 0;
+        margin-right: 0.6rem !important;
+        white-space: nowrap;
+    }
+
+
+    /* ---------------------------------------------------------
+       2. MAIN NAVIGATION
+       --------------------------------------------------------- */
+
+    /*
+       Closed state:
+       Keep the navigation links visible horizontally.
+
+       This gives us:
+
+       MOVIEHUB | Movies | TV Shows | My Watchlist | Search | ?
+
+       If the links don't fit, they can scroll horizontally.
+    */
+
+    #mainNavbar {
+        order: 2 !important;
+        display: flex !important;
+        align-items: center;
+        flex: 1 1 auto !important;
+        flex-basis: auto !important;
+        width: auto !important;
+        min-width: 0;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+
+        /* Hide scrollbar - Chrome / Edge / Safari */
+
+        #mainNavbar::-webkit-scrollbar {
+            display: none;
+        }
+
+
+    /* ---------------------------------------------------------
+       Navigation wrapper
+       --------------------------------------------------------- */
+
+    .movie-navbar-menu {
+        display: flex;
+        align-items: center;
+        width: auto !important;
+        flex-shrink: 0;
+    }
+
+
+        /* ---------------------------------------------------------
+       Navigation list
+       --------------------------------------------------------- */
+
+        .movie-navbar-menu .navbar-nav {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+            flex-wrap: nowrap !important;
+            width: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+
+        /* ---------------------------------------------------------
+       Navigation items
+       --------------------------------------------------------- */
+
+        .movie-navbar-menu .nav-item {
+            width: auto !important;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+
+        /* ---------------------------------------------------------
+       Navigation links
+       --------------------------------------------------------- */
+
+        .movie-navbar-menu .nav-link {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            padding: 0.45rem 0.5rem;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+
+    /* ---------------------------------------------------------
+       3. SEARCH ICON
+       --------------------------------------------------------- */
+
+    .search-trigger-wrapper {
+        order: 3 !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0;
+        margin-left: 0.35rem !important;
+        margin-right: 0 !important;
+        position: relative;
+        z-index: 1055;
+    }
+
+
+        .search-trigger-wrapper button {
+            padding: 0.5rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+            .search-trigger-wrapper button:focus {
+                box-shadow: none;
+            }
+
+
+    /* ---------------------------------------------------------
+       4. DESKTOP LOGIN HIDDEN
+       --------------------------------------------------------- */
+
+    .desktop-login {
+        display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       5. MOBILE LOGIN
+       --------------------------------------------------------- */
+
+    /*
+       Login is hidden while the drawer is closed.
+       It becomes visible inside the drawer.
+    */
+
+    .mobile-login {
+        display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------
+       6. HAMBURGER
+       --------------------------------------------------------- */
+
+    .navbar-toggler {
+        order: 4 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        margin-left: 0.25rem !important;
+        padding: 0.25rem 0.4rem;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        position: relative;
+        z-index: 1055;
+    }
+
+
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: none !important;
+        }
+
+
+        .navbar-toggler:hover {
+            opacity: 0.85;
+        }
+
+
+    /* ---------------------------------------------------------
+       7. DRAWER
+       --------------------------------------------------------- */
+
+    /*
+       When Bootstrap adds .show, convert the navigation
+       from the horizontal navbar into a full-width drawer.
+    */
+
+    #mainNavbar.show {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100% !important;
+        max-height: calc(100vh - 70px);
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: block !important;
+        background: #212529;
+        padding: 1rem !important;
+        margin: 0 !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        z-index: 1050;
+        white-space: normal;
+    }
+
+
+        /*
+       Drawer navigation wrapper
+    */
+
+        #mainNavbar.show .movie-navbar-menu {
+            display: block;
+            width: 100% !important;
+        }
+
+
+            /*
+       Drawer navigation list
+    */
+
+            #mainNavbar.show .movie-navbar-menu .navbar-nav {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: stretch;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                gap: 0.25rem;
+                white-space: normal;
+                flex-wrap: nowrap !important;
+            }
+
+
+            /*
+       Drawer navigation items
+    */
+
+            #mainNavbar.show .movie-navbar-menu .nav-item {
+                width: 100% !important;
+                flex-shrink: 0;
+            }
+
+
+            /*
+       Drawer navigation links
+    */
+
+            #mainNavbar.show .movie-navbar-menu .nav-link {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 0.75rem 1rem;
+                margin: 0;
+                border-radius: 0.6rem;
+                font-size: 1rem;
+                white-space: nowrap;
+                background: transparent;
+                transition: background-color 0.2s ease, color 0.2s ease;
+            }
+
+
+                #mainNavbar.show .movie-navbar-menu .nav-link:hover {
+                    background: rgba(255, 255, 255, 0.08);
+                    color: #ffffff !important;
+                }
+
+
+        /*
+       Drawer mobile login
+    */
+
+        #mainNavbar.show .mobile-login {
+            display: block !important;
+            width: 100%;
+            margin-top: 1rem !important;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+
+    /*
+       If Bootstrap is in the collapsing state
+    */
+
+    #mainNavbar.collapsing {
+        overflow: hidden;
+    }
+
+
+    /* ---------------------------------------------------------
+       8. SEARCH OVERLAY
+       --------------------------------------------------------- */
+
+    .prime-search-overlay {
+        top: 60px;
+    }
+}
+
+
+/* =========================================================
+   6. SMALL MOBILE SCREENS
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+
+    /* ---------------------------------------------------------
+       Main navigation - closed state
+       --------------------------------------------------------- */
+
+    #mainNavbar {
+        flex: 1 1 auto !important;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent;
+        border: 0 !important;
+        border-radius: 0;
+        box-shadow: none;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+
+        #mainNavbar::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        /* ---------------------------------------------------------
+       Drawer - small mobile
+       --------------------------------------------------------- */
+
+        #mainNavbar.show {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 10px;
+            width: calc(100% - 20px) !important;
+            max-height: calc(100vh - 80px);
+            padding: 1.25rem !important;
+            background: #212529;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.9rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.55);
+            overflow-x: hidden;
+            overflow-y: auto;
+            white-space: normal;
+        }
+
+
+    /* ---------------------------------------------------------
+       Navigation links
+       --------------------------------------------------------- */
+
+    .movie-navbar-menu {
+        width: auto !important;
+        flex-shrink: 0;
+    }
+
+
+        .movie-navbar-menu .navbar-nav {
+            width: auto !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+            flex-wrap: nowrap !important;
+            gap: 0;
+        }
+
+
+        .movie-navbar-menu .nav-item {
+            width: auto !important;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+
+        .movie-navbar-menu .nav-link {
+            padding: 0.35rem 0.4rem;
+            margin: 0;
+            border-radius: 6px;
+            background: transparent;
+            font-size: 0.78rem;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+
+            .movie-navbar-menu .nav-link:hover {
+                background: rgba(255, 255, 255, 0.08);
+                color: #ffffff !important;
+            }
+
+
+    /*
+       Drawer links on very small screens
+    */
+
+    #mainNavbar.show .movie-navbar-menu .navbar-nav {
+        flex-direction: column !important;
+        align-items: stretch;
+        width: 100% !important;
+        gap: 0.3rem;
+        white-space: normal;
+    }
+
+
+    #mainNavbar.show .movie-navbar-menu .nav-item {
+        width: 100% !important;
+    }
+
+
+    #mainNavbar.show .movie-navbar-menu .nav-link {
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+        font-size: 0.95rem;
+        border-radius: 0.55rem;
+    }
+
+
+    /* ---------------------------------------------------------
+       Brand
+       --------------------------------------------------------- */
+
+    .navbar-brand {
+        font-size: 0.9rem;
+        margin-right: 0.35rem !important;
+    }
+
+
+        .navbar-brand i {
+            font-size: 1.4rem !important;
+        }
+
+
+    /* ---------------------------------------------------------
+       Search
+       --------------------------------------------------------- */
+
+    .search-trigger-wrapper {
+        margin-left: 0.2rem !important;
+        flex-shrink: 0;
+    }
+
+
+        .search-trigger-wrapper button {
+            padding: 0.4rem !important;
+        }
+
+
+        .search-trigger-wrapper i {
+            font-size: 1.25rem !important;
+        }
+
+
+    /* ---------------------------------------------------------
+       Hamburger
+       --------------------------------------------------------- */
+
+    .navbar-toggler {
+        margin-left: 0.15rem !important;
+        padding: 0.2rem 0.3rem;
+    }
+
+
+        .navbar-toggler i {
+            font-size: 1.7rem !important;
+        }
+}
+
+
+/* =========================================================
+   7. SEARCH OVERLAY
+   ========================================================= */
+
+/* Full-screen dark backdrop */
+
+.prime-search-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1060;
+}
+
+
+/* Search overlay panel */
+
+.prime-search-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100vw;
+    z-index: 1065;
+}
+
+
+/* Search card */
+
+.search-panel-card {
+    background: linear-gradient( 145deg, #1f2937 0%, #111827 100% );
+}
+
+
+/* =========================================================
+   8. SEARCH INPUT
+   ========================================================= */
+
+.search-overlay-input {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+}
+
+
+    .search-overlay-input::placeholder {
+        color: rgba(255, 255, 255, 0.55);
+        opacity: 1;
+    }
+
+
+    .search-overlay-input:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3) !important;
+    }

@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace Movie_Watchlist.Controllers
 {
-    [Authorize]
+    
     public class TvShowController : Controller
     {
         private readonly ITvShowHomeRepository _tvShowHomeRepo;

@@ -80,7 +80,63 @@ $(document).on("click", ".toggle-watchlist", function (e) {
     });
 });
 
+// ============================================================
+// Search Overlay Open / Close Logic
+// ============================================================
+$(document).ready(function () {
+    const $backdrop = $('#searchBackdrop');
+    const $overlay  = $('#primeSearchOverlay');
+    const $input    = $('#globalSearchInput');
+    const $openBtn  = $('#openSearchOverlayBtn');
+    const $closeBtn = $('#closeSearchOverlayBtn');
+
+    function openSearchOverlay() {
+        $backdrop.fadeIn(200);
+        $overlay.fadeIn(200, function () {
+            $input.focus();
+        });
+        $('body').css('overflow', 'hidden');
+    }
+
+    function closeSearchOverlay() {
+        $overlay.fadeOut(180);
+        $backdrop.fadeOut(180);
+        $('body').css('overflow', '');
+        // Clear results when closing
+        $('#autocompleteResults').hide().empty();
+        $input.val('');
+    }
+
+    $openBtn.on('click', function (e) {
+        e.stopPropagation();
+        openSearchOverlay();
+    });
+
+    $closeBtn.on('click', function () {
+        closeSearchOverlay();
+    });
+
+    // Close on backdrop click
+    $backdrop.on('click', function () {
+        closeSearchOverlay();
+    });
+
+    // Close on Escape key
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeSearchOverlay();
+        }
+    });
+
+    // Prevent overlay panel clicks from bubbling to backdrop
+    $overlay.on('click', function (e) {
+        e.stopPropagation();
+    });
+});
+
+// ============================================================
 // Global Search Autocomplete
+// ============================================================
 $(document).ready(function () {
     let searchTimeout;
     const $input = $('#globalSearchInput');
@@ -98,28 +154,39 @@ $(document).ready(function () {
         searchTimeout = setTimeout(() => {
             $.get('/Search/Autocomplete', { q: query }, function (data) {
                 $results.empty();
-                
-                if (data && data.length > 0) {
-                    data.forEach(item => {
-                        const icon = item.mediaType === 'tv' ? '<i class="bi bi-tv me-2 text-info"></i>' : '<i class="bi bi-film me-2 text-warning"></i>';
-                        const url = item.mediaType === 'tv' ? `/TvShow/Details/${item.id}` : `/Home/Details/${item.id}`;
-                        const poster = item.posterPath 
-                            ? `<img src="https://image.tmdb.org/t/p/w92${item.posterPath}" style="width:30px; height:45px; object-fit:cover;" class="me-2 rounded">`
-                            : `<div style="width:30px; height:45px;" class="me-2 rounded bg-secondary"></div>`;
 
-                        $results.append(`
-                            <a href="${url}" class="dropdown-item d-flex align-items-center py-2 text-wrap">
-                                ${poster}
-                                <div class="d-flex flex-column">
-                                    <span class="fw-bold">${item.title}</span>
-                                    <small class="text-muted">${icon}${item.releaseYear || ''}</small>
+                if (data && data.length > 0) {
+                    const $grid = $('<div class="search-results-grid"></div>');
+
+                    data.forEach(item => {
+                        const url = item.mediaType === 'tv'
+                            ? `/TvShow/Details/${item.id}`
+                            : `/Home/Details/${item.id}`;
+
+                        const badgeClass = item.mediaType === 'tv' ? 'bg-info' : 'bg-warning text-dark';
+                        const badgeLabel = item.mediaType === 'tv' ? 'TV' : 'Movie';
+
+                        const posterHtml = item.posterPath
+                            ? `<img src="https://image.tmdb.org/t/p/w185${item.posterPath}" class="result-poster" alt="${item.title}">`
+                            : `<div class="result-poster-placeholder"><i class="bi bi-image"></i></div>`;
+
+                        $grid.append(`
+                            <a href="${url}" class="search-result-item text-white d-flex flex-column">
+                                ${posterHtml}
+                                <div class="p-2">
+                                    <div class="d-flex align-items-center gap-1 mb-1">
+                                        <span class="badge ${badgeClass} rounded-pill" style="font-size:0.65rem;">${badgeLabel}</span>
+                                        ${item.releaseYear ? `<small class="text-muted" style="font-size:0.7rem;">${item.releaseYear}</small>` : ''}
+                                    </div>
+                                    <p class="mb-0 fw-semibold small text-truncate" title="${item.title}">${item.title}</p>
                                 </div>
                             </a>
                         `);
                     });
-                    $results.show();
+
+                    $results.append($grid).show();
                 } else {
-                    $results.append('<div class="dropdown-item text-muted">No results found</div>');
+                    $results.append('<div class="search-no-results"><i class="bi bi-search opacity-30 fs-3 d-block mb-2"></i>No results found</div>');
                     $results.show();
                 }
             });

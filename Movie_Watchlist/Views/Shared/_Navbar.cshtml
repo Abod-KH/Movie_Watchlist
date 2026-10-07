@@ -2,57 +2,117 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg py-2">
         <div class="container">
 
+            <!-- ========================= -->
             <!-- Brand -->
+            <!-- ========================= -->
             <a class="navbar-brand fw-bold d-flex align-items-center flex-shrink-0"
                asp-area=""
                asp-controller="Home"
                asp-action="Index">
 
                 <i class="bi bi-film text-primary me-2 fs-3"></i>
-                <span class="text-white">MOVIE</span><span class="text-primary">HUB</span>
+
+                <span class="text-white">MOVIE</span>
+                <span class="text-primary">HUB</span>
+
             </a>
 
 
-            <!-- Mobile Search - stays visible -->
-            <div class="navbar-search-wrapper order-lg-2 flex-grow-1 mx-2 mx-lg-4">
+            <!-- ========================= -->
+            <!-- Collapsible Navigation -->
+            <!-- ========================= -->
+            <div class="collapse navbar-collapse movie-navbar-menu"
+                 id="mainNavbar">
 
-                <form class="d-flex position-relative w-100"
-                      action="/Search/Index"
-                      method="get">
+                <!-- Navigation Links -->
+                <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-3 flex-shrink-0">
 
-                    <input class="form-control form-control-sm bg-dark text-white border-secondary rounded-pill ps-3"
-                           type="search"
-                           name="q"
-                           placeholder="Search movies, TV..."
-                           aria-label="Search"
-                           id="globalSearchInput"
-                           autocomplete="off">
+                    <!-- Movies -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="Home"
+                           asp-action="Movies">
 
-                    <button class="btn btn-outline-primary btn-sm ms-1 rounded-pill px-3"
-                            type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
+                            <i class="bi bi-film me-1"></i>
+                            Movies
 
-                    <!-- Autocomplete -->
-                    <div id="autocompleteResults"
-                         class="dropdown-menu w-100 mt-1 shadow-lg"
-                         style="
-                        display:none;
-                        position:absolute;
-                        top:100%;
-                        left:0;
-                        max-height:400px;
-                        overflow-y:auto;
-                        ">
-                    </div>
+                        </a>
+                    </li>
 
-                </form>
+
+                    <!-- TV Shows -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="TvShow"
+                           asp-action="Index">
+
+                            <i class="bi bi-tv me-1"></i>
+                            TV Shows
+
+                        </a>
+                    </li>
+
+
+                    <!-- Watchlist -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50"
+                           asp-area=""
+                           asp-controller="Watchlist"
+                           asp-action="UserWatchlist">
+
+                            <i class="bi bi-bookmark-heart me-1"></i>
+                            My Watchlist
+
+                        </a>
+                    </li>
+
+                </ul>
+
+
+                <!-- ========================= -->
+                <!-- Login inside mobile drawer -->
+                <!-- ========================= -->
+                <div class="mobile-login mt-2">
+                    <partial name="_LoginPartial" />
+                </div>
 
             </div>
 
 
+            <!-- Spacer: pushes search & login to the right (desktop) -->
+            <div class="navbar-spacer"></div>
+
+
+            <!-- ========================= -->
+            <!-- Search Icon -->
+            <!-- ========================= -->
+            <div class="search-trigger-wrapper">
+                <button id="openSearchOverlayBtn"
+                        type="button"
+                        class="btn text-white-50 p-2 hover-text-white border-0 bg-transparent"
+                        title="Search"
+                        aria-label="Open search">
+
+                    <i class="bi bi-search fs-4"></i>
+
+                </button>
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- Desktop Login -->
+            <!-- ========================= -->
+            <div class="desktop-login flex-shrink-0">
+                <partial name="_LoginPartial" />
+            </div>
+
+
+            <!-- ========================= -->
             <!-- Mobile Hamburger -->
-            <button class="navbar-toggler border-0 order-lg-4 ms-2"
+            <!-- ========================= -->
+            <button class="navbar-toggler border-0 ms-2"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#mainNavbar"
@@ -64,155 +124,114 @@
 
             </button>
 
-
-            <!-- Drawer / Collapsible Menu -->
-            <div class="collapse navbar-collapse order-lg-1" id="mainNavbar">
-
-                <!-- Navigation Links -->
-                <ul class="navbar-nav mb-2 mb-lg-0 ms-lg-3 flex-shrink-0">
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white-50"
-                           asp-area=""
-                           asp-controller="Home"
-                           asp-action="Movies">
-
-                            <i class="bi bi-film me-1"></i>
-                            Movies
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white-50"
-                           asp-area=""
-                           asp-controller="Watchlist"
-                           asp-action="UserWatchlist">
-
-                            <i class="bi bi-bookmark-heart me-1"></i>
-                            My Watchlist
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-white-50"
-                           asp-area=""
-                           asp-controller="TvShow"
-                           asp-action="Index">
-
-                            <i class="bi bi-tv me-1"></i>
-                            TV Shows
-                        </a>
-                    </li>
-
-                </ul>
-
-
-                <!-- Login inside mobile drawer -->
-                <div class="mobile-login mt-2">
-                    <partial name="_LoginPartial" />
-                </div>
-
-            </div>
-
-
-            <!-- Desktop Login -->
-            <div class="desktop-login order-lg-3 flex-shrink-0 ms-lg-2">
-                <partial name="_LoginPartial" />
-            </div>
-
         </div>
     </nav>
 </header>
 
 
-<style>
-
-    .navbar-search-wrapper {
-        min-width: 0;
-        max-width: 420px;
-    }
-
-
-    /* Desktop */
-    @@media (min-width: 992px) {
-
-        .navbar-search-wrapper {
-            max-width: none;
-            flex: 1 1 auto;
-        }
-
-        #mainNavbar {
-            flex: 0 0 auto;
-            width: auto;
-            order: 1 !important;
-        }
-
-        .navbar-search-wrapper {
-            order: 2 !important;
-        }
-
-        .desktop-login {
-            order: 3 !important;
-        }
-
-        .mobile-login {
-            display: none;
-        }
-    }
+<!-- ================================================= -->
+<!-- Full-Screen Dark Backdrop -->
+<!-- ================================================= -->
+<div id="searchBackdrop"
+     class="prime-search-backdrop"
+     style="display: none;">
+</div>
 
 
-    /* Mobile / Tablet */
-    @@media (max-width: 991.98px) {
+<!-- ================================================= -->
+<!-- Search Overlay -->
+<!-- ================================================= -->
+<div id="primeSearchOverlay"
+     class="prime-search-overlay"
+     style="display: none;">
 
-        .navbar-search-wrapper {
-            max-width: 100%;
-            flex: 1 1 0;
-            min-width: 100px;
-        }
+    <div class="container py-3 py-md-4">
 
-            .navbar-search-wrapper .form-control {
-                font-size: 0.8rem;
-            }
+        <div class="row justify-content-center">
 
-        .desktop-login {
-            display: none;
-        }
-        /*
-             * Drawer styling
-             */
-        #mainNavbar {
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
+            <div class="col-12 col-lg-10 col-xl-8">
 
-        .mobile-login {
-            padding-top: 0.5rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .navbar-nav .nav-link {
-            padding: 0.6rem 0;
-        }
-    }
+                <div class="search-panel-card p-4 rounded-4 shadow-lg border border-secondary border-opacity-50 position-relative">
 
 
-    /* Very small screens */
-    @@media (max-width: 575.98px) {
+                    <!-- ========================= -->
+                    <!-- Search Panel Header -->
+                    <!-- ========================= -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        .navbar-search-wrapper {
-            margin-left: 0.25rem !important;
-            margin-right: 0.25rem !important;
-        }
+                        <span class="text-white-50 fw-semibold text-uppercase tracking-wider small">
 
-            .navbar-search-wrapper .form-control {
-                font-size: 0.75rem;
-                padding-left: 0.5rem;
-            }
+                            <i class="bi bi-search text-primary me-2"></i>
 
-            .navbar-search-wrapper .btn {
-                font-size: 0.75rem;
-                padding: 0.2rem 0.5rem;
-            }
-    }
-</style>
+                            Search Movies & TV Shows
+
+                        </span>
+
+
+                        <button id="closeSearchOverlayBtn"
+                                type="button"
+                                class="btn btn-sm text-white-50 hover-text-white border-0 p-1"
+                                title="Close (Esc)"
+                                aria-label="Close search">
+
+                            <i class="bi bi-x-lg fs-5"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- ========================= -->
+                    <!-- Search Form -->
+                    <!-- ========================= -->
+                    <form id="overlaySearchForm"
+                          action="/Search/Index"
+                          method="get">
+
+                        <div class="position-relative d-flex gap-2">
+
+                            <div class="position-relative flex-grow-1">
+
+                                <input type="text"
+                                       id="globalSearchInput"
+                                       name="q"
+                                       class="form-control form-control-lg search-overlay-input text-white bg-dark border-2 border-white rounded-3 ps-5 py-3 shadow-none fs-5"
+                                       placeholder="Search movies, TV shows..."
+                                       autocomplete="off">
+
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 fs-5 text-light opacity-75"></i>
+
+                            </div>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg px-4 rounded-3 flex-shrink-0 fw-semibold"
+                                    title="Go to full search">
+
+                                <i class="bi bi-arrow-right-circle-fill"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- ========================= -->
+                        <!-- Autocomplete -->
+                        <!-- ========================= -->
+                        <div id="autocompleteResults"
+                             class="mt-3 search-results-container rounded-3 shadow-lg"
+                             style="display: none;">
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
