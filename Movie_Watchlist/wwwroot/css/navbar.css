@@ -194,24 +194,35 @@
 
    MOVIEHUB   Movies   TV Shows   My Watchlist   ??   ?
 
-   When there is enough space, the links remain visible.
+   The navigation area occupies the middle space.
 
-   When the user clicks the hamburger:
+   Search and Hamburger always stay fixed on the right.
+
+   When the hamburger is clicked:
    A drawer opens containing the navigation links and Login.
+
    ========================================================= */
 
 @media (max-width: 991.98px) {
 
     /* ---------------------------------------------------------
        Navbar container
+
+       Grid layout:
+
+       Column 1 = Brand
+       Column 2 = Navigation
+       Column 3 = Search
+       Column 4 = Hamburger
        --------------------------------------------------------- */
 
     .navbar .container {
-        display: flex;
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto auto;
         align-items: center;
-        flex-wrap: nowrap;
         width: 100%;
         position: relative;
+        flex-wrap: nowrap;
     }
 
 
@@ -229,7 +240,8 @@
        --------------------------------------------------------- */
 
     .navbar-brand {
-        order: 1 !important;
+        grid-column: 1;
+        order: unset !important;
         flex-shrink: 0;
         margin-right: 0.6rem !important;
         white-space: nowrap;
@@ -242,22 +254,23 @@
 
     /*
        Closed state:
-       Keep the navigation links visible horizontally.
 
-       This gives us:
+       MOVIEHUB | Movies | TV Shows | My Watchlist | ?? | ?
 
-       MOVIEHUB | Movies | TV Shows | My Watchlist | Search | ?
+       The navigation occupies only the middle grid column.
 
-       If the links don't fit, they can scroll horizontally.
+       Search and Hamburger are separate columns,
+       so they cannot be pushed into the middle.
     */
 
     #mainNavbar {
-        order: 2 !important;
+        grid-column: 2;
+        order: unset !important;
         display: flex !important;
         align-items: center;
-        flex: 1 1 auto !important;
+        flex: none !important;
         flex-basis: auto !important;
-        width: auto !important;
+        width: 100% !important;
         min-width: 0;
         margin: 0 !important;
         padding: 0 !important;
@@ -335,9 +348,18 @@
        3. SEARCH ICON
        --------------------------------------------------------- */
 
+    /*
+       IMPORTANT:
+
+       Search gets its own grid column.
+
+       It will NOT move when the drawer opens.
+    */
+
     .search-trigger-wrapper {
-        order: 3 !important;
-        flex: 0 0 auto !important;
+        grid-column: 3;
+        order: unset !important;
+        flex: none !important;
         flex-shrink: 0;
         margin-left: 0.35rem !important;
         margin-right: 0 !important;
@@ -374,6 +396,7 @@
 
     /*
        Login is hidden while the drawer is closed.
+
        It becomes visible inside the drawer.
     */
 
@@ -386,8 +409,17 @@
        6. HAMBURGER
        --------------------------------------------------------- */
 
+    /*
+       IMPORTANT:
+
+       Hamburger gets its own grid column.
+
+       It stays fixed on the far right.
+    */
+
     .navbar-toggler {
-        order: 4 !important;
+        grid-column: 4;
+        order: unset !important;
         display: flex !important;
         align-items: center;
         justify-content: center;
@@ -421,6 +453,12 @@
     /*
        When Bootstrap adds .show, convert the navigation
        from the horizontal navbar into a full-width drawer.
+
+       IMPORTANT:
+
+       Search and Hamburger remain in grid columns 3 and 4.
+       The drawer is positioned absolutely, so it does not
+       affect their position.
     */
 
     #mainNavbar.show {
@@ -443,9 +481,9 @@
     }
 
 
-        /*
+        /* ---------------------------------------------------------
        Drawer navigation wrapper
-    */
+       --------------------------------------------------------- */
 
         #mainNavbar.show .movie-navbar-menu {
             display: block;
@@ -453,9 +491,9 @@
         }
 
 
-            /*
+            /* ---------------------------------------------------------
        Drawer navigation list
-    */
+       --------------------------------------------------------- */
 
             #mainNavbar.show .movie-navbar-menu .navbar-nav {
                 display: flex !important;
@@ -470,9 +508,9 @@
             }
 
 
-            /*
+            /* ---------------------------------------------------------
        Drawer navigation items
-    */
+       --------------------------------------------------------- */
 
             #mainNavbar.show .movie-navbar-menu .nav-item {
                 width: 100% !important;
@@ -480,9 +518,9 @@
             }
 
 
-            /*
+            /* ---------------------------------------------------------
        Drawer navigation links
-    */
+       --------------------------------------------------------- */
 
             #mainNavbar.show .movie-navbar-menu .nav-link {
                 display: flex;
@@ -504,9 +542,9 @@
                 }
 
 
-        /*
+        /* ---------------------------------------------------------
        Drawer mobile login
-    */
+       --------------------------------------------------------- */
 
         #mainNavbar.show .mobile-login {
             display: block !important;
@@ -517,9 +555,9 @@
         }
 
 
-    /*
-       If Bootstrap is in the collapsing state
-    */
+    /* ---------------------------------------------------------
+       Bootstrap collapsing state
+       --------------------------------------------------------- */
 
     #mainNavbar.collapsing {
         overflow: hidden;
@@ -547,7 +585,9 @@
        --------------------------------------------------------- */
 
     #mainNavbar {
-        flex: 1 1 auto !important;
+        grid-column: 2;
+        flex: none !important;
+        width: 100% !important;
         min-width: 0;
         overflow-x: auto;
         overflow-y: hidden;
@@ -633,9 +673,9 @@
             }
 
 
-    /*
+    /* ---------------------------------------------------------
        Drawer links on very small screens
-    */
+       --------------------------------------------------------- */
 
     #mainNavbar.show .movie-navbar-menu .navbar-nav {
         flex-direction: column !important;
@@ -679,6 +719,7 @@
        --------------------------------------------------------- */
 
     .search-trigger-wrapper {
+        grid-column: 3;
         margin-left: 0.2rem !important;
         flex-shrink: 0;
     }
@@ -699,6 +740,7 @@
        --------------------------------------------------------- */
 
     .navbar-toggler {
+        grid-column: 4;
         margin-left: 0.15rem !important;
         padding: 0.2rem 0.3rem;
     }
