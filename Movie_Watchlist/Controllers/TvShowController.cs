@@ -87,11 +87,7 @@ namespace Movie_Watchlist.Controllers
             var similarShows = await _tmdbService.GetSimilarTvShowsAsync(tmdbId);
             var trailerKey = await _tmdbService.GetTvShowTrailerKeyAsync(tmdbId);
 
-            int releaseYear = 0;
-            if (DateTime.TryParse(apiTvShow.FirstAirDate, out var date))
-            {
-                releaseYear = date.Year;
-            }
+            DateTime? releaseDate = DateTime.TryParse(apiTvShow.FirstAirDate, out var date) ? date : null;
 
             var model = new TvShowDetailsViewModel
             {
@@ -102,7 +98,8 @@ namespace Movie_Watchlist.Controllers
                     Description = apiTvShow.Description ?? "",
                     PosterPath = apiTvShow.FullPosterPath,
                     Rating = apiTvShow.Rating,
-                    ReleaseYear = releaseYear
+                    ReleaseDate = releaseDate,
+                    ReleaseYear = releaseDate?.Year ?? 0
                 },
                 TrailerKey = trailerKey,
                 SimilarTvShows = similarShows.ToList()

@@ -55,7 +55,7 @@ namespace Movie_Watchlist.Presintation.Areas.Admin.Controllers
             var movie = new Movie
             {
                 Title = model.Title,
-                ReleaseYear = model.ReleaseYear,
+                ReleaseDate = model.ReleaseDate,
                 GenreId = model.GenreId,
                 PosterPath = "/images/" + imageFileName 
             };

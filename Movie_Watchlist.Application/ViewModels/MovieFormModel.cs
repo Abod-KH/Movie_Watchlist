@@ -13,7 +13,8 @@ namespace Movie_Watchlist.Application.ViewModels
         public string Title { get; set; }
 
         [Required]
-        public int ReleaseYear { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? ReleaseDate { get; set; }
 
         [Required]
         public int GenreId { get; set; }

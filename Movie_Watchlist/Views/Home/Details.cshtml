@@ -8,6 +8,7 @@
     @{
         ViewData["PosterPath"]      = Model.Movie.PosterPath;
         ViewData["ReleaseYear"]     = Model.Movie.ReleaseYear;
+        ViewData["ReleaseDate"]     = Model.Movie.ReleaseDate;
         ViewData["GenreName"]       = Model.Movie.Genre?.Name ?? "";
         ViewData["Rating"]          = Model.Movie.VoteAverage;
         ViewData["Description"]     = Model.Movie.Description;

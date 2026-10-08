@@ -164,13 +164,17 @@ namespace Movie_Watchlist.Presintation.Controllers
             if (apiMovie == null)
                 return NotFound();
 
+            DateTime? releaseDate = DateTime.TryParse(apiMovie.ReleaseDate, out var date) ? date : null;
+
             var mappedMovie = new Movie
             {
                 Title = apiMovie.Title ?? "Unknown",
                 Description = apiMovie.Description ?? string.Empty,
                 PosterPath = apiMovie.FullPosterPath,
                 TmdbId = apiMovie.Id,
-                VoteAverage = apiMovie.VoteAverage
+                VoteAverage = apiMovie.VoteAverage,
+                ReleaseDate = releaseDate,
+                ReleaseYear = releaseDate?.Year ?? 0
             };
 
             var modelFromApi = await BuildModelAsync(mappedMovie);

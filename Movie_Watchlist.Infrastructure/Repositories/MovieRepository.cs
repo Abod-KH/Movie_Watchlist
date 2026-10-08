@@ -21,7 +21,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             table.Columns.Add("Description", typeof(string));
             table.Columns.Add("PosterPath", typeof(string));
             table.Columns.Add("BackdropPath", typeof(string));
-            table.Columns.Add("ReleaseYear", typeof(int));
+            table.Columns.Add("ReleaseDate", typeof(DateTime));
             table.Columns.Add("GenreId", typeof(int));
             table.Columns.Add("VoteAverage", typeof(double));
 
@@ -33,7 +33,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     movie.Description ?? string.Empty,
                     movie.PosterPath ?? string.Empty,
                     movie.BackdropPath ?? string.Empty,
-                    movie.ReleaseYear,
+                    (object?)movie.ReleaseDate ?? DBNull.Value,
                     movie.GenreId,
                     movie.VoteAverage
                 );

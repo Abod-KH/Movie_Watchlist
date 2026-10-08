@@ -9,6 +9,7 @@ namespace Movie_Watchlist.Domain.Entities
         public string? PosterPath { get; set; }
         public string? BackdropPath { get; set; }
         public double Rating { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public int ReleaseYear { get; set; }
         public int GenreId { get; set; }
         public Genre? Genre { get; set; }

@@ -145,11 +145,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
                     if (apiMovie != null)
                     {
                         int genreToUse = (apiMovie.Genre_ids != null && apiMovie.Genre_ids.Any()) ? apiMovie.Genre_ids.First() : 28;
-                        int releaseYear = 0;
-                        if (DateTime.TryParse(apiMovie.ReleaseDate, out var date))
-                        {
-                            releaseYear = date.Year;
-                        }
+                        DateTime? releaseDate = DateTime.TryParse(apiMovie.ReleaseDate, out var date) ? date : null;
 
                         movies.Add(new Movie
                         {
@@ -158,7 +154,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
                             Description = apiMovie.Description,
                             PosterPath = apiMovie.FullPosterPath,
                             BackdropPath = apiMovie.FullBackdropPath,
-                            ReleaseYear = releaseYear,
+                            ReleaseDate = releaseDate,
+                    ReleaseYear = releaseDate?.Year ?? 0,
                             GenreId = genreToUse,
                             VoteAverage = apiMovie.VoteAverage
                         });
@@ -207,11 +204,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
                     if (apiTvShow != null)
                     {
                         int genreToUse = (apiTvShow.GenreIds != null && apiTvShow.GenreIds.Any()) ? apiTvShow.GenreIds.First() : 18;
-                        int releaseYear = 0;
-                        if (DateTime.TryParse(apiTvShow.FirstAirDate, out var date))
-                        {
-                            releaseYear = date.Year;
-                        }
+                        DateTime? releaseDate = DateTime.TryParse(apiTvShow.FirstAirDate, out var date) ? date : null;
 
                         tvShows.Add(new TvShow
                         {
@@ -220,7 +213,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
                             Description = apiTvShow.Description ?? "",
                             PosterPath = apiTvShow.FullPosterPath,
                             BackdropPath = apiTvShow.FullBackdropPath,
-                            ReleaseYear = releaseYear,
+                            ReleaseDate = releaseDate,
+                    ReleaseYear = releaseDate?.Year ?? 0,
                             GenreId = genreToUse,
                             Rating = apiTvShow.Rating
                         });
@@ -279,8 +273,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
                 int tmdbGenreId = (apiMovie.Genre_ids != null && apiMovie.Genre_ids.Any()) ? apiMovie.Genre_ids.First() : 28;
                 int genreToUse = MapTmdbGenreToLocalGenre(tmdbGenreId);
 
-                int releaseYear = 0;
-                if (DateTime.TryParse(apiMovie.ReleaseDate, out var date)) releaseYear = date.Year;
+                DateTime? releaseDate = DateTime.TryParse(apiMovie.ReleaseDate, out var date) ? date : null;
 
                 moviesToSave.Add(new Movie
                 {
@@ -289,7 +282,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
                     Description = apiMovie.Description ?? "",
                     PosterPath = apiMovie.FullPosterPath,
                     BackdropPath = apiMovie.FullBackdropPath,
-                    ReleaseYear = releaseYear,
+                    ReleaseDate = releaseDate,
+                    ReleaseYear = releaseDate?.Year ?? 0,
                     GenreId = genreToUse,
                     VoteAverage = apiMovie.VoteAverage
                 });
@@ -340,8 +334,7 @@ namespace Movie_Watchlist.Infrastructure.Workers
                 int tmdbGenreId = (apiTvShow.GenreIds != null && apiTvShow.GenreIds.Any()) ? apiTvShow.GenreIds.First() : 18;
                 int genreToUse = MapTmdbGenreToLocalGenre(tmdbGenreId);
 
-                int releaseYear = 0;
-                if (DateTime.TryParse(apiTvShow.FirstAirDate, out var date)) releaseYear = date.Year;
+                DateTime? releaseDate = DateTime.TryParse(apiTvShow.FirstAirDate, out var date) ? date : null;
 
                 tvShowsToSave.Add(new TvShow
                 {
@@ -350,7 +343,8 @@ namespace Movie_Watchlist.Infrastructure.Workers
                     Description = apiTvShow.Description ?? "",
                     PosterPath = apiTvShow.FullPosterPath,
                     BackdropPath = apiTvShow.FullBackdropPath,
-                    ReleaseYear = releaseYear,
+                    ReleaseDate = releaseDate,
+                    ReleaseYear = releaseDate?.Year ?? 0,
                     GenreId = genreToUse,
                     Rating = apiTvShow.Rating
                 });

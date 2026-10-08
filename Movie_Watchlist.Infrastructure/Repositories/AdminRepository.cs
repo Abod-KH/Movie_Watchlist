@@ -18,7 +18,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     ("@TmdbId", movie.TmdbId),
                     ("@Description", movie.Description),
                     ("@PosterPath", movie.PosterPath),
-                    ("@ReleaseYear", movie.ReleaseYear),
+                    ("@ReleaseDate", movie.ReleaseDate),
                     ("@GenreId", movie.GenreId));
             }
 
@@ -30,7 +30,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     ("@TmdbId", movie.TmdbId),
                     ("@Description", movie.Description),
                     ("@PosterPath", movie.PosterPath),
-                    ("@ReleaseYear", movie.ReleaseYear),
+                    ("@ReleaseDate", movie.ReleaseDate),
                     ("@GenreId", movie.GenreId));
             }
 
