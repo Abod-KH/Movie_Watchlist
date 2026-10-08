@@ -22,7 +22,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
             table.Columns.Add("PosterPath", typeof(string));
             table.Columns.Add("BackdropPath", typeof(string));
             table.Columns.Add("Rating", typeof(double));
-            table.Columns.Add("ReleaseYear", typeof(int));
+            table.Columns.Add("ReleaseDate", typeof(DateTime));
             table.Columns.Add("GenreId", typeof(int));
 
             foreach (var show in tvShows)
@@ -34,7 +34,7 @@ namespace Movie_Watchlist.Infrastructure.Repositories
                     show.PosterPath ?? string.Empty,
                     show.BackdropPath ?? string.Empty,
                     show.Rating,
-                    show.ReleaseYear,
+                    (object?)show.ReleaseDate ?? DBNull.Value,
                     show.GenreId
                 );
             }

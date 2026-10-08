@@ -5,7 +5,8 @@
     Expected ViewData keys:
       - "Title"           (string)  – Media title
       - "PosterPath"      (string)  – Full poster URL
-      - "ReleaseYear"     (int)     – Year of release
+      - "ReleaseYear"     (int)     – Year of release (fallback when no full date)
+      - "ReleaseDate"     (DateTime?) – Full release date
       - "GenreName"       (string)  – Genre display name
       - "Rating"          (double)  – Vote average
       - "Description"     (string)  – Overview text
@@ -21,6 +22,8 @@
     var title       = (string)ViewData["Title"]!;
     var posterPath  = (string)ViewData["PosterPath"]!;
     var releaseYear = (int)ViewData["ReleaseYear"]!;
+    var releaseDate = (DateTime?)ViewData["ReleaseDate"];
+    var releaseText = releaseDate?.ToString("MMMM d, yyyy") ?? (releaseYear > 0 ? releaseYear.ToString() : "");
     var genreName   = (string?)ViewData["GenreName"] ?? "";
     var rating      = (double)ViewData["Rating"]!;
     var description = (string?)ViewData["Description"] ?? "";
@@ -51,7 +54,7 @@
                     <div class="flex-grow-1">
                         <h1 class="fw-bold">@title</h1>
                         <p class="text-muted">
-                            @releaseYear • @genreName
+                            @releaseText • @genreName
                         </p>
                         <div class="d-flex align-items-center mb-3">
                             <i class="bi bi-star-fill text-warning me-1 fs-5"></i>

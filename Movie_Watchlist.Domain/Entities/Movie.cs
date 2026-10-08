@@ -15,6 +15,7 @@ namespace Movie_Watchlist.Domain.Entities
         public string? PosterPath { get; set; }
         public string? BackdropPath { get; set; }
 
+        public DateTime? ReleaseDate { get; set; }
         public int ReleaseYear { get; set; }
 
         public double VoteAverage { get; set; }
